@@ -1,6 +1,6 @@
 [
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/classic-breakout.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/classic-breakout.html",
     "name": "classic-breakout.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
@@ -37,7 +37,7 @@
     ]
   },
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/classic-frogger.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/classic-frogger.html",
     "name": "classic-frogger.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
@@ -74,7 +74,7 @@
     ]
   },
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/classic-pong.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/classic-pong.html",
     "name": "classic-pong.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
@@ -111,7 +111,7 @@
     ]
   },
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/flappy-dot.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/flappy-dot.html",
     "name": "flappy-dot.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
@@ -148,7 +148,7 @@
     ]
   },
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/maze-runner.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/maze-runner.html",
     "name": "maze-runner.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
@@ -185,7 +185,7 @@
     ]
   },
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/ping-pong.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/ping-pong.html",
     "name": "ping-pong.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
@@ -222,7 +222,7 @@
     ]
   },
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/reaction-time.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/reaction-time.html",
     "name": "reaction-time.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
@@ -259,7 +259,7 @@
     ]
   },
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/snake-game.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/snake-game.html",
     "name": "snake-game.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
@@ -296,7 +296,7 @@
     ]
   },
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/space-invaders.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/space-invaders.html",
     "name": "space-invaders.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
@@ -333,7 +333,7 @@
     ]
   },
   {
-    "game": "/home/salboaie/work/ploinky/docs/sources/allAges/tetris.html",
+    "game": "/home/salboaie/work/ploinky/docs/sources/classicArcade/tetris.html",
     "name": "tetris.html",
     "hasErrors": false,
     "hasCriticalErrors": false,
