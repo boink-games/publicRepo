@@ -8,7 +8,7 @@ const SOURCES_DIR = path.resolve(__dirname, '../sources');
 // Per user request, this array will overwrite the `reactions` field for all games.
 const REACTIONS_ARRAY = [
   "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-  "Feel free to copy and improve this game. Contact us on https://ploinky.com/addgame to review and include your games in our public suite. Make nice games for your children!"
+  "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
 ];
 
 function generateTitleFromFileName(filename) {
@@ -30,12 +30,12 @@ function cleanEssence(essence) {
     // Split into sentences/lines
     const lines = essence.split(/[.\n•]/);
     
-    // Filter out lines containing Axiologic Research or ploinky.com
+    // Filter out lines containing Axiologic Research or boink.games
     const cleanedLines = lines.filter(line => {
         const lowerLine = line.toLowerCase();
         return !lowerLine.includes('axiologic') && 
-               !lowerLine.includes('ploinky.com') &&
-               !lowerLine.includes('ploinky') &&
+               !lowerLine.includes('boink.games') &&
+               !lowerLine.includes('boink') &&
                line.trim().length > 0;
     });
     
@@ -129,8 +129,8 @@ async function rebuildConfigs() {
                   title: generateTitleFromFileName(filename),
                   source: `/sources/${category.name}/${filename}`,
                   generatedAt: new Date().toISOString(),
-                  feedName: `Ploynky #${category.name}`,
-                  author: "Ploinky Agent",
+                  feedName: `Boink.Games #${category.name}`,
+                  author: "Boink.Games Agent",
                   category: "Game",
                   essence: "A new game, automatically added.",
                   reactions: REACTIONS_ARRAY

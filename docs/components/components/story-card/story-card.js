@@ -315,7 +315,7 @@ export class StoryCard {
         const essenceElement = this.element.querySelector('.card-essence');
         if (this.post?.isSelectionCard) {
             if (essenceElement) {
-                essenceElement.textContent = 'Welcome to Ploynky! Pick your microgame categories below:';
+                essenceElement.textContent = 'Welcome to Boink.Games! Pick your microgame categories below:';
             }
             // Update the title for first card
             const titleElements = this.element.querySelectorAll('.card-title');
@@ -341,7 +341,7 @@ export class StoryCard {
             if (tag) {
                 if (!(tag.startsWith('#') || tag.startsWith('@'))) tag = `#${tag}`;
             }
-            const hash = tag || (this.extractDomain(this.post.source) || 'Ploynky');
+            const hash = tag || (this.extractDomain(this.post.source) || 'Boink.Games');
             const timeText = (this.post?.type !== 'microgame') ? this.formatTimeAgo(this.post.publishedAt || this.post.generatedAt) : '';
             const subtitle = this.element.querySelector('.card-slide[data-id="main"] .card-subtitle');
             if (subtitle) subtitle.textContent = timeText ? `${hash} · ${timeText}` : `${hash}`;
@@ -488,7 +488,7 @@ export class StoryCard {
             const about = document.createElement('div');
             about.className = 'card-slide';
             about.setAttribute('data-id', 'about');
-            const text = `Demonstration game provided by Ploynky. We invite creative people to invent games — with AI, ideas matter more than advanced coding, especially for useful, educational games for kids.`;
+            const text = `Demonstration game provided by Boink.Games. We invite creative people to invent games — with AI, ideas matter more than advanced coding, especially for useful, educational games for kids.`;
             about.innerHTML = `
                 <div class="card-content">
                     <div class="card-header">

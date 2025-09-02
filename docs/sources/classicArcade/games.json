@@ -5,13 +5,28 @@
     "title": "Breakout",
     "source": "/sources/classicArcade/breakout.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
-    "feedName": "Ploynky #classicArcade",
+    "feedName": "Boink.Games #classicArcade",
     "author": "Classic Arcade Collection",
     "category": "Game",
     "essence": "Break all the bricks with your ball and paddle. Don't let the ball fall!",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://ploinky.com/addgame to review and include your games in our public suite. Make nice games for your children!"
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:breakout-variant",
+    "type": "microgame",
+    "title": "Breakout Variant",
+    "source": "/sources/classicArcade/breakout-variant.html",
+    "generatedAt": "2025-09-02T15:37:56.802Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added.",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
   {
@@ -20,13 +35,28 @@
     "title": "Classic Breakout",
     "source": "/sources/classicArcade/classic-breakout.html",
     "generatedAt": "2025-09-02T14:53:56.779Z",
-    "feedName": "Ploynky #classicArcade",
-    "author": "Ploinky Agent",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:classic-frogger",
+    "type": "microgame",
+    "title": "Classic Frogger",
+    "source": "/sources/classicArcade/classic-frogger.html",
+    "generatedAt": "2025-09-02T15:37:56.803Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
     "category": "Game",
     "essence": "A new game, automatically added.",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://ploinky.com/addgame to review and include your games in our public suite. Make nice games for your children!"
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
   {
@@ -35,13 +65,28 @@
     "title": "Classic Pac Man",
     "source": "/sources/classicArcade/classic-pac-man.html",
     "generatedAt": "2025-09-02T14:53:56.779Z",
-    "feedName": "Ploynky #classicArcade",
-    "author": "Ploinky Agent",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:classic-pong",
+    "type": "microgame",
+    "title": "Classic Pong",
+    "source": "/sources/classicArcade/classic-pong.html",
+    "generatedAt": "2025-09-02T15:37:56.803Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
     "category": "Game",
     "essence": "A new game, automatically added.",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://ploinky.com/addgame to review and include your games in our public suite. Make nice games for your children!"
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
   {
@@ -50,13 +95,28 @@
     "title": "Classic Space Invaders",
     "source": "/sources/classicArcade/classic-space-invaders.html",
     "generatedAt": "2025-09-02T14:53:56.779Z",
-    "feedName": "Ploynky #classicArcade",
-    "author": "Ploinky Agent",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:flappy-dot",
+    "type": "microgame",
+    "title": "Flappy Dot",
+    "source": "/sources/classicArcade/flappy-dot.html",
+    "generatedAt": "2025-09-02T15:37:56.803Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
     "category": "Game",
     "essence": "A new game, automatically added.",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://ploinky.com/addgame to review and include your games in our public suite. Make nice games for your children!"
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
   {
@@ -65,13 +125,28 @@
     "title": "Frogger",
     "source": "/sources/classicArcade/frogger.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
-    "feedName": "Ploynky #classicArcade",
+    "feedName": "Boink.Games #classicArcade",
     "author": "Classic Arcade Collection",
     "category": "Game",
     "essence": "Help the frog cross busy roads and treacherous rivers to reach safety",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://ploinky.com/addgame to review and include your games in our public suite. Make nice games for your children!"
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:maze-runner",
+    "type": "microgame",
+    "title": "Maze Runner",
+    "source": "/sources/classicArcade/maze-runner.html",
+    "generatedAt": "2025-09-02T15:37:56.803Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added.",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
   {
@@ -80,13 +155,28 @@
     "title": "Missile Command",
     "source": "/sources/classicArcade/missile-command.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
-    "feedName": "Ploynky #classicArcade",
+    "feedName": "Boink.Games #classicArcade",
     "author": "Classic Arcade Collection",
     "category": "Game",
     "essence": "Defend your cities from incoming missiles by launching interceptors",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://ploinky.com/addgame to review and include your games in our public suite. Make nice games for your children!"
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:ping-pong",
+    "type": "microgame",
+    "title": "Ping Pong",
+    "source": "/sources/classicArcade/ping-pong.html",
+    "generatedAt": "2025-09-02T15:37:56.803Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added.",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
   {
@@ -95,13 +185,28 @@
     "title": "Pong",
     "source": "/sources/classicArcade/pong.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
-    "feedName": "Ploynky #classicArcade",
+    "feedName": "Boink.Games #classicArcade",
     "author": "Classic Arcade Collection",
     "category": "Game",
     "essence": "The original arcade tennis game. Control your paddle to hit the ball past the AI opponent",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://ploinky.com/addgame to review and include your games in our public suite. Make nice games for your children!"
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:reaction-time",
+    "type": "microgame",
+    "title": "Reaction Time",
+    "source": "/sources/classicArcade/reaction-time.html",
+    "generatedAt": "2025-09-02T15:37:56.803Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added.",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
   {
@@ -110,13 +215,58 @@
     "title": "Snake",
     "source": "/sources/classicArcade/snake.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
-    "feedName": "Ploynky #classicArcade",
+    "feedName": "Boink.Games #classicArcade",
     "author": "Classic Arcade Collection",
     "category": "Game",
     "essence": "Control the snake to eat food and grow longer. Don't hit the walls or yourself! Inspired by the classic arcade game",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://ploinky.com/addgame to review and include your games in our public suite. Make nice games for your children!"
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:snake-game",
+    "type": "microgame",
+    "title": "Snake Game",
+    "source": "/sources/classicArcade/snake-game.html",
+    "generatedAt": "2025-09-02T15:37:56.803Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added.",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:space-invaders",
+    "type": "microgame",
+    "title": "Space Invaders",
+    "source": "/sources/classicArcade/space-invaders.html",
+    "generatedAt": "2025-09-02T15:37:56.803Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added.",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:classicArcade:tetris",
+    "type": "microgame",
+    "title": "Tetris",
+    "source": "/sources/classicArcade/tetris.html",
+    "generatedAt": "2025-09-02T15:37:56.803Z",
+    "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added.",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   }
 ]

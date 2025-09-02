@@ -57,16 +57,16 @@ export class NewsFeedPage {
                     .catch(err => { console.error(`Could not fetch posts from ${url}:`, err); return []; })
             ));
 
-            // Load from selected local source categories (default to 'default')
-            const selected = await window.LocalStorage.get('selectedSourceCategories') || ['default'];
+            // Load from selected local source categories
+            const selected = await window.LocalStorage.get('selectedSourceCategories') || [];
             if (window.__LOGS_ENABLED) window.logTS('NF: selected categories', { count: selected.length });
 
             // Fetch category sources in parallel
-            const filteredSelected = (selected || []).filter(cat => !!cat && cat !== 'default');
+            const filteredSelected = (selected || []).filter(cat => !!cat);
             const categoryFetches = filteredSelected.map(cat => {
                 try {
-                    // Map logical ids to folder names
-                    const folder = (cat === 'allAges') ? 'allAges' : cat;
+                    // Folder name matches category id; migrate legacy 'allAges' to 'classicArcade'
+                    const folder = (cat === 'allAges') ? 'classicArcade' : cat;
                     // Build default local path; now using games.json for games
                     const sourceUrl = `./sources/${folder}/games.json`;
                     const fullUrl = sourceUrl.startsWith('/') ? `.${sourceUrl}` : sourceUrl;
@@ -96,7 +96,7 @@ export class NewsFeedPage {
                 const cat = filteredSelected[i];
                 const arr = categoryResults[i];
                 if (Array.isArray(arr)) {
-                    const mapped = arr.map(g => ({ ...g, tag: g.tag || (cat === 'allAges' ? '@allAges' : cat), type: g.type || 'microgame' }));
+                    const mapped = arr.map(g => ({ ...g, tag: g.tag || ((cat === 'allAges' ? 'classicArcade' : cat)), type: g.type || 'microgame' }));
                     jsonPosts = jsonPosts.concat(mapped);
                     catPosts += arr.length;
                 }
@@ -110,7 +110,7 @@ export class NewsFeedPage {
         const selectionPost = {
             id: "selection-card",
             title: "Select Game Sources",
-            essence: "Welcome to Ploynky! Pick your game categories below:",
+            essence: "Welcome to Boink.Games! Pick your game categories below:",
             reactions: [],
             source: "#",
             isSelectionCard: true
@@ -631,8 +631,8 @@ export class NewsFeedPage {
     createTutorialPost() {
         return {
             id: "tutorial-1",
-            title: "Welcome to Ploynky!",
-            essence: "Ploynky is a mobile-first games feed. Each card shows a short description and a Play button. Tap Play to open the game in a focused popup sized for phones.",
+            title: "Welcome to Boink.Games!",
+            essence: "Boink.Games is a mobile-first games feed. Each card shows a short description and a Play button. Tap Play to open the game in a focused popup sized for phones.",
             reactions: [
                 "Swipe UP or DOWN to move between games.",
                 "Swipe LEFT to view more details about a game.",

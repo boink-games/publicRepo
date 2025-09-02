@@ -153,7 +153,7 @@ async function main() {
 
   if (!destinationFolder || !gamePrompt) {
     console.log('Usage: node createGame.js <path-to-destination-folder> "<game-prompt>"');
-    console.log('Example: node createGame.js ./sources/allAges "a simple breakout game with a blue paddle and red bricks"');
+    console.log('Example: node createGame.js ./sources/classicArcade "a simple breakout game with a blue paddle and red bricks"');
     process.exit(1);
   }
 

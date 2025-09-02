@@ -31,7 +31,7 @@ class SourcesManager {
                 defaultSources = [
                     { id: 'smallChildren', type: 'category', url: '/sources/smallChildren/games.json', tag: 'smallChildren', removable: false, visible: true },
                     { id: 'schoolChildren', type: 'category', url: '/sources/schoolChildren/games.json', tag: 'schoolChildren', removable: false, visible: true },
-                    { id: 'allAges', type: 'category', url: '/sources/allAges/games.json', tag: '@allAges', removable: false, visible: true },
+                    { id: 'classicArcade', type: 'category', url: '/sources/classicArcade/games.json', tag: 'classicArcade', removable: false, visible: true },
                     { id: 'girls', type: 'category', url: '/sources/girls/games.json', tag: 'girls', removable: false, visible: true },
                     { id: 'boys', type: 'category', url: '/sources/boys/games.json', tag: 'boys', removable: false, visible: true },
                     { id: 'microStrategy', type: 'category', url: '/sources/microStrategy/games.json', tag: 'microStrategy', removable: false, visible: true },
@@ -64,6 +64,17 @@ class SourcesManager {
             if (!s || !s.url) return false;
             if (s.type === 'external') return true;
             return /\/sources\/[^/]+\/games\.json$/.test(s.url);
+        });
+
+        // Migrate any legacy 'allAges' source entries to 'classicArcade'
+        this.sources = this.sources.map(s => {
+            if (s && s.id === 'allAges') {
+                return { ...s, id: 'classicArcade', url: '/sources/classicArcade/games.json', tag: 'classicArcade' };
+            }
+            if (s && typeof s.tag === 'string' && s.tag.trim() === '@allAges') {
+                return { ...s, tag: 'classicArcade' };
+            }
+            return s;
         });
 
         // Add external sources
@@ -183,9 +194,17 @@ class SourcesManager {
         let selectedCategories = await window.LocalStorage.get('selectedSourceCategories');
         let selectedExternal = await window.LocalStorage.get('selectedExternalPostsUrls');
         
-        // First time - default to microgame sources
+        // First time - default to visible configured categories from defaults
         if (!hasSelectedBefore && !selectedCategories && !selectedExternal) {
-            selectedCategories = ['smallChildren', 'schoolChildren', 'allAges', 'girls', 'boys', 'microStrategy'];
+            try {
+                const visibleDefaults = (this.sources || [])
+                    .filter(s => s && s.type === 'category' && s.visible === true)
+                    .map(s => s.id)
+                    .filter(Boolean);
+                selectedCategories = visibleDefaults;
+            } catch (_) {
+                selectedCategories = [];
+            }
             selectedExternal = [];
             
             // Save the initial selection
@@ -194,11 +213,23 @@ class SourcesManager {
             await window.LocalStorage.set('hasSelectedSourcesBefore', true);
         }
         
-        // Ensure we have at least default if nothing is selected
-        if (!selectedCategories) selectedCategories = ['smallChildren', 'schoolChildren', 'allAges'];
+        // Ensure we have at least currently visible categories if nothing is selected
+        if (!selectedCategories) {
+            try {
+                selectedCategories = (this.sources || [])
+                    .filter(s => s && s.type === 'category' && s.visible === true)
+                    .map(s => s.id)
+                    .filter(Boolean);
+            } catch (_) {
+                selectedCategories = [];
+            }
+        }
         if (!selectedExternal) selectedExternal = [];
         
-        selectedCategories = (selectedCategories || []).filter(c => c && c !== 'default');
+        // Backward compatibility: migrate legacy 'allAges' to 'classicArcade'
+        selectedCategories = (selectedCategories || [])
+            .filter(c => c)
+            .map(c => c === 'allAges' ? 'classicArcade' : c);
 
         return {
             categories: selectedCategories,

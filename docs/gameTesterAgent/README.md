@@ -54,10 +54,10 @@ export USE_GPT5_NANO="true"
 
 ```bash
 # Test without fixing
-node index.js test ../sources/allAges/snake.html
+node index.js test ../sources/classicArcade/snake.html
 
 # Test and auto-fix with GPT-5
-node index.js fix ../sources/allAges/snake.html
+node index.js fix ../sources/classicArcade/snake.html
 
 # Test with specific viewport
 node index.js test ../sources/boys/rocket-dodge.html --viewport mobile
