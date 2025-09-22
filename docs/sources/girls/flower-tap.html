@@ -13,7 +13,7 @@
       --hud-border:rgba(255,255,255,0.9);
       --hud-text:#084b8a;
       --accent:#ffd54f;
-      --shadow:rgba(0,0,0,0.15);
+      --shadow:rgba(0,0,0,0.3);
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0}
@@ -32,13 +32,10 @@
     }
     .hud{
       position:fixed;top:0;left:0;right:0;
-      display:flex;align-items:center;justify-content:space-between;
-      gap:10px;padding: max(10px, env(safe-area-inset-top)) 12px 12px 12px;
+      display:flex;align-items:flex-start;justify-content:center;
+      gap:10px;padding: max(20px, env(safe-area-inset-top)) 12px 12px 12px;
       z-index:2;
       pointer-events:none; /* allow taps through except on buttons */
-    }
-    .left, .right{
-      display:flex;align-items:center;gap:10px;pointer-events:auto;
     }
     .pill, .icon-btn{
       display:inline-flex;align-items:center;gap:8px;
@@ -46,7 +43,7 @@
       border: 2px solid var(--hud-border);
       color: var(--hud-text);
       border-radius: 999px;
-      padding: 10px 14px;
+      padding: 12px 16px;
       font-weight:800;
       font-size: clamp(16px, 3.2vw, 22px);
       box-shadow: 0 6px 18px var(--shadow);
@@ -59,9 +56,10 @@
     }
     .score{
       min-width: 120px; justify-content:center;
+      font-size: clamp(14px, 2.8vw, 18px);
     }
     .icon-btn{
-      width:52px;height:52px;justify-content:center;padding:0;
+      width:48px;height:48px;justify-content:center;padding:0;
     }
     .icon-btn:active, .pill:active{
       transform: scale(0.98);
@@ -90,22 +88,83 @@
     .visible{opacity:1; visibility:visible; transition: opacity .4s ease}
     .a11y{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;}
   </style>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    .game-title {
+        font-size: 2.8rem; /* Increased font size for better visual impact */
+        font-weight: bold;
+        font-family: 'Fredoka One', sans-serif;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        /* Vibrant gradient from hot pink to warm orange */
+        background: linear-gradient(135deg, #F5478A, #F59E3B);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        /* Double outline: thin white inner stroke and thick purple outer stroke */
+        -webkit-text-stroke: 1px white; /* Inner white stroke */
+        text-shadow:
+            2px 2px 0 #5B217E,   /* Thick purple outer stroke - part 1 */
+            -2px -2px 0 #5B217E,  /* Thick purple outer stroke - part 2 */
+            2px -2px 0 #5B217E,   /* Thick purple outer stroke - part 3 */
+            -2px 2px 0 #5B217E,   /* Thick purple outer stroke - part 4 */
+            4px 4px 6px rgba(0, 0, 0, 0.3); /* Soft shadow for 3D effect */
+        position: relative; /* Needed for pseudo-elements for glossy effect */
+    }
+
+    /* Glossy highlights on top of the letters */
+    .game-title::before {
+        content: attr(data-text); /* Use data-text to duplicate content for highlight */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 50%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        z-index: 1;
+    }
+
+    .game-title::after {
+        content: '🌸';
+        font-size: 1.5rem;
+        margin: 0 5px;
+        vertical-align: middle;
+    }
+
+    .center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        pointer-events: auto;
+    }
+
+    .score-and-sound {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+  </style>
 </head>
 <body>
   <div class="hud" aria-hidden="false">
-    <div class="left">
-      <div class="pill score" aria-live="polite" aria-label="Score">
-        <span class="icon" aria-hidden="true">⭐</span>
-        <span id="score">0</span>
-      </div>
-    </div>
-    <div class="right">
-      <button class="icon-btn" id="soundBtn" aria-label="Sound on/off" title="Sound">
-        <span class="icon" id="soundIcon">🔊</span>
-      </button>
-      <button class="icon-btn" id="restart" aria-label="Restart" title="Restart">
-        <span class="icon">🔄</span>
-      </button>
+    <div class="center">
+        <h1 class="game-title">Flower Tap</h1>
+        <div class="score-and-sound">
+            <div class="pill score" aria-live="polite" aria-label="Score">
+                <span class="icon" aria-hidden="true">⭐</span>
+                <span id="score">0</span>
+            </div>
+            <button class="icon-btn" id="soundBtn" aria-label="Sound on/off" title="Sound">
+                <span class="icon" id="soundIcon">🔊</span>
+            </button>
+            <button class="icon-btn" id="restart" aria-label="Restart" title="Restart">
+                <span class="icon">🔄</span>
+            </button>
+        </div>
     </div>
   </div>
 
@@ -125,6 +184,8 @@
     const flowers = [];
     const particles = [];
     const clouds = [];
+    const insects = [];
+    const MAX_INSECTS = 3;
     const MAX_FLOWERS = 10;
     let score = 0;
     let lastTime = 0;
@@ -239,7 +300,7 @@
         x: baseX,
         y: H + r + rand(0, H*0.25),
         r,
-        vy: -rand(22, 48), // px/s
+        vy: -rand(40, 80), // px/s
         c: PETAL_COLORS[(Math.random()*PETAL_COLORS.length)|0],
         swayAmp: rand(r*0.12, r*0.22),
         swaySpd: rand(0.8, 1.6),
@@ -248,6 +309,28 @@
         rotSpd: rand(-0.6, 0.6)
       };
       return f;
+    }
+
+    function spawnInsect() {
+      const type = Math.random() > 0.5 ? 'bee' : 'butterfly';
+      const y = rand(H * 0.2, H * 0.8);
+      const side = Math.random() > 0.5 ? 'left' : 'right';
+      return {
+        type: type,
+        x: side === 'left' ? -20 : W + 20,
+        y: y,
+        vx: rand(30, 60) * (side === 'left' ? 1 : -1),
+        vy: rand(-10, 10),
+        size: rand(8, 12),
+        wingAngle: 0,
+        wingSpeed: rand(0.1, 0.2)
+      };
+    }
+
+    function ensureInsects() {
+      while (insects.length < MAX_INSECTS) {
+        insects.push(spawnInsect());
+      }
     }
 
     function ensureFlowers() {
@@ -319,6 +402,45 @@
       ctx.restore();
     }
 
+    function drawInsect(insect) {
+      ctx.save();
+      ctx.translate(insect.x, insect.y);
+      if (insect.type === 'bee') {
+        // body
+        ctx.fillStyle = '#ffc700'; // yellow
+        ctx.beginPath();
+        ctx.arc(0, 0, insect.size, 0, Math.PI * 2);
+        ctx.fill();
+        // stripes
+        ctx.fillStyle = 'black';
+        ctx.fillRect(-insect.size, -insect.size / 4, insect.size * 2, insect.size / 2);
+        // wings
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.beginPath();
+        ctx.arc(-insect.size / 2, -insect.size / 2, insect.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else { // butterfly
+        const wingSize = insect.size;
+        insect.wingAngle += insect.wingSpeed;
+        const wingWave = Math.sin(insect.wingAngle) * 0.5;
+        // wings
+        ctx.fillStyle = `hsl(${tSec * 50}, 100%, 70%)`;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-wingSize, -wingSize + wingWave * wingSize);
+        ctx.lineTo(-wingSize, wingSize + wingWave * wingSize);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(wingSize, -wingSize + wingWave * wingSize);
+        ctx.lineTo(wingSize, wingSize + wingWave * wingSize);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
     function drawParticles(dt) {
       for (let i=particles.length-1;i>=0;i--) {
         const p = particles[i];
@@ -354,6 +476,17 @@
         }
       }
 
+      // insects
+      for (let i = insects.length - 1; i >= 0; i--) {
+        const insect = insects[i];
+        insect.x += insect.vx * dt;
+        insect.y += insect.vy * dt;
+        if (insect.x < -30 || insect.x > W + 30) {
+          insects.splice(i, 1);
+        }
+      }
+      ensureInsects();
+
       // flowers
       for (const f of flowers) {
         f.y += f.vy * dt;
@@ -377,7 +510,7 @@
 
       // draw sun
       ctx.save();
-      const sunX = W - 70, sunY = 70, sunR = 38;
+      const sunX = 70, sunY = 50, sunR = 38;
       const grd = ctx.createRadialGradient(sunX, sunY, 4, sunX, sunY, sunR);
       grd.addColorStop(0, '#fff9c4');
       grd.addColorStop(1, '#ffe082');
@@ -399,6 +532,11 @@
 
       // clouds
       for (const c of clouds) drawCloud(c);
+
+      // insects
+      for (const insect of insects) {
+        drawInsect(insect);
+      }
 
       // soft ground
       ctx.save();
@@ -511,6 +649,7 @@
     // Init
     setupClouds();
     ensureFlowers();
+    ensureInsects();
     requestAnimationFrame(loop);
   })();
   </script>

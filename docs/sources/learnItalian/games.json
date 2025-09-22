@@ -2,13 +2,14 @@
   {
     "id": "game:learnItalian:colors",
     "type": "microgame",
-    "title": "Colori Italiani - Base",
+    "title": "Italian Colors - Basic",
+    "logo": "🎨",
     "source": "/sources/learnItalian/italian-colors.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
     "feedName": "Boink.Games #learnItalian",
     "author": "Boink.Games",
     "category": "Game",
-    "essence": "Învață culorile de bază în italiană cu animații vibrante și pronunție clară. Ascultă și alege traducerea corectă",
+    "essence": "Learn basic Italian colors with vibrant animations and clear pronunciation. Listen and choose the correct translation",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
@@ -17,13 +18,14 @@
   {
     "id": "microgame:learnItalian:colori-avanzati",
     "type": "microgame",
-    "title": "Culori Avansate",
+    "title": "Advanced Italian Colors",
+    "logo": "🌈",
     "source": "/sources/learnItalian/colori-avanzati.html",
     "generatedAt": "2025-09-02T10:09:31.204Z",
     "feedName": "Boink.Games #learnItalian",
     "author": "Boink.Games Agent",
     "category": "Game",
-    "essence": "Explorează nuanțe și culori avansate în italiană. Design modern cu efecte vizuale captivante",
+    "essence": "Explore the nuances of Italian colors. A modern design with captivating visual effects",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
@@ -32,13 +34,14 @@
   {
     "id": "microgame:learnItalian:numeri",
     "type": "microgame",
-    "title": "Numeri Italiani 1-10",
+    "title": "Italian Numbers 1-10",
+    "logo": "🔢",
     "source": "/sources/learnItalian/numeri-italiani.html",
     "generatedAt": "2025-09-02T10:09:31.203Z",
     "feedName": "Boink.Games #learnItalian",
     "author": "Boink.Games Agent",
     "category": "Game",
-    "essence": "Antrenament interactiv pentru numerele 1-10 în italiană cu reprezentare vizuală și exerciții de numărare",
+    "essence": "Interactive training for numbers 1-10 in Italian with visual representation and counting exercises",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
@@ -47,13 +50,14 @@
   {
     "id": "microgame:learnItalian:parole",
     "type": "microgame",
-    "title": "Potrivește Cuvintele",
+    "title": "Match the Words",
+    "logo": "🇮🇹",
     "source": "/sources/learnItalian/parole-italiane.html",
     "generatedAt": "2025-09-02T10:09:31.204Z",
     "feedName": "Boink.Games #learnItalian",
     "author": "Boink.Games Agent",
     "category": "Game",
-    "essence": "Joc de potrivire pentru vocabular italian esențial. Conectează cuvintele italiene cu traducerile lor",
+    "essence": "Matching game for essential Italian vocabulary. Connect the Italian words with their translations",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"

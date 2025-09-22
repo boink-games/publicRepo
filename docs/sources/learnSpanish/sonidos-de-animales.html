@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sonidos de Animales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+
 <style>
   :root{
     --bg1:#fdf7ff;
@@ -36,11 +40,12 @@
     text-align:center;
     margin-bottom: clamp(14px, 2.5vh, 24px);
   }
+  
   h1{
     margin:0 0 8px 0;
     font-weight:800;
     letter-spacing:.5px;
-    font-size: clamp(28px, 5.5vw, 44px);
+    font-size: clamp(32px, 6vw, 52px);
     background: linear-gradient(90deg, #7b4cff, #ff5fa2 60%, #ffa35f);
     -webkit-background-clip:text;
     background-clip:text;
@@ -77,7 +82,7 @@
     display:grid;
     grid-template-rows: 1fr auto;
     align-items:center;
-    min-height: clamp(180px, 32vw, 320px);
+    min-height: clamp(160px, 28vw, 280px);
     transition: transform .12s ease, box-shadow .2s ease;
     touch-action: manipulation;
     outline: none;
@@ -97,7 +102,7 @@
   .circle{
     position:relative;
     place-self:center;
-    width: clamp(140px, 35vw, 230px);
+    width: clamp(120px, 30vw, 200px);
     aspect-ratio:1/1;
     border-radius:50%;
     display:grid;
@@ -160,23 +165,25 @@
     display:none;
     align-items:center;
     justify-content:center;
-    background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(240,247,255,.9));
+    background: rgba(0,0,0,0.5);
     backdrop-filter: blur(6px);
     z-index: 100;
   }
   .overlay.show{ display:flex; }
   .start-card{
     background:#fff;
-    border-radius:20px;
-    padding:24px 20px;
-    width:min(420px, 88vw);
+    border-radius:24px;
+    padding: 24px;
+    width:min(320px, 88vw);
     text-align:center;
-    box-shadow: 0 10px 30px rgba(60, 80, 120, .2), inset 0 0 0 1px rgba(0,0,0,.06);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
   }
   .start-title{
-    font-size: 22px;
-    font-weight:800;
+    font-family: 'Chewy', cursive;
+    font-size: 28px;
     margin-bottom:8px;
+    color: #4a148c;
+    text-transform: uppercase;
   }
   .start-sub{
     color:#666;
@@ -209,8 +216,8 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Sonidos de Animales</h1>
-    <p class="instr">Toca un animal para escuchar su sonido y su nombre en español. También puedes usar el teclado: 1 = perro, 2 = gato, 3 = vaca. Usa las flechas para moverte y Enter o Espacio para reproducir.</p>
+            <h1>Sonidos de Animales</h1>
+    
   </header>
 
   <section class="grid" id="grid" aria-label="Animales">
@@ -321,7 +328,10 @@
       <div class="label">vaca</div>
       <div class="sparkle"></div>
     </button>
+    
   </section>
+
+  <p class="instr">Toca un animal para escuchar su sonido y su nombre en español. También puedes usar el teclado: 1 = perro, 2 = gato, 3 = vaca. Usa las flechas para moverte y Enter o Espacio para reproducir.</p>
 
   <footer>
     Consejos: sube el volumen del dispositivo. Si no suena, pulsa “Activar sonido”.

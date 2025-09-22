@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Italian Word Match</title>
+<title>Match the Words</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
   
@@ -96,9 +96,9 @@
       0 8px 20px rgba(0,0,0,0.08),
       inset 0 2px 4px rgba(255,255,255,0.9);
     display:flex;
+    flex-direction:column;
     align-items:center;
-    justify-content:space-between;
-    gap:12px;
+    justify-content:center;
     position: relative;
     overflow: hidden;
   }
@@ -119,29 +119,34 @@
     100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
   }
   .title{
-    display:flex;align-items:center;gap:12px;flex-wrap:wrap
+    display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;
   }
   .title h1{
     margin:0;
-    font-size: clamp(24px, 4vw, 32px);
+    font-size: clamp(36px, 6vw, 48px); /* Increased font size */
     font-weight: 700;
     letter-spacing:.5px;
-    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    background: linear-gradient(135deg, #ff00cc, #3333ff, #00ccff); /* More vibrant gradient */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     position: relative;
   }
   .badge{
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-    color:white;
-    padding:6px 14px;
-    border-radius:999px;
-    font-weight:700;
-    font-size:13px;
+    background: none; /* Remove background */
+    color: rgba(255,255,255,0.7); /* Lighter color */
+    padding: 0; /* Remove padding */
+    border-radius:0;
+    font-weight:500; /* Lighter weight */
+    font-size:14px; /* Slightly larger than original, but smaller than title */
     letter-spacing:.5px;
-    box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
-    animation: badgePulse 2s ease-in-out infinite;
+    box-shadow: none; /* Remove shadow */
+    animation: none; /* Remove animation */
+    position: absolute; /* Position absolutely */
+    top: -20px; /* Adjust position above title */
+    left: 0; /* Align with title */
+    width: 100%; /* Take full width */
+    text-align: center; /* Center text */
   }
   
   @keyframes badgePulse {
@@ -149,7 +154,7 @@
     50% { transform: scale(1.08); }
   }
   .controls{
-    display:flex;align-items:center;gap:10px;flex-wrap:wrap
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content: center;
   }
   .btn{
     appearance:none;
@@ -235,10 +240,13 @@
   .column h2{
     margin:0 0 8px 0;
     font-size: clamp(14px, 2.2vw, 16px);
-    color:var(--muted);
     font-weight:700;
     letter-spacing:.4px;
     text-transform: uppercase;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   .list{
     display:flex;flex-direction:column;gap:10px;
@@ -248,7 +256,7 @@
     width:100%;
     background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
     border:1px solid rgba(255,255,255,.08);
-    color:var(--text);
+    color:black; /* Changed to black */
     border-radius: 12px;
     padding: 14px 14px;
     font-weight:700;
@@ -315,8 +323,8 @@
   .conn.fade{ opacity:0; }
 
   .legend{
-    color:var(--muted);
-    font-size:14px;
+    color:black; /* Changed to black for better visibility */
+    font-size:16px; /* Increased font size */
     line-height:1.35;
     display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;
   }
@@ -344,6 +352,14 @@
   .modal p{ margin:6px 0 18px; color:var(--muted) }
   .modal .btn{ background: linear-gradient(180deg, #22c55e, #16a34a); box-shadow: 0 6px 18px rgba(34,197,94,.35); }
 
+  
+
+    
+
+  
+
+    
+
   @media (max-width:720px){
     .item{ padding: 13px 12px; }
   }
@@ -364,8 +380,11 @@
       <h1>Match the Words</h1>
     </div>
     <div class="controls">
-      <div class="stat" id="score">0 / 4 matched</div>
+      <div class="stat" id="score">0 / 6 matched</div>
+      
       <button class="btn" id="newGameBtn" aria-label="Start a new game (shuffle)">New Game</button>
+      
+      
     </div>
   </header>
 
@@ -383,14 +402,9 @@
       </div>
     </div>
     <div class="legend">
-      <div>How to play: Select an Italian word, then select its English equivalent to make a match. Correct pairs briefly connect with a line and then disappear. Match them all!</div>
-      <div class="keys" aria-hidden="true">
-        <span class="key">↑/↓</span><span>move</span>
-        <span class="key">←/→</span><span>switch side</span>
-        <span class="key">Enter</span><span>select</span>
-        <span class="key">R</span><span>restart</span>
-      </div>
+      <div><strong>How to play:</strong> Tap an Italian word, then tap its English equivalent to make a match. Correct pairs disappear. Match them all!</div>
     </div>
+    
   </div>
 
   <div class="modal" id="winModal" role="dialog" aria-modal="true" aria-labelledby="winTitle" aria-describedby="winDesc">
@@ -406,11 +420,34 @@
 
 <script>
 (function(){
-  const PAIRS = [
-    { id:'gatto', it:'Gatto', en:'Cat' },
-    { id:'cane',  it:'Cane',  en:'Dog' },
-    { id:'ciao',  it:'Ciao',  en:'Hello' },
-    { id:'libro', it:'Libro', en:'Book' }
+  const LEVELS = [
+    // Level 1
+    [
+      { id:'gatto', it:'Gatto', en:'Cat' },
+      { id:'cane',  it:'Cane',  en:'Dog' },
+      { id:'ciao',  it:'Ciao',  en:'Hello' },
+      { id:'libro', it:'Libro', en:'Book' },
+      { id:'casa',  it:'Casa',  en:'House' },
+      { id:'albero',it:'Albero',en:'Tree' }
+    ],
+    // Level 2
+    [
+      { id:'acqua', it:'Acqua', en:'Water' },
+      { id:'pane',  it:'Pane',  en:'Bread' },
+      { id:'sole',  it:'Sole',  en:'Sun' },
+      { id:'luna',  it:'Luna',  en:'Moon' },
+      { id:'cielo', it:'Cielo', en:'Sky' },
+      { id:'fiore', it:'Fiore', en:'Flower' }
+    ],
+    // Level 3
+    [
+      { id:'tavolo', it:'Tavolo', en:'Table' },
+      { id:'sedia',  it:'Sedia',  en:'Chair' },
+      { id:'porta',  it:'Porta',  en:'Door' },
+      { id:'finestra', it:'Finestra', en:'Window' },
+      { id:'strada', it:'Strada', en:'Road' },
+      { id:'macchina', it:'Macchina', en:'Car' }
+    ]
   ];
 
   const board = document.getElementById('board');
@@ -422,12 +459,20 @@
   const winModal = document.getElementById('winModal');
   const playAgainBtn = document.getElementById('playAgainBtn');
   const live = document.getElementById('live');
+  const levelEl = document.createElement('span'); // New element for level display
+  levelEl.className = 'stat';
+  levelEl.id = 'level';
+  document.querySelector('.controls').prepend(levelEl); // Add to controls
+  // const progressBarEl = document.querySelector('.progress-bar');
+  
 
   let selected = null;
   let lock = false;
   let lines = [];
   let matched = 0;
-  let total = PAIRS.length;
+  let currentLevelIndex = 0; // Start at level 0
+  let currentPairs = LEVELS[currentLevelIndex];
+  let total = currentPairs.length;
 
   // Keyboard navigation state
   let activeSide = 'left';
@@ -470,24 +515,29 @@
 
   function populate(){
     // Left: fixed order (Italian)
-    PAIRS.forEach(p=>{
+    currentPairs.forEach(p=>{
       listLeft.appendChild(makeItem(p.it, p.id, 'left'));
     });
     // Right: shuffled order (English)
-    shuffle(PAIRS).forEach(p=>{
+    shuffle(currentPairs).forEach(p=>{
       listRight.appendChild(makeItem(p.en, p.id, 'right'));
     });
     updateScore();
+    updateLevelDisplay(); // New function to update level display
     requestAnimationFrame(resizeAndRecalc);
     resetKbFocus();
   }
 
-  function init(){
+  function init(level = 0){ // Added level parameter
     clearBoard();
     selected = null;
     lock = false;
     matched = 0;
+    currentLevelIndex = level;
+    currentPairs = LEVELS[currentLevelIndex];
+    total = currentPairs.length;
     populate();
+    
   }
 
   function updateScore(){
@@ -586,9 +636,17 @@
           matched++;
           live.textContent = `Matched ${matched} of ${total}`;
           updateScore();
+          
           lock = false;
           if(matched === total){
-            setTimeout(showWin, 150);
+            // Check for next level
+            if (currentLevelIndex + 1 < LEVELS.length) {
+              setTimeout(() => {
+                init(currentLevelIndex + 1); // Load next level
+              }, 150);
+            } else {
+              setTimeout(showWin, 150); // All levels completed
+            }
           }else{
             // maintain keyboard focus on remaining items
             maintainKbAfterRemoval();
@@ -598,6 +656,8 @@
       }, 260);
     }, 200);
   }
+
+  
 
   function wrongMatch(left, right){
     lock = true;
@@ -674,6 +734,10 @@
     winModal.classList.remove('show');
   }
 
+  function updateLevelDisplay(){ // New function
+    levelEl.textContent = `Level ${currentLevelIndex + 1} / ${LEVELS.length}`;
+  }
+
   function maintainKbAfterRemoval(){
     // Ensure kb indices are within range
     const li = getActiveItems('left').length;
@@ -742,7 +806,7 @@
 
   newGameBtn.addEventListener('click', ()=>{
     closeWin();
-    init();
+    init(0);
   });
   playAgainBtn.addEventListener('click', ()=>{
     closeWin();

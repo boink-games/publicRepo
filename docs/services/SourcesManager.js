@@ -91,8 +91,17 @@ class SourcesManager {
      * Merge saved sources with defaults, ensuring all defaults are present
      */
     mergeSourcesWithDefaults(saved, defaults) {
-        const merged = [...saved];
-        const existingIds = new Set(saved.map(s => s.id).filter(Boolean));
+        const defaultIds = new Set(defaults.map(s => s.id).filter(Boolean));
+        // Filter out old default sources that are not in the new defaults, but keep user-added sources (removable: true)
+        const savedFiltered = saved.filter(s => {
+            if (s.removable) {
+                return true; // Keep user-added sources
+            }
+            return defaultIds.has(s.id); // Keep only new default sources
+        });
+
+        const merged = [...savedFiltered];
+        const existingIds = new Set(merged.map(s => s.id).filter(Boolean));
         
         // Add any missing default sources
         defaults.forEach(defSource => {
@@ -231,10 +240,27 @@ class SourcesManager {
             .filter(c => c)
             .map(c => c === 'allAges' ? 'classicArcade' : c);
 
+        const expandedCategories = [];
+        for (const cat of selectedCategories) {
+            const source = this.sources.find(s => s.id === cat);
+            if (source && source.isContainer) {
+                const sourceUrl = `.${source.url}`;
+                const response = await fetch(sourceUrl, { cache: 'no-store' });
+                if (response.ok) {
+                    const subCategories = await response.json();
+                    for (const subCat of subCategories) {
+                        expandedCategories.push(subCat.id);
+                    }
+                }
+            } else {
+                expandedCategories.push(cat);
+            }
+        }
+
         return {
-            categories: selectedCategories,
+            categories: expandedCategories,
             external: selectedExternal,
-            all: [...selectedCategories, ...selectedExternal]
+            all: [...expandedCategories, ...selectedExternal]
         };
     }
 

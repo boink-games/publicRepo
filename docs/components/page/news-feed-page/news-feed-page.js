@@ -45,9 +45,9 @@ export class NewsFeedPage {
             if (window.__LOGS_ENABLED) console.time('NF: beforeRender total');
             // Try to load from configured external URLs first (support tagged sources)
             const externalSources = await window.LocalStorage.get('externalPostSources') || [];
-            const allExternal = Array.isArray(externalSources) ? externalSources.map(s => s.url) : (await window.LocalStorage.get('externalPostsUrls') || []);
-            const selectedExternal = await window.LocalStorage.get('selectedExternalPostsUrls');
-            const externalUrls = (Array.isArray(selectedExternal) ? selectedExternal : allExternal).filter(Boolean);
+
+            const { categories: selected, external: selectedExternalUrls } = await window.SourcesManager.getSelectedSources();
+            const externalUrls = (Array.isArray(selectedExternalUrls) ? selectedExternalUrls : []).filter(Boolean);
             if (window.__LOGS_ENABLED) window.logTS('NF: selected external URLs', { count: externalUrls.length });
 
             // Fetch external sources in parallel
@@ -57,13 +57,11 @@ export class NewsFeedPage {
                     .catch(err => { console.error(`Could not fetch posts from ${url}:`, err); return []; })
             ));
 
-            // Load from selected local source categories
-            const selected = await window.LocalStorage.get('selectedSourceCategories') || [];
+
             if (window.__LOGS_ENABLED) window.logTS('NF: selected categories', { count: selected.length });
 
             // Fetch category sources in parallel
-            const filteredSelected = (selected || []).filter(cat => !!cat);
-            const categoryFetches = filteredSelected.map(cat => {
+            const categoryFetches = selected.map(cat => {
                 try {
                     // Folder name matches category id; migrate legacy 'allAges' to 'classicArcade'
                     const folder = (cat === 'allAges') ? 'classicArcade' : cat;
@@ -92,8 +90,8 @@ export class NewsFeedPage {
             let extPosts = 0, catPosts = 0;
             for (const arr of externalResults) { if (Array.isArray(arr)) { jsonPosts = jsonPosts.concat(arr); extPosts += arr.length; } }
             // Rebuild mapping: iterate selected categories to align
-            for (let i = 0; i < filteredSelected.length; i++) {
-                const cat = filteredSelected[i];
+            for (let i = 0; i < selected.length; i++) {
+                const cat = selected[i];
                 const arr = categoryResults[i];
                 if (Array.isArray(arr)) {
                     const mapped = arr.map(g => ({ ...g, tag: g.tag || ((cat === 'allAges' ? 'classicArcade' : cat)), type: g.type || 'microgame' }));

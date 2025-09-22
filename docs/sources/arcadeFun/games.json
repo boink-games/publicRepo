@@ -1,3 +1,4 @@
+
 [
   {
     "id": "microgame:classicArcade:classic-breakout",
@@ -136,6 +137,82 @@
     "source": "/sources/classicArcade/tetris.html",
     "generatedAt": "2025-09-02T15:37:56.803Z",
     "feedName": "Boink.Games #classicArcade",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:microStrategy:2048-game",
+    "type": "microgame",
+    "title": "2048 Game",
+    "source": "/sources/microStrategy/2048-game.html",
+    "generatedAt": "2025-09-01T00:00:00.000Z",
+    "feedName": "Boink.Games #microStrategy",
+    "author": "CodeWithRandom",
+    "category": "Game",
+    "essence": "Slide tiles to merge matching numbers and create the 2048 tile. A simple but addictive puzzle game",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:microStrategy:civilization-style-game",
+    "type": "microgame",
+    "title": "Civilization Style Game",
+    "source": "/sources/microStrategy/civilization-style-game.html",
+    "generatedAt": "2025-09-02T14:45:56.075Z",
+    "feedName": "Boink.Games #microStrategy",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:microStrategy:deck-building-card-game",
+    "type": "microgame",
+    "title": "Deck Building Card Game",
+    "source": "/sources/microStrategy/deck-building-card-game.html",
+    "generatedAt": "2025-09-02T14:45:56.075Z",
+    "feedName": "Boink.Games #microStrategy",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+
+  {
+    "id": "microgame:microStrategy:sudoku",
+    "type": "microgame",
+    "title": "Sudoku",
+    "source": "/sources/microStrategy/sudoku.html",
+    "generatedAt": "2025-09-01T00:00:00.000Z",
+    "feedName": "Boink.Games #microStrategy",
+    "author": "CodeWithRandom",
+    "category": "Game",
+    "essence": "The classic logic puzzle. Fill the 9x9 grid so that each column, each row, and each of the nine 3x3 subgrids contain all of the digits from 1 to 9",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:microStrategy:tower-defense-game",
+    "type": "microgame",
+    "title": "Tower Defense Game",
+    "source": "/sources/microStrategy/tower-defense-game.html",
+    "generatedAt": "2025-09-02T14:46:28.544Z",
+    "feedName": "Boink.Games #microStrategy",
     "author": "Boink.Games Agent",
     "category": "Game",
     "essence": "A new game, automatically added",

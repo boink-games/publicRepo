@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#ff9a9e" />
-  <title>Guess the Word - Kids Edition</title>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet" />
+  <title>Guess the Word</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&family=Bangers&family=Luckiest+Guy&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg1:#ff9a9e;
@@ -78,38 +80,83 @@
     }
     h1{
       margin:0;
-      font-size:clamp(28px, 6.5vw, 52px);
+      font-family: "Luckiest Guy", cursive;
+      font-size:clamp(32px, 7vw, 58px);
       line-height:1.05;
-      letter-spacing:1px;
-      background:linear-gradient(90deg, #ff6f61, #ff9f1c, #4dd0e1, #7b61ff);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-      text-shadow: 0 2px 0 #ffffffaa;
+      letter-spacing:2px;
+      color:#5b21b6; /* Intense Violet */
+      text-shadow: 0 3px 0 rgba(255,255,255,.4); /* Whiteish shadow for pop */
       display:flex;
       align-items:center;
       justify-content:center;
       gap:.4em;
     }
     h1 .emoji{filter: drop-shadow(0 3px 0 rgba(255,255,255,.6))}
+    .title-animation{
+      width: clamp(56px, 13vw, 88px);
+      aspect-ratio: 1 / 1;
+      background: #3b82f6;
+      border-radius: 12px;
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      transform: rotate(-5deg);
+    }
+    .sq{
+      position: absolute;
+      display: grid;
+      place-items: center;
+      font-size: clamp(14px, 3vw, 20px);
+      color: white;
+      font-weight: 700;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      animation: float-letter 8s ease-in-out infinite;
+    }
+    .sq-b{
+      width: 50%; height: 50%;
+      background: #ef4444;
+      top: 10%; left: 5%;
+      animation-delay: -2s;
+    }
+    .sq-e{
+      width: 35%; height: 35%;
+      background: #f59e0b;
+      top: 55%; left: 50%;
+      animation-delay: -4s;
+    }
+    .sq-s{
+      width: 40%; height: 40%;
+      background: #10b981;
+      top: 20%; left: 60%;
+      animation-delay: 0s;
+    }
+    @keyframes float-letter {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-5px) rotate(5deg); }
+    }
     .subtitle{
       font-family:"Nunito", sans-serif;
       margin:10px auto 0;
       font-weight:800;
-      font-size:clamp(16px, 3.7vw, 22px);
+      font-size:clamp(14px, 3.2vw, 18px);
       color:#2b2b2b;
     }
 
     .hud{
-      display:grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items:center;
-      gap:12px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
       margin:clamp(10px, 2.4vw, 18px) 0;
     }
     .message{
-      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align:center;
+      white-space: nowrap;
       background:linear-gradient(90deg, #fff8e1, #fffbea);
       border:2px dashed #ffe082;
       color:#6d4c41;
@@ -119,12 +166,22 @@
       font-weight:800;
       letter-spacing:.3px;
     }
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .lives-container {
+      display: flex;
+      justify-content: flex-start;
+    }
     .score, .lives, .audio{
       display:flex;
       align-items:center;
       gap:8px;
       font-weight:800;
-      font-size:clamp(16px, 3.6vw, 20px);
+      font-size:clamp(14px, 3.2vw, 18px);
     }
     .badge{
       padding:6px 12px;
@@ -132,6 +189,10 @@
       border-radius:999px;
       box-shadow: var(--shadow);
       display:flex; align-items:center; gap:8px;
+    }
+    .lives.badge {
+      background: transparent;
+      box-shadow: none;
     }
     .lives .heart{
       width:clamp(22px, 5.6vw, 32px);
@@ -220,7 +281,7 @@
       background:
         radial-gradient(180px 180px at 20% 15%, #ffffff, #f1f5f9),
         linear-gradient(180deg, #ffffff, #f1f5f9);
-      box-shadow: 0 8px 0 #dce5ee, 0 0 0 4px #ffffff inset;
+      box-shadow: 0 8px 0 #dce5ee, 0 0 0 4px #ffffff inset, 0 0 5px rgba(0,0,0,0.1);
       cursor:pointer;
       transition: transform .05s ease, filter .2s ease, background .2s ease;
       touch-action: manipulation;
@@ -276,16 +337,27 @@
     .controls{
       margin-top:clamp(12px, 3.2vw, 18px);
       display:flex;
-      justify-content:center;
+      justify-content:space-between;
       gap:12px;
       flex-wrap:wrap;
+      width: 100%;
+    }
+    .controls .btn {
+      min-height: 52px;
+      padding: 0 16px;
+    }
+    #newWordBtn {
+      justify-content: flex-start;
+    }
+    #replayBtn {
+      justify-content: flex-start;
     }
     .btn{
       min-height:var(--touch);
       padding:0 18px;
       border:none;
       border-radius: 18px;
-      font-size: clamp(18px, 4.6vw, 24px);
+      font-size: clamp(16px, 4.2vw, 22px);
       font-weight:900;
       display:inline-flex;
       align-items:center;
@@ -343,27 +415,36 @@
       opacity:1; visibility:visible;
     }
     .result-card{
-      width:min(680px, 96vw);
+      width:min(380px, 90vw);
       background:linear-gradient(180deg, #ffffff, #f6fbff);
       border-radius: 22px;
       box-shadow: var(--shadow);
-      padding: 22px;
+      padding: 16px;
       text-align:center;
       position:relative;
       overflow:hidden;
     }
     .result-card h2{
-      margin:10px 0 8px;
-      font-size: clamp(26px, 7vw, 40px);
+      margin:8px 0 6px;
+      font-size: clamp(20px, 5.5vw, 28px);
     }
     .result-word{
-      font-size: clamp(22px, 6vw, 32px);
+      font-size: clamp(16px, 4.5vw, 22px);
       font-weight:900;
       color:#374151;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
+    }
+    .result-card .controls {
+      justify-content: center;
+    }
+    .result-card .btn {
+      gap: 6px; /* Reduce gap between icon and text */
+    }
+    .result-card .btn span[aria-hidden="true"] {
+      font-size: 18px; /* Make icon smaller */
     }
     .result-emoji{
-      font-size: clamp(36px, 12vw, 64px);
+      font-size: clamp(32px, 10vw, 56px);
     }
 
     .float-bubble{
@@ -388,6 +469,29 @@
       .badge{ padding:8px 14px }
     }
 
+    @media (max-width: 480px) {
+      .keyboard {
+        gap: 4px;
+        grid-template-columns: repeat(auto-fit, minmax(34px, 1fr));
+      }
+      .key {
+        height: 52px;
+        min-width: 0;
+        font-size: 16px;
+        border-radius: 8px;
+      }
+      .btn {
+        min-height: 52px;
+        padding: 0 14px;
+        font-size: 15px;
+        border-radius: 14px;
+      }
+      .controls .btn {
+        flex-grow: 1;
+        flex-basis: 0;
+      }
+    }
+
     /* Reduced motion respects */
     @media (prefers-reduced-motion: reduce){
       *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important }
@@ -404,30 +508,39 @@
       <span class="float-bubble b3"></span>
 
       <header>
-        <h1><span class="emoji" aria-hidden="true">🎈</span> Guess the Word <span class="emoji" aria-hidden="true">🔤</span></h1>
-        <div class="subtitle">Tap the letters to find the hidden word! 🌟</div>
+        <h1>
+          <div class="title-animation" aria-hidden="true">
+            <div class="sq sq-b">B</div>
+            <div class="sq sq-e">E</div>
+            <div class="sq sq-s">S</div>
+          </div>
+          Guess the Word
+          <div class="title-animation" aria-hidden="true">
+            <div class="sq sq-b">B</div>
+            <div class="sq sq-e">E</div>
+            <div class="sq sq-s">S</div>
+          </div>
+        </h1>
+        <div class="subtitle">Tap the letters to find the hidden word!</div>
       </header>
 
       <div class="hud">
-        <div class="score badge" id="streakBadge" aria-live="polite" title="Winning streak">
-          <span aria-hidden="true">⭐</span>
-          <span>Streak: <strong id="streak">0</strong></span>
+        <div class="status-bar">
+          <div class="score badge" id="streakBadge" aria-live="polite" title="Winning streak">
+            <span aria-hidden="true">⭐</span>
+            <span>Streak: <strong id="streak">0</strong></span>
+          </div>
+          <div class="audio badge">
+            <button class="btn toggle" id="soundToggle" aria-pressed="true" aria-label="Toggle sound effects">
+              <span class="icon" id="soundIcon" aria-hidden="true">🔊</span>
+              <span class="lbl" id="soundLabel">Sound</span>
+            </button>
+          </div>
         </div>
-
+        <div class="lives-container">
+          <div class="lives badge" id="lives" aria-label="Lives"></div>
+        </div>
         <div class="message" id="message" role="status" aria-live="polite">Good luck, word wizard! 🧙‍♂️✨</div>
-
-        <div class="audio badge">
-          <button class="btn toggle" id="soundToggle" aria-pressed="true" aria-label="Toggle sound effects">
-            <span class="icon" id="soundIcon" aria-hidden="true">🔊</span>
-            <span class="lbl" id="soundLabel">Sound</span>
-          </button>
-          <button class="btn toggle" id="vibeToggle" aria-pressed="true" aria-label="Toggle vibration">
-            <span class="icon" aria-hidden="true">📳</span>
-            <span class="lbl">Vibrate</span>
-          </button>
-        </div>
-
-        <div class="lives badge" id="lives" aria-label="Lives"></div>
       </div>
 
       <div class="word-area" aria-label="Word">
@@ -624,7 +737,6 @@
     const soundToggle = document.getElementById('soundToggle');
     const soundIcon = document.getElementById('soundIcon');
     const soundLabel = document.getElementById('soundLabel');
-    const vibeToggle = document.getElementById('vibeToggle');
 
     // Helpers
     const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -981,24 +1093,44 @@
     });
 
     // Toggle Sound & Vibration
+    let soundMode = storage.get('soundMode', 'sound'); // 'sound', 'vibrate', 'muted'
+
     function updateSoundUI(){
-      soundToggle.setAttribute('aria-pressed', sfx.enabled ? 'true' : 'false');
-      soundIcon.textContent = sfx.enabled ? '🔊' : '🔇';
-      soundLabel.textContent = sfx.enabled ? 'Sound' : 'Muted';
+      sfx.setEnabled(soundMode === 'sound');
+      haptics.set(soundMode === 'sound' || soundMode === 'vibrate');
+
+      switch(soundMode) {
+        case 'sound':
+          soundIcon.textContent = '🔊';
+          soundLabel.textContent = 'Sound';
+          soundToggle.setAttribute('aria-label', 'Sound on. Click to switch to vibrate only.');
+          break;
+        case 'vibrate':
+          soundIcon.textContent = '📳';
+          soundLabel.textContent = 'Vibrate';
+          soundToggle.setAttribute('aria-label', 'Vibrate only. Click to mute.');
+          break;
+        case 'muted':
+          soundIcon.textContent = '🔇';
+          soundLabel.textContent = 'Muted';
+          soundToggle.setAttribute('aria-label', 'Muted. Click to turn sound on.');
+          break;
+      }
     }
+
     soundToggle.addEventListener('click', async ()=>{
       await sfx.resume();
-      sfx.setEnabled(!sfx.enabled);
+      if (soundMode === 'sound') {
+        soundMode = 'vibrate';
+      } else if (soundMode === 'vibrate') {
+        soundMode = 'muted';
+      } else {
+        soundMode = 'sound';
+      }
+      storage.set('soundMode', soundMode);
       updateSoundUI();
-      if(sfx.enabled) sfx.play('ui');
-    });
-    function updateVibeUI(){
-      vibeToggle.setAttribute('aria-pressed', haptics.enabled ? 'true' : 'false');
-    }
-    vibeToggle.addEventListener('click', ()=>{
-      haptics.set(!haptics.enabled);
-      updateVibeUI();
-      if(haptics.enabled) haptics.light();
+      if(soundMode === 'sound') sfx.play('ui');
+      else if(soundMode === 'vibrate') haptics.light();
     });
 
     // Keep input focus for desktop keyboards
@@ -1011,7 +1143,6 @@
     // Initialize
     (function init(){
       updateSoundUI();
-      updateVibeUI();
       streakEl.textContent = String(streak || 0);
       resetState();
     })();

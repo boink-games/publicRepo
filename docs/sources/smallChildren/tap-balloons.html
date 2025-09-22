@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Pop the Balloons</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg1:#b8e8ff;
@@ -23,12 +26,38 @@
       background:linear-gradient(180deg,var(--bg1),var(--bg2));
       overflow:hidden;
     }
-    .wrap{position:relative;height:100%;width:100%;overflow:hidden}
+    .wrap{position:relative;height:120vh;width:100%;overflow:hidden}
     header{
-      position:absolute;inset:0 0 auto 0;display:flex;align-items:center;justify-content:space-between;
-      padding:12px 14px;z-index:3;pointer-events:none;
+      position:absolute;inset:0 0 auto 0;display:flex;flex-direction:column;align-items:center;
+      width:100%;
+      padding:12px 14px;z-index:3;
+      pointer-events: none;
     }
-    .hud-left,.hud-right{display:flex;gap:10px;align-items:center;pointer-events:auto}
+    .hud-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: 10px;
+      pointer-events: auto;
+    }
+    .hud-group-left, .hud-group-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-family: 'Fredoka One', cursive;
+      font-weight: 400;
+      font-size: 58px; /* Increased size */
+      color: #00008B; /* Dark Blue */
+      text-shadow: 
+        -1px -1px 1px rgba(255, 255, 255, 0.7), /* Highlight */
+        1px 1px 1px rgba(0, 0, 0, 0.7),   /* Shadow */
+        2px 2px 3px rgba(0, 0, 0, 0.5);  /* Drop shadow for volume */
+      text-align: center;
+    }
     .pill{
       display:flex;align-items:center;gap:8px;background:var(--ui);color:var(--uiText);
       padding:8px 12px;border-radius:999px;box-shadow:var(--shadow);font-weight:800;letter-spacing:.3px;
@@ -60,20 +89,23 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="hud-left">
-        <div class="pill" aria-live="polite" aria-atomic="true" role="status" id="scorePill" title="Score">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#f6b100" d="M12 2.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8L3.6 8.6l5.8-.8L12 2.5z"/></svg>
-          <span id="score">0</span>
+      <h1>Pop the Balloons</h1>
+      <div class="hud-container">
+        <div class="hud-group-left">
+          <div class="pill" aria-live="polite" aria-atomic="true" role="status" id="scorePill" title="Score">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#f6b100" d="M12 2.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8L3.6 8.6l5.8-.8L12 2.5z"/></svg>
+            <span id="score">0</span>
+          </div>
         </div>
-      </div>
-      <div class="hud-right">
-        <button class="icon-btn" id="sound" aria-label="Sound on">
-          <svg id="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path fill="#0b466c" d="M4 9v6h3l4 3V6L7 9H4z"/><path fill="#0b466c" d="M16.5 12a3.5 3.5 0 0 0-2.1-3.2v6.4a3.5 3.5 0 0 0 2.1-3.2z"/><path fill="#0b466c" d="M18 4.6v2.1A7.3 7.3 0 0 1 20.9 12 7.3 7.3 0 0 1 18 17.3v2.1A9.4 9.4 0 0 0 23 12 9.4 9.4 0 0 0 18 4.6z"/></svg>
-          <svg id="icon-sound-off" viewBox="0 0 24 24" aria-hidden="true" style="display:none"><path fill="#0b466c" d="M4 9v6h3l4 3V6L7 9H4z"/><path fill="#0b466c" d="M21 7.3 19.7 6 16 9.7 12.3 6 11 7.3 14.7 11 11 14.7 12.3 16 16 12.3 19.7 16 21 14.7 17.3 11 21 7.3z"/></svg>
-        </button>
-        <button class="icon-btn" id="restart" aria-label="Restart">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#0b466c" d="M12 5a7 7 0 1 1-6.7 9H7l-3-4-3 4h1.8A9 9 0 1 0 12 3v2z"/></svg>
-        </button>
+        <div class="hud-group-right">
+          <button class="icon-btn" id="sound" aria-label="Sound on">
+            <svg id="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h2l5 4V4L8 8H6zm11.5 4c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM15 2.3v2.06c2.89.86 5 3.54 5 6.64s-2.11 5.78-5 6.64v2.06c4.01-.91 7-4.49 7-8.7 0-4.21-2.99-7.79-7-8.7z" fill="#0b466c"/></svg>
+            <svg id="icon-sound-off" viewBox="0 0 24 24" aria-hidden="true" style="display:none"><path d="M19.5 10.5l-1.5-1.5-2 2-2-2-1.5 1.5 2 2-2 2 1.5 1.5 2-2 2 2 1.5-1.5-2-2 2-2zM6 8c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h2l5 4V4L8 8H6z" fill="#0b466c"/></svg>
+          </button>
+          <button class="icon-btn" id="restart" aria-label="Restart">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="#0b466c"/></svg>
+          </button>
+        </div>
       </div>
     </header>
     <canvas id="game"></canvas>
@@ -82,6 +114,7 @@
       Tap balloons! 🎈
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/tinycolor2@1.6.0/tinycolor.min.js"></script>
   <script>
     (() => {
       const canvas = document.getElementById('game');
@@ -94,11 +127,13 @@
       const tip = document.getElementById('tip');
 
       let DPR = Math.min(2, window.devicePixelRatio || 1);
-      let W = 0, H = 0, running = true, lastTime = 0, score = 0;
+      let W = 0, H = 0, running = true, lastTime = 0, score = 0, popCount = 0;
       let balloons = [];
       let particles = [];
       let floaters = [];
       let clouds = [];
+      let birds = [];
+      let airplanes = [];
       let SOUND = true;
 
       // Color palette (soft, friendly)
@@ -206,6 +241,79 @@
         ctx.restore();
       }
 
+      // Bird and Airplane drawing functions
+      function spawnBird() {
+        return {
+            x: rand(-50, W + 50),
+            y: rand(H * 0.1, H * 0.6),
+            vx: rand(0.05, 0.15),
+            phase: rand(0, Math.PI * 2),
+            size: rand(8, 15)
+        };
+      }
+
+      function drawBird(b) {
+          const flap = Math.sin(performance.now() / 150 + b.phase) * (b.size / 2);
+          ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(b.x - b.size, b.y + flap);
+          ctx.lineTo(b.x, b.y);
+          ctx.lineTo(b.x + b.size, b.y + flap);
+          ctx.stroke();
+      }
+
+      function spawnAirplane() {
+          const fromLeft = Math.random() > 0.5;
+          return {
+              x: fromLeft ? -150 : W + 150,
+              y: rand(H * 0.1, H * 0.4),
+              vx: (fromLeft ? 1 : -1) * rand(0.1, 0.2),
+              size: rand(25, 40)
+          };
+      }
+
+      function drawAirplane(a) {
+          ctx.save();
+          ctx.translate(a.x, a.y);
+          if (a.vx < 0) ctx.scale(-1, 1);
+          
+          ctx.fillStyle = 'rgba(245, 245, 245, 0.8)';
+          ctx.strokeStyle = 'rgba(180, 180, 180, 0.8)';
+          ctx.lineWidth = 2;
+
+          // Body
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(-a.size * 0.8, a.size * 0.15);
+          ctx.lineTo(-a.size, a.size * 0.15);
+          ctx.lineTo(-a.size * 0.9, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Wing
+          ctx.beginPath();
+          ctx.moveTo(-a.size * 0.3, 0);
+          ctx.lineTo(a.size * 0.3, -a.size * 0.3);
+          ctx.lineTo(a.size * 0.4, -a.size * 0.25);
+          ctx.lineTo(-a.size * 0.2, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Tail
+          ctx.beginPath();
+          ctx.moveTo(-a.size * 0.9, 0);
+          ctx.lineTo(-a.size, -a.size * 0.2);
+          ctx.lineTo(-a.size * 0.95, -a.size * 0.18);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.restore();
+      }
+
       // Balloon sprite cache
       const spriteCache = new Map(); // key: color+r
       function makeBalloonSprite(r, color) {
@@ -250,15 +358,29 @@
       }
 
       function spawnBalloon() {
+        const isSpecial = Math.random() < 0.15; // 15% chance for a special balloon
         const base = Math.min(W, H);
-        const r = rand(base * 0.035, base * 0.07); // larger on big screens
-        const color = COLORS[Math.floor(rand(0, COLORS.length))];
-        const sprite = makeBalloonSprite(r, color.val);
+        const r = rand(base * 0.045, base * 0.09); // Vary size more
+
+        let color, pattern;
+        if (isSpecial) {
+            color = { name: 'GOLD', val: '#FFD700' };
+            pattern = { type: 'shimmer', color: '#FFFFFF' };
+        } else {
+            color = COLORS[Math.floor(rand(0, COLORS.length))];
+            pattern = {
+                type: 'stars',
+                color: tinycolor(color.val).isLight() ? tinycolor(color.val).darken(25).toString() : '#fff'
+            };
+        }
+
+        const sprite = makeBalloonSprite(r, color.val, pattern);
+        const padding = W * 0.2; // 20% padding on each side
         return {
-          x: rand(r + 8, W - r - 8),
-          y: H + r + rand(0, H * 0.25),
-          r, color,
-          vy: -rand(10, 24) / 100, // slower for kids
+          x: rand(padding + r, W - padding - r),
+          y: H + r + rand(0, H * 0.5),
+          r, color, isSpecial,
+          vy: -rand(12, 32) / 100, // Slower speed
           swayPhase: rand(0, Math.PI * 2),
           swaySpeed: rand(0.6, 1.2),
           swayAmp: rand(6, 14),
@@ -273,6 +395,7 @@
 
       function init() {
         score = 0;
+        popCount = 0;
         scoreEl.textContent = score;
         lastTime = performance.now();
         running = true;
@@ -283,6 +406,11 @@
         for (let i = 0; i < targetCount; i++) balloons.push(spawnBalloon());
         particles = [];
         floaters = [];
+        birds = [];
+        airplanes = [];
+        for (let i = 0; i < 3; i++) birds.push(spawnBird());
+        if (Math.random() < 0.5) airplanes.push(spawnAirplane());
+
         if (tip) {
           tip.style.opacity = '1';
           tip.style.animation = 'popin .4s ease both, fadeout 1s ease 4s forwards';
@@ -304,6 +432,22 @@
         for (const c of clouds) {
           c.x += c.v * dt;
           if (c.x > W + 150) c.x = -150;
+        }
+        // birds and airplanes
+        for (const b of birds) {
+          b.x += b.vx * dt;
+          if (b.x > W + 50) b.x = -50;
+        }
+        for (const a of airplanes) {
+          a.x += a.vx * dt;
+          if (a.vx > 0 && a.x > W + 150) a.x = -150;
+          if (a.vx < 0 && a.x < -150) a.x = W + 150;
+        }
+        if (Math.random() < 0.005 && birds.length < 5) {
+            birds.push(spawnBird());
+        }
+        if (Math.random() < 0.001 && airplanes.length < 1) {
+            airplanes.push(spawnAirplane());
         }
         // balloons
         for (const b of balloons) {
@@ -355,17 +499,35 @@
         ctx.fillStyle = sunG;
         ctx.beginPath(); ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2); ctx.fill();
 
-        // Clouds
+        // Scenery
+        for (const a of airplanes) drawAirplane(a);
         for (const c of clouds) drawCloud(c);
+        for (const b of birds) drawBird(b);
 
-        // Balloon strings and sprites
+        // Balloon shadows, strings, and sprites
         for (const b of balloons) {
+          // Shadow
+          const groundY = H - 10;
+          const dist = Math.max(0, groundY - (b.y + b.r));
+          const scale = 1 - clamp(dist / (H * 1.2), 0, 0.7);
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(0, 0, 0, ${0.1 * scale})`;
+          ctx.ellipse(b.x, groundY, b.r * 0.9 * scale, b.r * 0.3 * scale, 0, 0, Math.PI * 2);
+          ctx.fill();
+
           // string
-          ctx.strokeStyle = 'rgba(8,50,77,.35)';
+          ctx.strokeStyle = 'rgba(9, 57, 91, 0.6)'; // Dark Blue
           ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.moveTo(b.x, b.y + b.r * 0.22);
-          ctx.lineTo(b.x + Math.sin(t/600 + b.swayPhase) * 8, b.y + b.r + 26);
+          const startY = b.y + b.r * 0.22;
+          const stringLength = b.r + 30;
+          const sway = Math.sin(t/600 + b.swayPhase) * 12;
+          const endX = b.x + sway;
+          const endY = startY + stringLength;
+          const controlX = b.x + sway * 0.5;
+          const controlY = startY + stringLength * 0.5;
+          ctx.moveTo(b.x, startY);
+          ctx.quadraticCurveTo(controlX, controlY, endX, endY);
           ctx.stroke();
           // sprite
           const sp = b.sprite;
@@ -437,11 +599,76 @@
 
       function popAt(i, px, py) {
         const b = balloons[i];
-        score++;
+        if (!b.isSpecial) {
+            popCount++;
+        } else {
+            popCount = 0; // Reset counter when bonus balloon is popped
+        }
+
+        const points = b.isSpecial ? 2 : 1;
+        score += points;
         scoreEl.textContent = score;
         if (navigator.vibrate) { try { navigator.vibrate(10); } catch(_){} }
         // Particles burst
         const parts = Math.floor(rand(14, 20));
+        for (let p = 0; p < parts; p++) {
+          particles.push({
+            x: b.x, y: b.y,
+            vx: Math.cos((Math.PI * 2 * p) / parts) * rand(40, 150),
+            vy: Math.sin((Math.PI * 2 * p) / parts) * rand(40, 150) - rand(10, 40),
+            rot: rand(0, Math.PI*2),
+            vr: rand(-0.5, 0.5),
+            color: b.color.val,
+            life: rand(380, 560),
+            max: 560,
+            size: rand(2, 4) + b.r * 0.06,
+            shape: Math.floor(rand(0, 3))
+          });
+        }
+        // Floater
+        if (b.isSpecial) {
+            addFloater(b.x, b.y - b.r * 0.3, '+2', '#FFD700', 1200, clamp(b.r, 30, 50));
+        } else {
+            addFloater(b.x, b.y - b.r * 0.3, '⭐️', '#f6b100', 900, clamp(b.r * 0.9, 26, 42));
+        }
+
+        ensureAudio();
+        playPopChime();
+
+        // Respawn
+        balloons[i] = spawnBalloon();
+      }
+
+      // Input handling
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left);
+        const y = (e.clientY - rect.top);
+        return { x, y };
+      }
+      canvas.addEventListener('pointerdown', (e) => {
+        ensureAudio();
+        const p = getPos(e);
+        handleTap(p.x, p.y);
+      }, { passive: true });
+
+      // Buttons
+      restartBtn.addEventListener('click', () => { init(); }, { passive: true });
+      soundBtn.addEventListener('click', () => {
+        SOUND = !SOUND;
+        soundBtn.setAttribute('aria-label', SOUND ? 'Sound on' : 'Sound off');
+        iconSoundOn.style.display = SOUND ? 'block' : 'none';
+        iconSoundOff.style.display = SOUND ? 'none' : 'block';
+        ensureAudio();
+      }, { passive: true });
+
+      // Start
+      resize();
+      init();
+    })();
+  </script>
+</body>
+</html>t parts = Math.floor(rand(14, 20));
         for (let p = 0; p < parts; p++) {
           particles.push({
             x: b.x, y: b.y,
@@ -494,5 +721,75 @@
       init();
     })();
   </script>
+</body>
+</html>) => {
+        SOUND = !SOUND;
+        soundBtn.setAttribute('aria-label', SOUND ? 'Sound on' : 'Sound off');
+        iconSoundOn.style.display = SOUND ? 'block' : 'none';
+        iconSoundOff.style.display = SOUND ? 'none' : 'block';
+        ensureAudio();
+      }, { passive: true });
+
+      // Start
+      resize();
+      init();
+    })();
+  </script>
+</body>
+</html>t parts = Math.floor(rand(14, 20));
+        for (let p = 0; p < parts; p++) {
+          particles.push({
+            x: b.x, y: b.y,
+            vx: Math.cos((Math.PI * 2 * p) / parts) * rand(40, 150),
+            vy: Math.sin((Math.PI * 2 * p) / parts) * rand(40, 150) - rand(10, 40),
+            rot: rand(0, Math.PI*2),
+            vr: rand(-0.5, 0.5),
+            color: b.color.val,
+            life: rand(380, 560),
+            max: 560,
+            size: rand(2, 4) + b.r * 0.06,
+            shape: Math.floor(rand(0, 3))
+          });
+        }
+        // Floater star
+        addFloater(b.x, b.y - b.r * 0.3, '⭐️', '#f6b100', 900, clamp(b.r * 0.9, 26, 42));
+
+        ensureAudio();
+        playPopChime();
+
+        // Respawn
+        balloons[i] = spawnBalloon();
+      }
+
+      // Input handling
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left);
+        const y = (e.clientY - rect.top);
+        return { x, y };
+      }
+      canvas.addEventListener('pointerdown', (e) => {
+        ensureAudio();
+        const p = getPos(e);
+        handleTap(p.x, p.y);
+      }, { passive: true });
+
+      // Buttons
+      restartBtn.addEventListener('click', () => { init(); }, { passive: true });
+      soundBtn.addEventListener('click', () => {
+        SOUND = !SOUND;
+        soundBtn.setAttribute('aria-label', SOUND ? 'Sound on' : 'Sound off');
+        iconSoundOn.style.display = SOUND ? 'block' : 'none';
+        iconSoundOff.style.display = SOUND ? 'none' : 'block';
+        ensureAudio();
+      }, { passive: true });
+
+      // Start
+      resize();
+      init();
+    })();
+  </script>
+</body>
+</html></script>
 </body>
 </html>

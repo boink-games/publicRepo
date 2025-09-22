@@ -8,6 +8,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
   <link rel="manifest" href='data:application/manifest+json,{"name":"Sudoku","short_name":"Sudoku","display":"standalone","background_color":"%230e0f2b","theme_color":"%230e0f2b","start_url":"%2E%2F","scope":"%2E%2F","icons":[]}' />
   <style>
     :root{
@@ -35,32 +38,9 @@
     }
 
     *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-    html,body{height:100%;}
-
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-      color:var(--text);
-      background:
-        radial-gradient(120% 120% at 80% 10%, var(--bg3) 0%, transparent 30%),
-        radial-gradient(120% 120% at 0% 100%, #e74add 0%, transparent 35%),
-        linear-gradient(135deg, var(--bg1), var(--bg2) 60%);
-      min-height:100dvh;
-      height:100dvh;
-      overflow:hidden;
-      overscroll-behavior: none;
-      touch-action: none;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: calc(1rem + var(--safe-t)) calc(1rem + var(--safe-r)) calc(1rem + var(--safe-b)) calc(1rem + var(--safe-l));
-      gap:1rem;
-    }
-
     .app{
       width:min(94vw, 70rem);
       max-width:100%;
-      height:100%;
       display:flex;
       flex-direction:column;
       gap:1rem;
@@ -69,40 +49,45 @@
 
     header.appbar{
       display:flex;
+      flex-direction: column;
       align-items:center;
-      justify-content:space-between;
-      padding:0.75rem 1rem;
+      justify-content:center;
+      padding:0.5rem 0.75rem; /* Reduced padding */
       background: var(--panel-bg);
       backdrop-filter: var(--panel-blur);
       border-radius: calc(var(--radius) - 0.25rem);
       box-shadow: var(--shadow);
-      gap:0.5rem;
+      gap:0.3rem; /* Reduced gap */
       flex: 0 0 auto;
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap:0.65rem;
+      gap:0.5rem; /* Reduced gap */
       font-weight:800;
       letter-spacing:0.3px;
       text-transform:uppercase;
     }
-    .brand .logo{
-      width:2rem; height:2rem; border-radius:0.5rem;
-      background: conic-gradient(from 0deg, #00e5ff, #7b61ff, #ff3cac, #00e5ff);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25), inset 0 0 12px rgba(255,255,255,0.25);
+    .brand h1 {
+      font-family: 'Luckiest Guy', cursive;
+      font-size: clamp(2.5rem, 7vw, 4rem); /* Large size */
+      color: #ADD8E6; /* Light blue */
+      background: linear-gradient(45deg, #ff6b6b, #ffd166, #61f0a6, #0fb7ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     }
-
     .status{
-      display:flex; flex-wrap:wrap; gap:0.6rem 1rem; align-items:center; justify-content:flex-end;
-      font-size:0.95rem; color:var(--muted);
+      display:flex; flex-wrap:wrap; gap:0.4rem 0.8rem; /* Reduced gap */ align-items:center; justify-content:center;
+      font-size:0.85rem; /* Slightly smaller font size */ color:var(--muted);
+      margin-top: 0.3rem; /* Reduced margin-top */
     }
     .pill{
       background: rgba(255,255,255,0.08);
-      padding:0.35rem 0.6rem;
+      padding:0.2rem 0.4rem; /* Reduced padding */
       border-radius: 999px;
-      display:flex; align-items:center; gap:0.4rem;
+      display:flex; align-items:center; gap:0.3rem;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
     }
     .dot{width:0.5rem; height:0.5rem; border-radius:50%;}
@@ -115,7 +100,7 @@
       gap:1rem;
       flex: 1 1 auto;
       min-height:0;
-      overflow: hidden;
+      overflow-y: auto; /* Changed from hidden to auto */
       align-content:start;
     }
 
@@ -243,6 +228,10 @@
     .key.danger{ background: linear-gradient(180deg, #ff6b6b, #ff3b3b); color:#3b0000; }
     .key.ghost{ background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06)); }
 
+    #soundToggle {
+      font-size: 0.7rem; /* Smaller font size for sound toggle */
+    }
+
     .controls{
       display:grid;
       grid-template-columns: repeat(4, minmax(var(--btn-size), 1fr));
@@ -351,7 +340,7 @@
     <header class="appbar" role="banner">
       <div class="brand" aria-label="Sudoku">
         <div class="logo" aria-hidden="true"></div>
-        <div>Sudoku</div>
+        <h1>Sudoku</h1>
       </div>
       <div class="status" role="status" aria-live="polite">
         <div class="pill"><span class="dot green" id="net-dot"></span><span id="net-text">Online</span></div>
@@ -381,7 +370,7 @@
           <button class="key warn" data-key="erase" aria-label="Erase">⌫</button>
         </div>
 
-        <div class="controls" id="actions" role="group" aria-label="Actions">
+        <div class="controls" id="actions" role="group" aria-label="Actions" style="margin-top: 2rem;">
           <button class="key ghost" id="checkBtn" aria-label="Check mistakes">Check</button>
           <button class="key primary" id="hintBtn" aria-label="Hint">Hint</button>
           <button class="key ghost" id="newBtn" aria-label="New game">New</button>
@@ -823,6 +812,7 @@
 
         document.documentElement.style.setProperty('--board-size', size + 'px');
       }
+
       function queueResize(){
         cancelAnimationFrame(resizeRaf);
         resizeRaf = requestAnimationFrame(computeBoardSize);
@@ -895,12 +885,9 @@
         bindEvents();
         // Start first puzzle and fade out loading
         newGame(0);
-        queueResize();
-        setTimeout(()=>{
-          els.loading.style.transition = 'opacity 280ms ease';
-          els.loading.style.opacity = '0';
-          setTimeout(()=>{ els.loading.remove(); }, 320);
-        }, 350);
+        els.loading.style.opacity = '0';
+        els.loading.style.visibility = 'hidden';
+        setTimeout(()=>{ els.loading.style.display = 'none'; }, 320);
       }
 
       if (document.readyState === 'loading') {

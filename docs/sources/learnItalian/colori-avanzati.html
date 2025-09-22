@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Colori Italiani — Learn Italian Colors</title>
+<title>Advanced Italian Colors — Learn Italian Colors</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap');
   
@@ -51,7 +51,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:16px;
+    padding:8px;
     position: relative;
   }
   
@@ -83,7 +83,7 @@
     animation: float 25s ease-in-out infinite reverse;
   }
   .app{
-    width:min(100%,1000px);
+    width:96%;
     background:rgba(255,255,255,.95);
     box-shadow:
       0 30px 80px rgba(0,0,0,.2),
@@ -161,21 +161,23 @@
   }
   .scoreboard{
     display:flex;
-    gap:14px;
-    align-items:center;
-    flex-wrap:wrap;
+    flex-direction: column;
+    gap:8px;
+    align-items:flex-end;
   }
   .pill{
     background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
     backdrop-filter: blur(10px);
     border:2px solid rgba(255,255,255,0.8);
-    padding:10px 16px;
+    padding:8px 12px;
     border-radius:999px;
     font-weight:700;
-    font-size:15px;
+    font-size:14px;
     color:#333;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: all 0.3s ease;
+    min-width: 90px;
+    text-align: center;
   }
   
   .pill:hover {
@@ -238,7 +240,7 @@
     margin:6px 0 18px;
   }
   .prompt .hint{
-    color:var(--muted);
+    color:var(--ink);
     font-size:14px;
     letter-spacing:.2px;
   }
@@ -249,7 +251,7 @@
     font-weight:800;
     letter-spacing:.5px;
     color:#0b1220;
-    text-shadow:0 1px 0 rgba(255,255,255,.6);
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
   }
   .grid{
     --cols:2;
@@ -263,13 +265,13 @@
     position:relative;
     aspect-ratio:1/1;
     border-radius:14px;
-    border:2px solid rgba(0,0,0,.1);
+    border:2px solid rgba(0,0,0,.2);
     overflow:hidden;
     cursor:pointer;
     padding:0;
     outline:none;
     background: var(--bg, #ddd);
-    box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
     transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease, filter .2s ease;
     touch-action:manipulation;
   }
@@ -387,17 +389,16 @@
     <header>
       <div class="title">
         <div class="logo" aria-hidden="true"></div>
-        <h1>Colori Italiani</h1>
+        <h1>Advanced Italian Colors</h1>
       </div>
       <div class="scoreboard">
-        <div class="pill"><span class="label">Punteggio</span><span id="score">0</span></div>
+        <div class="pill"><span class="label">Punti</span><span id="score">0</span></div>
         <div class="pill"><span class="label">Record</span><span id="best">0</span></div>
-        <button class="ghostbtn" id="helpBtn" aria-haspopup="dialog" aria-controls="help">?</button>
       </div>
     </header>
     <main>
       <div class="prompt" role="group" aria-labelledby="word">
-        <div class="hint">Scegli il colore giusto</div>
+        <div class="hint">Explore the nuances of Italian colors</div>
         <div class="word" id="word">—</div>
       </div>
       <div class="grid" id="grid" style="--cols:2"></div>
@@ -405,6 +406,7 @@
         <div class="controls">Tap/click a color • Keys 1–6 • Arrows + Enter/Space</div>
         <div class="actions">
           <button class="ghostbtn" id="resetBtn" title="Reset score">Reset</button>
+          <button class="ghostbtn" id="helpBtn" aria-haspopup="dialog" aria-controls="help">Help</button>
         </div>
       </div>
     </main>
@@ -429,7 +431,6 @@
     </div>
     <div class="footer">
       <button class="ghostbtn" id="startPractice">Start</button>
-      <button class="ghostbtn primary" id="startClose">Start & Close</button>
     </div>
   </dialog>
 
@@ -437,6 +438,7 @@
 
 <script>
 (function(){
+  // --- Configuration Data ---
   const COLORS = [
     { it:'Rosso', hex:'#e74c3c' },
     { it:'Verde', hex:'#27ae60' },
@@ -451,318 +453,438 @@
     { it:'Marrone', hex:'#8d5a2b' },
     { it:'Azzurro', hex:'#00bcd4' }
   ];
-  const ENGLISH = {
+  const ENGLISH_TRANSLATIONS = {
     'Rosso':'Red','Verde':'Green','Blu':'Blue','Giallo':'Yellow',
     'Arancione':'Orange','Viola':'Purple','Nero':'Black','Bianco':'White',
     'Grigio':'Gray','Rosa':'Pink','Marrone':'Brown','Azzurro':'Light Blue'
   };
+  const LOCAL_STORAGE_BEST_SCORE_KEY = 'itcolor_best';
+  const LOCAL_STORAGE_SEEN_KEY = 'itcolor_seen';
 
-  const wordEl = document.getElementById('word');
-  const gridEl = document.getElementById('grid');
-  const scoreEl = document.getElementById('score');
-  const bestEl = document.getElementById('best');
-  const liveEl = document.getElementById('live');
-  const helpDlg = document.getElementById('help');
-  const helpBtn = document.getElementById('helpBtn');
-  const closeHelp = document.getElementById('closeHelp');
-  const startPractice = document.getElementById('startPractice');
-  const startClose = document.getElementById('startClose');
-  const resetBtn = document.getElementById('resetBtn');
-  const glossary = document.getElementById('glossary');
-
-  let score = 0;
-  let best = Number(localStorage.getItem('itcolor_best')||0);
-  bestEl.textContent = best;
-  let lastTarget = -1;
-  let targetIndex = -1;
-  let optionIndices = [];
-  let optionCount = 4;
-  let cols = 2;
-  let kbdIndex = -1;
-  let isTransitioning = false;
-
-  let audioCtx = null;
-  function ensureAudio(){
-    if(!audioCtx){
-      try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
+  // --- Utility Functions ---
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
     }
+    return array;
   }
-  function beep(type='ok'){
-    if(!audioCtx) return;
-    const ctx = audioCtx;
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    const now = ctx.currentTime;
-    if(type==='ok'){
-      o.type='triangle';
-      o.frequency.setValueAtTime(660, now);
-      o.frequency.exponentialRampToValueAtTime(880, now+0.12);
-      g.gain.setValueAtTime(0.0001, now);
-      g.gain.exponentialRampToValueAtTime(0.07, now+0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, now+0.18);
-      o.start(now); o.stop(now+0.2);
-    }else{
-      o.type='sawtooth';
-      o.frequency.setValueAtTime(180, now);
-      o.frequency.exponentialRampToValueAtTime(140, now+0.08);
-      g.gain.setValueAtTime(0.0001, now);
-      g.gain.exponentialRampToValueAtTime(0.06, now+0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, now+0.14);
-      o.start(now); o.stop(now+0.16);
-    }
-  }
-  function vibrate(ms){ if(navigator.vibrate) try{ navigator.vibrate(ms); }catch(e){} }
 
-  function contrast(hex){
-    let h = hex.replace('#','');
-    if(h.length===3) h=[...h].map(x=>x+x).join('');
-    const r = parseInt(h.slice(0,2),16);
-    const g = parseInt(h.slice(2,4),16);
-    const b = parseInt(h.slice(4,6),16);
-    const yiq = (r*299 + g*587 + b*114) / 1000;
+  function getContrastColor(hex) {
+    const h = hex.replace('#', '').length === 3 ? hex.replace('#', '').split('').map(x => x + x).join('') : hex.replace('#', '');
+    const r = parseInt(h.slice(0, 2), 16);
+    const g = parseInt(h.slice(2, 4), 16);
+    const b = parseInt(h.slice(4, 6), 16);
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
     return yiq >= 175 ? '#0b1220' : '#ffffff';
   }
-  function borderFor(hex){
-    const c = contrast(hex);
-    return c==='#ffffff' ? 'rgba(255,255,255,.6)' : 'rgba(0,0,0,.22)';
+
+  function getBorderColor(hex) {
+    return getContrastColor(hex) === '#ffffff' ? 'rgba(255,255,255,.6)' : 'rgba(0,0,0,.22)';
   }
 
-  function getOptionCount(){
-    const w = Math.min(window.innerWidth, document.documentElement.clientWidth || window.innerWidth);
-    const portrait = window.matchMedia('(orientation: portrait)').matches;
-    return (w < 580 || portrait) ? 4 : 6;
-  }
-  function setColsByCount(n){
-    const c = (n<=4) ? 2 : 3;
-    cols = c;
-    gridEl.style.setProperty('--cols', String(c));
-  }
+  // --- Audio Feedback Module ---
+  const AudioFeedback = (function() {
+    let audioCtx = null;
 
-  function shuffle(arr){
-    for(let i=arr.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [arr[i],arr[j]]=[arr[j],arr[i]];
-    }
-    return arr;
-  }
-
-  function newTarget(){
-    let idx;
-    do{ idx = Math.floor(Math.random()*COLORS.length); }while(idx===lastTarget);
-    lastTarget = idx;
-    targetIndex = idx;
-    wordEl.textContent = COLORS[idx].it;
-    liveEl.textContent = 'Trova: ' + COLORS[idx].it;
-  }
-
-  function buildOptions(){
-    optionCount = getOptionCount();
-    setColsByCount(optionCount);
-    const opts = new Set([targetIndex]);
-    while(opts.size < optionCount){
-      const r = Math.floor(Math.random()*COLORS.length);
-      opts.add(r);
-    }
-    optionIndices = shuffle(Array.from(opts));
-  }
-
-  function clearGrid(){
-    gridEl.innerHTML = '';
-  }
-
-  function renderGrid(){
-    clearGrid();
-    optionIndices.forEach((colorIdx, i)=>{
-      const color = COLORS[colorIdx];
-      const btn = document.createElement('button');
-      btn.className = 'tile';
-      btn.style.setProperty('--bg', color.hex);
-      btn.style.borderColor = borderFor(color.hex);
-      btn.setAttribute('aria-label', `${i+1}: ${color.it} tile`);
-      btn.dataset.colorIndex = String(colorIdx);
-      btn.dataset.pos = String(i);
-      btn.innerHTML = `
-        <span class="num" style="color:${contrast(color.hex)}">${i+1}</span>
-        <span class="check">✓</span>
-      `;
-      btn.addEventListener('click', onTileSelect);
-      gridEl.appendChild(btn);
-    });
-    kbdIndex = -1;
-  }
-
-  function onTileSelect(e){
-    if(isTransitioning) return;
-    ensureAudio();
-    const btn = e.currentTarget;
-    const chosen = Number(btn.dataset.colorIndex);
-    if(chosen === targetIndex){
-      isTransitioning = true;
-      score += 1;
-      if(score > best){ best = score; localStorage.setItem('itcolor_best', String(best)); }
-      scoreEl.textContent = score;
-      bestEl.textContent = best;
-      btn.classList.add('correct');
-      beep('ok'); vibrate(12);
-      disableTiles(true);
-      setTimeout(()=>{
-        isTransitioning = false;
-        nextRound();
-      }, 420);
-    }else{
-      gridEl.classList.remove('shake'); void gridEl.offsetWidth; gridEl.classList.add('shake');
-      beep('bad'); vibrate(50);
-      flashBorder(btn);
-    }
-  }
-
-  function flashBorder(btn){
-    const old = btn.style.borderColor;
-    btn.style.borderColor = 'rgba(239,68,68,.95)';
-    setTimeout(()=>{ btn.style.borderColor = old; }, 220);
-  }
-
-  function disableTiles(dis=true){
-    const tiles = gridEl.querySelectorAll('.tile');
-    tiles.forEach(t=> t.disabled = !!dis);
-  }
-
-  function nextRound(){
-    newTarget();
-    buildOptions();
-    renderGrid();
-  }
-
-  function resetScore(){
-    score = 0;
-    scoreEl.textContent = score;
-  }
-
-  function openHelp(){
-    if(typeof helpDlg.showModal === 'function'){
-      populateGlossary();
-      helpDlg.showModal();
-    }else{
-      alert('How to play:\n\nMatch the Italian word to its color.\nTap/click a box or use keyboard:\n- 1–6 to pick\n- Arrow keys + Enter.\nScore +1 for each correct match.');
-    }
-  }
-  function closeHelpDialog(){
-    if(helpDlg.open) helpDlg.close();
-  }
-  function populateGlossary(){
-    if(glossary.dataset.ready) return;
-    const frag = document.createDocumentFragment();
-    COLORS.forEach(c=>{
-      const div = document.createElement('div');
-      div.style.display='flex'; div.style.alignItems='center'; div.style.gap='8px';
-      const sw = document.createElement('span');
-      sw.style.display='inline-block';
-      sw.style.width='18px'; sw.style.height='18px'; sw.style.borderRadius='5px';
-      sw.style.background=c.hex;
-      sw.style.border='1px solid '+borderFor(c.hex);
-      const text = document.createElement('span');
-      text.textContent = `${c.it} — ${ENGLISH[c.it]||''}`;
-      div.appendChild(sw); div.appendChild(text);
-      frag.appendChild(div);
-    });
-    glossary.appendChild(frag);
-    glossary.dataset.ready = '1';
-  }
-
-  function setKbdFocus(idx){
-    const tiles = [...gridEl.querySelectorAll('.tile')];
-    tiles.forEach(t=>t.classList.remove('kbd-focus'));
-    if(idx>=0 && idx<tiles.length){
-      tiles[idx].classList.add('kbd-focus');
-      tiles[idx].focus({preventScroll:true});
-      kbdIndex = idx;
-    }
-  }
-  function kbdMove(dx, dy){
-    const total = optionIndices.length;
-    const r = cols;
-    if(total===0) return;
-    if(kbdIndex < 0) { setKbdFocus(0); return; }
-    const c = r;
-    const currentRow = Math.floor(kbdIndex / c);
-    const currentCol = kbdIndex % c;
-    let newRow = currentRow + dy;
-    let newCol = currentCol + dx;
-    if(newCol < 0){ newCol = c-1; newRow -= 1; }
-    if(newCol >= c){ newCol = 0; newRow += 1; }
-    const maxRow = Math.ceil(total / c) - 1;
-    if(newRow < 0) newRow = maxRow;
-    if(newRow > maxRow) newRow = 0;
-    let newIndex = newRow * c + newCol;
-    // clamp to last element if overflow in short last row
-    if(newIndex >= total) newIndex = total - 1;
-    setKbdFocus(newIndex);
-  }
-  function kbdPick(index){
-    const tiles = gridEl.querySelectorAll('.tile');
-    if(index>=0 && index<tiles.length){
-      tiles[index].click();
-    }
-  }
-
-  document.addEventListener('keydown', (e)=>{
-    if(e.key==='?' || (e.key.toLowerCase()==='h' && !helpDlg.open)){
-      e.preventDefault(); openHelp(); return;
-    }
-    if(helpDlg.open){
-      if(e.key==='Escape'){ closeHelpDialog(); }
-      return;
-    }
-    ensureAudio();
-    if(e.key>='1' && e.key<='9'){
-      const n = parseInt(e.key,10) - 1;
-      if(n < optionIndices.length){
-        e.preventDefault();
-        kbdPick(n);
+    function ensureAudioContext() {
+      if (!audioCtx) {
+        try {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+          console.warn('AudioContext not supported:', e);
+          audioCtx = null;
+        }
       }
-      return;
     }
-    switch(e.key){
-      case 'ArrowLeft': e.preventDefault(); kbdMove(-1,0); break;
-      case 'ArrowRight': e.preventDefault(); kbdMove(1,0); break;
-      case 'ArrowUp': e.preventDefault(); kbdMove(0,-1); break;
-      case 'ArrowDown': e.preventDefault(); kbdMove(0,1); break;
-      case 'Enter':
-      case ' ': if(kbdIndex>=0){ e.preventDefault(); kbdPick(kbdIndex); } break;
-      case 'r':
-      case 'R': resetScore(); break;
-      default: break;
+
+    function playBeep(type = 'ok') {
+      if (!audioCtx) return;
+      const ctx = audioCtx;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g);
+      g.connect(ctx.destination);
+      const now = ctx.currentTime;
+
+      if (type === 'ok') {
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(660, now);
+        o.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.07, now + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+        o.start(now);
+        o.stop(now + 0.2);
+      } else { // 'bad'
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(180, now);
+        o.frequency.exponentialRampToValueAtTime(140, now + 0.08);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.06, now + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+        o.start(now);
+        o.stop(now + 0.16);
+      }
     }
-  }, {passive:false});
 
-  window.addEventListener('resize', ()=>{
-    const prevCount = optionCount;
-    const n = getOptionCount();
-    if(n !== prevCount){
-      optionCount = n;
-      setColsByCount(optionCount);
-      // keep same target, rebuild options
-      buildOptions();
-      renderGrid();
+    function vibrateDevice(ms) {
+      if (navigator.vibrate) {
+        try {
+          navigator.vibrate(ms);
+        } catch (e) {
+          console.warn('Vibration API failed:', e);
+        }
+      }
     }
-  });
 
-  helpBtn.addEventListener('click', openHelp);
-  closeHelp.addEventListener('click', closeHelpDialog);
-  startPractice.addEventListener('click', ()=>{ resetScore(); nextRound(); });
-  startClose.addEventListener('click', ()=>{ resetScore(); nextRound(); closeHelpDialog(); });
-  resetBtn.addEventListener('click', ()=>{ resetScore(); });
+    return {
+      init: ensureAudioContext,
+      beep: playBeep,
+      vibrate: vibrateDevice
+    };
+  })();
 
-  // Kick off
-  nextRound();
+  // --- UI Elements ---
+  const UIElements = {
+    word: document.getElementById('word'),
+    grid: document.getElementById('grid'),
+    score: document.getElementById('score'),
+    best: document.getElementById('best'),
+    live: document.getElementById('live'),
+    helpDialog: document.getElementById('help'),
+    helpBtn: document.getElementById('helpBtn'),
+    closeHelpBtn: document.getElementById('closeHelp'),
+    startPracticeBtn: document.getElementById('startPractice'),
+    startCloseBtn: document.getElementById('startClose'),
+    resetBtn: document.getElementById('resetBtn'),
+    glossary: document.getElementById('glossary')
+  };
 
-  // Small UX: open help on first visit (optional, only once)
-  const SEEN = 'itcolor_seen';
-  if(!localStorage.getItem(SEEN)){
-    setTimeout(openHelp, 300);
-    localStorage.setItem(SEEN,'1');
+  // --- Game Class ---
+  class ColorGame {
+    constructor() {
+      this.score = 0;
+      this.bestScore = Number(localStorage.getItem(LOCAL_STORAGE_BEST_SCORE_KEY) || 0);
+      this.lastTargetIndex = -1;
+      this.currentTargetIndex = -1;
+      this.optionIndices = [];
+      this.optionCount = 4;
+      this.gridCols = 2;
+      this.keyboardFocusIndex = -1;
+      this.isTransitioning = false;
+
+      this.initUI();
+      this.addEventListeners();
+      AudioFeedback.init();
+    }
+
+    initUI() {
+      UIElements.best.textContent = this.bestScore;
+      this.updateScoreDisplay();
+    }
+
+    updateScoreDisplay() {
+      UIElements.score.textContent = this.score;
+    }
+
+    getResponsiveOptionCount() {
+      const w = Math.min(window.innerWidth, document.documentElement.clientWidth || window.innerWidth);
+      const portrait = window.matchMedia('(orientation: portrait)').matches;
+      return (w < 580 || portrait) ? 4 : 6;
+    }
+
+    setGridColumns(count) {
+      this.gridCols = (count <= 4) ? 2 : 3;
+      UIElements.grid.style.setProperty('--cols', String(this.gridCols));
+    }
+
+    generateNewTarget() {
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * COLORS.length);
+      } while (idx === this.lastTargetIndex);
+      this.lastTargetIndex = idx;
+      this.currentTargetIndex = idx;
+      UIElements.word.textContent = COLORS[idx].it;
+      UIElements.live.textContent = 'Trova: ' + COLORS[idx].it;
+    }
+
+    buildOptions() {
+      this.optionCount = this.getResponsiveOptionCount();
+      this.setGridColumns(this.optionCount);
+      const opts = new Set([this.currentTargetIndex]);
+      while (opts.size < this.optionCount) {
+        const r = Math.floor(Math.random() * COLORS.length);
+        opts.add(r);
+      }
+      this.optionIndices = shuffleArray(Array.from(opts));
+    }
+
+    renderGrid() {
+      UIElements.grid.innerHTML = '';
+      this.optionIndices.forEach((colorIdx, i) => {
+        const color = COLORS[colorIdx];
+        const btn = document.createElement('button');
+        btn.className = 'tile';
+        btn.style.setProperty('--bg', color.hex);
+        btn.style.borderColor = getBorderColor(color.hex);
+        btn.setAttribute('aria-label', `${i + 1}: ${color.it} tile`);
+        btn.dataset.colorIndex = String(colorIdx);
+        btn.dataset.pos = String(i);
+        btn.innerHTML = `
+          <span class="num" style="color:${getContrastColor(color.hex)}">${i + 1}</span>
+          <span class="check">✓</span>
+        `;
+        btn.addEventListener('click', this.handleTileSelect.bind(this));
+        UIElements.grid.appendChild(btn);
+      });
+      this.keyboardFocusIndex = -1;
+    }
+
+    handleTileSelect(event) {
+      if (this.isTransitioning) return;
+
+      const btn = event.currentTarget;
+      const chosenColorIndex = Number(btn.dataset.colorIndex);
+
+      if (chosenColorIndex === this.currentTargetIndex) {
+        this.isTransitioning = true;
+        this.score += 1;
+        if (this.score > this.bestScore) {
+          this.bestScore = this.score;
+          localStorage.setItem(LOCAL_STORAGE_BEST_SCORE_KEY, String(this.bestScore));
+        }
+        this.updateScoreDisplay();
+        UIElements.best.textContent = this.bestScore; // Update best score display
+        btn.classList.add('correct');
+        AudioFeedback.beep('ok');
+        AudioFeedback.vibrate(12);
+        this.disableTiles(true);
+
+        setTimeout(() => {
+          this.isTransitioning = false;
+          this.nextRound();
+        }, 420);
+      } else {
+        UIElements.grid.classList.remove('shake');
+        void UIElements.grid.offsetWidth; // Trigger reflow
+        UIElements.grid.classList.add('shake');
+        AudioFeedback.beep('bad');
+        AudioFeedback.vibrate(50);
+        this.flashBorder(btn);
+      }
+    }
+
+    flashBorder(btn) {
+      const oldBorderColor = btn.style.borderColor;
+      btn.style.borderColor = 'rgba(239,68,68,.95)';
+      setTimeout(() => {
+        btn.style.borderColor = oldBorderColor;
+      }, 220);
+    }
+
+    disableTiles(disable = true) {
+      UIElements.grid.querySelectorAll('.tile').forEach(tile => {
+        tile.disabled = disable;
+      });
+    }
+
+    nextRound() {
+      this.generateNewTarget();
+      this.buildOptions();
+      this.renderGrid();
+      this.disableTiles(false); // Re-enable tiles for the new round
+    }
+
+    resetGame() {
+      this.score = 0;
+      this.updateScoreDisplay();
+      this.nextRound();
+    }
+
+    // --- Help Dialog Functions ---
+    openHelpDialog() {
+      if (typeof UIElements.helpDialog.showModal === 'function') {
+        this.populateGlossary();
+        UIElements.helpDialog.showModal();
+      } else {
+        alert('How to play:\n\nMatch the Italian word to its color.\nTap/click a box or use keyboard:\n- 1–6 to pick\n- Arrow keys + Enter.\nScore +1 for each correct match.');
+      }
+    }
+
+    closeHelpDialog() {
+      if (UIElements.helpDialog.open) {
+        UIElements.helpDialog.close();
+      }
+    }
+
+    populateGlossary() {
+      if (UIElements.glossary.dataset.ready) return;
+
+      const fragment = document.createDocumentFragment();
+      COLORS.forEach(color => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; align-items:center; gap:8px;'; // Use cssText for multiple styles
+        const swatch = document.createElement('span');
+        swatch.style.cssText = `display:inline-block; width:18px; height:18px; border-radius:5px; background:${color.hex}; border:1px solid ${getBorderColor(color.hex)};`;
+        const text = document.createElement('span');
+        text.textContent = `${color.it} — ${ENGLISH_TRANSLATIONS[color.it] || ''}`;
+        div.append(swatch, text); // Use append for multiple children
+        fragment.appendChild(div);
+      });
+      UIElements.glossary.appendChild(fragment);
+      UIElements.glossary.dataset.ready = '1';
+    }
+
+    // --- Keyboard Navigation Functions ---
+    setKeyboardFocus(index) {
+      const tiles = [...UIElements.grid.querySelectorAll('.tile')];
+      tiles.forEach(t => t.classList.remove('kbd-focus'));
+      if (index >= 0 && index < tiles.length) {
+        tiles[index].classList.add('kbd-focus');
+        tiles[index].focus({ preventScroll: true });
+        this.keyboardFocusIndex = index;
+      }
+    }
+
+    moveKeyboardFocus(dx, dy) {
+      const totalTiles = this.optionIndices.length;
+      if (totalTiles === 0) return;
+
+      if (this.keyboardFocusIndex < 0) {
+        this.setKeyboardFocus(0);
+        return;
+      }
+
+      const currentRow = Math.floor(this.keyboardFocusIndex / this.gridCols);
+      const currentCol = this.keyboardFocusIndex % this.gridCols;
+
+      let newRow = currentRow + dy;
+      let newCol = currentCol + dx;
+
+      if (newCol < 0) {
+        newCol = this.gridCols - 1;
+        newRow -= 1;
+      }
+      if (newCol >= this.gridCols) {
+        newCol = 0;
+        newRow += 1;
+      }
+
+      const maxRow = Math.ceil(totalTiles / this.gridCols) - 1;
+      if (newRow < 0) newRow = maxRow;
+      if (newRow > maxRow) newRow = 0;
+
+      let newIndex = newRow * this.gridCols + newCol;
+      if (newIndex >= totalTiles) newIndex = totalTiles - 1; // Clamp to last element if overflow
+
+      this.setKeyboardFocus(newIndex);
+    }
+
+    pickTileWithKeyboard(index) {
+      const tiles = UIElements.grid.querySelectorAll('.tile');
+      if (index >= 0 && index < tiles.length) {
+        tiles[index].click();
+      }
+    }
+
+    // --- Event Listeners ---
+    addEventListeners() {
+      document.addEventListener('keydown', this.handleKeyDown.bind(this), { passive: false });
+      window.addEventListener('resize', this.handleResize.bind(this));
+
+      UIElements.helpBtn.addEventListener('click', this.openHelpDialog.bind(this));
+      UIElements.closeHelpBtn.addEventListener('click', this.closeHelpDialog.bind(this));
+      UIElements.startPracticeBtn.addEventListener('click', () => {
+        this.resetGame();
+        this.closeHelpDialog();
+      });
+      UIElements.resetBtn.addEventListener('click', this.resetGame.bind(this));
+    }
+
+    handleKeyDown(event) {
+      if (event.key === '?' || (event.key.toLowerCase() === 'h' && !UIElements.helpDialog.open)) {
+        event.preventDefault();
+        this.openHelpDialog();
+        return;
+      }
+
+      if (UIElements.helpDialog.open) {
+        if (event.key === 'Escape') {
+          this.closeHelpDialog();
+        }
+        return;
+      }
+
+      AudioFeedback.init(); // Ensure audio context is active on user interaction
+
+      if (event.key >= '1' && event.key <= '9') {
+        const num = parseInt(event.key, 10) - 1;
+        if (num < this.optionIndices.length) {
+          event.preventDefault();
+          this.pickTileWithKeyboard(num);
+        }
+        return;
+      }
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          this.moveKeyboardFocus(-1, 0);
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          this.moveKeyboardFocus(1, 0);
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          this.moveKeyboardFocus(0, -1);
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          this.moveKeyboardFocus(0, 1);
+          break;
+        case 'Enter':
+        case ' ':
+          if (this.keyboardFocusIndex >= 0) {
+            event.preventDefault();
+            this.pickTileWithKeyboard(this.keyboardFocusIndex);
+          }
+          break;
+        case 'r':
+        case 'R':
+          this.resetGame();
+          break;
+        default:
+          break;
+      }
+    }
+
+    handleResize() {
+      const newOptionCount = this.getResponsiveOptionCount();
+      if (newOptionCount !== this.optionCount) {
+        this.optionCount = newOptionCount;
+        this.setGridColumns(this.optionCount);
+        this.buildOptions(); // Rebuild options to adjust to new count
+        this.renderGrid();
+      }
+    }
+
+    // --- Initialization ---
+    init() {
+      this.nextRound();
+      // Small UX: open help on first visit (optional, only once)
+      if (!localStorage.getItem(LOCAL_STORAGE_SEEN_KEY)) {
+        setTimeout(() => this.openHelpDialog(), 300);
+        localStorage.setItem(LOCAL_STORAGE_SEEN_KEY, '1');
+      }
+    }
   }
+
+  // Initialize the game
+  const game = new ColorGame();
+  game.init();
 })();
 </script>
 </body>

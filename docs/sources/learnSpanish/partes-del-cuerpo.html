@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Aprende el Cuerpo en Español</title>
+<title>Partes del Cuerpo</title>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <style>
   :root{
     --bg1:#f6f9ff;
@@ -48,10 +50,16 @@
     box-shadow: 0 6px 16px rgba(0,0,0,.12);
   }
   h1{
-    margin:0; font-size: clamp(18px, 3vw, 26px);
+    margin:0; font-size: clamp(28px, 5vw, 48px); /* Larger font size for title */
+    font-family: 'Luckiest Guy', cursive; /* New playful font */
+    color: #1a237e; /* Dark blue color */
+    text-shadow: 3px 3px 0px rgba(0,0,0,0.1); /* Adjusted text shadow for better contrast */
   }
   .scoreboard{
-    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    display:flex;
+    flex-direction: column; /* Arrange items vertically */
+    align-items: flex-start; /* Align items to the start (left) */
+    gap:12px;
   }
   .chip{
     background:white;
@@ -63,9 +71,15 @@
     box-shadow: 0 4px 10px rgba(0,0,0,.05);
   }
   .bar{
-    width:160px; height:10px; background:#e8eefc; border-radius:20px; overflow:hidden;
+    width:100%; /* Make it span full width */
+    height:10px; background:#e8eefc; border-radius:20px; overflow:hidden;
   }
   .bar>span{display:block; height:100%; width:0%; background:linear-gradient(90deg, #73a1ff, #4b7bec); transition:width .35s ease}
+  .chips-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px; /* Add some space between chips and bar */
+  }
   main.game{
     background:white;
     border-radius:18px;
@@ -91,9 +105,11 @@
   }
   button{
     appearance:none; border:none; background:var(--primary); color:white;
-    padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer;
+    padding:8px 12px; /* Reduced padding */
+    border-radius:12px; font-weight:700; cursor:pointer;
     box-shadow: 0 10px 24px rgba(75,123,236,.25), 0 3px 10px rgba(0,0,0,.06);
     transition: transform .08s ease, filter .2s ease;
+    font-size: 14px; /* Explicit font size */
   }
   button.secondary{
     background:#ffffff; color:var(--ink); border:1px solid #e8eefc; box-shadow:none;
@@ -149,6 +165,7 @@
     position:fixed; inset:0; background:rgba(18,31,55,.45);
     display:grid; place-items:center; padding:18px;
     opacity:0; pointer-events:none; transition:opacity .25s ease;
+    z-index: 999;
   }
   .modal.show{ opacity:1; pointer-events:auto }
   .card{
@@ -166,21 +183,43 @@
   .sr-only{
     position:absolute !important; left:-9999px; width:1px; height:1px; overflow:hidden;
   }
+  .card.end-card {
+    background: #e0f2f7; /* Light blue background */
+    color: black; /* Black text color */
+  }
+  .card.end-card h2,
+  .card.end-card #resultMsg,
+  .card.end-card .bigScore {
+    color: black; /* Black text color */
+  }
+  .card.end-card .bigScore {
+    text-shadow: none; /* Removed text-shadow */
+  }
+  .card.end-card button.secondary {
+    background: #cce7ee; /* Lighter blue for secondary button */
+    border-color: #a7d9e6; /* Border color for secondary button */
+    color: black; /* Black text for secondary button */
+  }
+  .card.end-card button.secondary:hover {
+    background: #b3dce6; /* Slightly darker blue on hover */
+  }
 </style>
 </head>
 <body>
 <div id="app">
   <header>
     <div class="title">
-      <div class="logo">ABC</div>
+      <div class="logo">PDC</div>
       <div>
-        <h1>Aprende el cuerpo en español</h1>
-        <div style="color:var(--sub); font-size:13px">Escucha y toca la parte correcta</div>
+        <h1>Partes del Cuerpo</h1>
+         
       </div>
     </div>
     <div class="scoreboard">
-      <div class="chip">Ronda <b id="round">0</b>/<span id="total">0</span></div>
-      <div class="chip">Puntos <b id="score">0</b></div>
+      <div class="chips-row">
+        <div class="chip">Ronda <b id="round">0</b>/<span id="total">0</span></div>
+        <div class="chip">Puntos <b id="score">0</b></div>
+      </div>
       <div class="bar"><span id="progress"></span></div>
     </div>
   </header>
@@ -256,29 +295,28 @@
     <div class="help">
       Instrucciones: pulsa "Comenzar" y escucha la palabra. Toca la parte correcta. Móvil: toca la figura. Teclado: 1 = cabeza, 2 = brazos, 3 = piernas, Espacio = repetir.
     </div>
-    <div class="footerNote">Consejo: pulsa el botón de altavoz si necesitas escuchar otra vez.</div>
+ 
   </main>
 </div>
 
 <div id="overlay" class="modal show" aria-modal="true" role="dialog">
-  <div class="card">
-    <h2>¿Listo para jugar?</h2>
-    <p>Escucha una palabra en español y toca esa parte del cuerpo en la figura.</p>
+  <div class="card end-card">
+    <h2 data-ro="Instrucțiuni" data-en="Instructions">Instrucciones</h2>
+    <p data-ro="Ascultă cuvântul în spaniolă și atinge partea corectă a corpului de pe figură." data-en="Listen to the word in Spanish and touch the correct body part on the figure.">Escucha una palabra en español y toca esa parte del cuerpo en la figura.</p>
     <ul style="margin-top:8px; margin-bottom:8px; padding-left:18px; line-height:1.5">
-      <li>La voz dice: la cabeza, los brazos o las piernas.</li>
-      <li>Toca la parte correcta para ganar un punto.</li>
-      <li>Botón 🔊 o Espacio para repetir la palabra.</li>
-      <li>Teclado: 1 = cabeza, 2 = brazos, 3 = piernas.</li>
+      <li data-ro="Vocea va spune: la cabeza, los brazos, sau las piernas." data-en="The voice will say: la cabeza, los brazos, or las piernas.">La voz dice: la cabeza, los brazos o las piernas.</li>
+      <li data-ro="Atinge partea corectă pentru a câștiga un punct." data-en="Touch the correct part to score a point.">Toca la parte correcta para ganar un punto.</li>
+      <li data-ro="Butonul 🔊 sau tasta Spațiu pentru a repeta cuvântul." data-en="Button 🔊 or Spacebar to repeat the word.">Botón 🔊 o Espacio para repetir la palabra.</li>
     </ul>
     <div class="gridBtns">
-      <button id="startBtn">▶️ Comenzar</button>
-      <button id="howBtn" class="secondary">🔊 Probar voz</button>
+      <button id="startBtn" data-ro="▶️ Începe" data-en="▶️ Start">▶️ Comenzar</button>
+      <button id="howBtn" class="secondary" data-ro="🔊 Testează Vocea" data-en="🔊 Test Voice">🔊 Probar voz</button>
     </div>
   </div>
 </div>
 
 <div id="endModal" class="modal" aria-modal="true" role="dialog">
-  <div class="card">
+  <div class="card end-card">
     <h2>¡Buen trabajo!</h2>
     <div class="results">
       <div class="bigScore" id="finalScore">0/0</div>
@@ -301,7 +339,16 @@
     { id:'legs',   article:'las', label:'piernas', key:'3' },
   ];
   const idToPart = Object.fromEntries(parts.map(p=>[p.id,p]));
-  const totalRounds = 9;
+  const totalRounds = 10;
+  let shuffledParts = []; // New variable to hold shuffled parts
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]; // ES6 swap
+    }
+    return array;
+  }
 
   const el = {
     round: document.getElementById('round'),
@@ -421,7 +468,10 @@
     el.live.textContent = `Nueva palabra: ${phrase(target)}`;
   }
   function randomPart(){
-    return parts[Math.floor(Math.random()*parts.length)];
+    if (shuffledParts.length === 0) {
+      shuffledParts = shuffleArray([...parts]); // Shuffle a copy of the original parts
+    }
+    return shuffledParts.pop(); // Get the last element and remove it
   }
 
   function startGame(){
@@ -457,6 +507,31 @@
     else msg = '¡Buen intento! Practiquemos de nuevo.';
     el.resultMsg.textContent = msg;
     el.endModal.classList.add('show');
+
+    // Celebrate!
+    if (typeof confetti === 'function') {
+      const duration = 2 * 1000;
+      const end = Date.now() + duration;
+      (function frame() {
+        confetti({
+          particleCount: 2,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#89f7fe', '#66a6ff', '#ffffff']
+        });
+        confetti({
+          particleCount: 2,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#89f7fe', '#66a6ff', '#ffffff']
+        });
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+    }
   }
 
   function pick(id){

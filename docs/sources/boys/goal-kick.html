@@ -6,26 +6,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg-1:#0a1329;
       --bg-2:#081a2d;
-      --ui:#0ea5e9;
-      --ui-2:#22c55e;
+      --ui:#38bdf8; /* Brighter Blue */
+      --ui-2:#34d399; /* Brighter Green */
       --accent:#f59e0b;
       --danger:#ef4444;
       --white:#ffffff;
       --shadow:rgba(0,0,0,.35);
       --shadow-2:rgba(0,0,0,.55);
-      --glass:rgba(255,255,255,.12);
-      --glass-2:rgba(255,255,255,.08);
+      --glass:rgba(255,255,255,.1);
+      --glass-2:rgba(255,255,255,.05);
       --field:#116530;
       --field-2:#0f5a2b;
       --line:rgba(255,255,255,.45);
     }
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
     html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:radial-gradient(1400px 900px at 20% 10%,var(--bg-1),var(--bg-2))}
-    body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;color:var(--white);padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+    body{font-family:'Poppins', system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;color:var(--white);padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
     .game{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
     canvas{width:100%;height:100%;display:block;cursor:crosshair}
 
@@ -46,17 +49,39 @@
 
     /* HUD */
     .hud{
-      position:fixed;z-index:10;top:calc(8px + env(safe-area-inset-top));
+      position:fixed;z-index:10;top:calc(55px + env(safe-area-inset-top));
       left:calc(10px + env(safe-area-inset-left));right:calc(10px + env(safe-area-inset-right));
-      display:grid;grid-template-columns:1fr auto auto auto auto;gap:8px;align-items:center
+      display:flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap:8px;
+    }
+    
+    .game-title {
+      position: fixed;
+      z-index: 10;
+      top: calc(4px + env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%);
+      color: '#F5B82E'; /* Vibrant Gold */
+      font-family: 'Bangers', cursive;
+      font-size: clamp(2.2rem, 8vw, 3rem); /* Adjusted for new font */
+      font-weight: 400; /* Bangers is already bold */
+      letter-spacing: 2px;
+      text-shadow: 0 4px 8px rgba(0,0,0,0.6); /* Stronger shadow */
+      text-transform: uppercase;
+      white-space: nowrap; /* Keep title and emojis on one line */
     }
     .chip{
-      display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:999px;
+      display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;
       background:linear-gradient(135deg,var(--glass),var(--glass-2));
       box-shadow:0 10px 24px var(--shadow);backdrop-filter:blur(10px);
-      font-weight:800;font-size:clamp(.8rem,3.5vw,1rem)
+      font-weight:700;
+      font-size:clamp(0.8rem, 4vw, 1rem);
     }
-    .chip strong{color:var(--ui);letter-spacing:.5px}
+    .chip strong{letter-spacing:.5px}
+    .chip.warn strong, .chip.warn .val { color: #FFEB3B; } /* Brighter Yellow */
+    .chip.badge strong, .chip.badge .val { color: #79F8F8; } /* Brighter Cyan */
     .chip .val{font-variant-numeric:tabular-nums}
     .btn{cursor:pointer;transition:transform .12s ease, box-shadow .12s ease}
     @media(hover:hover){
@@ -66,25 +91,35 @@
     .chip.badge{background:linear-gradient(135deg,rgba(34,197,94,.25),rgba(14,165,233,.25));color:#e8faff}
     .chip.warn{background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(14,165,233,.2))}
     .chip.action{background:linear-gradient(135deg,#111827,#0b1220);border:1px solid rgba(255,255,255,.08)}
-    .icon{width:22px;height:22px;display:inline-grid;place-items:center}
+    .icon{width:16px;height:16px;display:inline-grid;place-items:center}
     .icon svg{width:100%;height:100%;display:block}
+
+    #pauseBtn {
+      padding: 6px 10px; /* Smaller padding */
+      font-size: 0.7rem; /* Smaller font size */
+      margin-left: auto; /* Align to the right */
+    }
+    #pauseBtn .icon {
+      width: 18px; /* Smaller icon */
+      height: 18px; /* Smaller icon */
+    }
 
     /* Instructions & Power */
     .instructions{
       position:fixed;z-index:8;bottom:calc(18px + env(safe-area-inset-bottom));
       left:50%;transform:translateX(-50%);
-      background:linear-gradient(135deg,var(--glass),var(--glass-2));
-      backdrop-filter:blur(8px);padding:10px 16px;border-radius:999px;
+      background:rgba(17, 24, 39, 0.7); /* Darker semi-transparent background */
+      backdrop-filter:blur(12px); /* Increased blur */
+      padding:12px 20px; /* Slightly more padding */
+      border-radius:12px; /* Rounded corners */
       font-weight:800;font-size:clamp(.85rem,3.6vw,1rem);letter-spacing:.2px;
-      color:#d9f0ff;box-shadow:0 8px 20px var(--shadow);animation:hint 2s infinite
+      color:#d9f0ff;box-shadow:0 8px 20px var(--shadow);animation:hint 2s infinite;
+      max-width: min(95vw, 400px); /* More generous width, capped for larger screens */
+      text-align: justify; /* Justify text */
     }
     @keyframes hint{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.05)}}
 
-    .power{
-      position:fixed;z-index:9;bottom:calc(70px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
-      width:min(64vw,320px);height:18px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;display:none;box-shadow:0 6px 16px var(--shadow)
-    }
-    .power-bar{height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444)}
+    
 
     /* Overlays */
     .overlay{
@@ -92,17 +127,23 @@
     }
     .panel{
       width:min(92vw,760px);background:linear-gradient(135deg,rgba(16,24,40,.78),rgba(18,28,48,.9));
-      border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px;box-shadow:0 20px 60px var(--shadow-2);color:#eaf4ff
+      border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:28px;box-shadow:0 20px 60px var(--shadow-2);color:#eaf4ff
     }
-    .title{font-weight:900;letter-spacing:.5px;font-size:clamp(1.4rem,6vw,2rem);margin-bottom:10px;color:#a5f3fc}
-    .subtitle{opacity:.85;margin-bottom:16px}
-    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
-    .tag{padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-weight:800}
-    .tag.active{background:linear-gradient(135deg,rgba(14,165,233,.3),rgba(34,197,94,.25));border-color:rgba(14,165,233,.4)}
-    .cta{width:100%;display:grid;grid-auto-flow:column;gap:10px;margin-top:10px}
-    .btn-lg{padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(135deg,#0b1220,#0f172a);color:#d9f0ff;font-weight:900;letter-spacing:.6px;cursor:pointer;text-align:center}
+    .title{font-family: 'Poppins', sans-serif; font-weight:900;letter-spacing:.5px;font-size:clamp(1.4rem,6vw,2rem);margin-bottom:12px;color:#a5f3fc}
+    .subtitle{font-family: 'Poppins', sans-serif; opacity:.85;margin-bottom:20px;font-weight:400;font-size: clamp(0.9rem, 4vw, 1rem);}
+    .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:16px 0}
+    .tag{padding:10px 16px;font-size: clamp(0.8rem, 3.5vw, 0.9rem);border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;font-weight:700; transition: transform 0.2s ease, background-color 0.2s ease;}
+    .tag.active{background:linear-gradient(135deg,rgba(14,165,233,.3),rgba(34,197,94,.25));border-color:rgba(14,165,233,.4); transform: scale(1.05);}
+    .cta{width:100%;display:grid;grid-auto-flow:column;gap:12px;margin-top:16px}
+    .btn-lg{padding:14px 18px;font-size: clamp(0.9rem, 4vw, 1rem);border-radius:16px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(135deg,#0b1220,#0f172a);color:#d9f0ff;font-weight:700;letter-spacing:.6px;cursor:pointer;text-align:center; transition: transform 0.2s ease, box-shadow 0.2s ease;}
+    .btn-lg:hover{transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.2);}
+    .btn-lg:active{transform: scale(0.97);}
     .btn-lg.primary{background:linear-gradient(135deg,#0ea5e9,#2563eb)}
     .btn-lg.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+    #pause .btn-lg {
+      padding: 10px 14px;
+      font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+    }
     .grid{display:grid;gap:10px}
 
     /* Celebration emoji pop */
@@ -114,7 +155,7 @@
     /* Wind flag */
     .flag{display:flex;align-items:center;gap:6px}
     .arrow{width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:12px solid var(--ui);filter:drop-shadow(0 2px 6px rgba(14,165,233,.5))}
-    .flag-txt{font-weight:900;color:#a5f3fc}
+    .flag-txt{font-weight:700;color:#FFFFFF; text-shadow: 0 0 5px rgba(0,0,0,0.5);}
 
     /* Safe for ultra tall/short screens */
     @media (max-height:520px){ .instructions{display:none} }
@@ -130,59 +171,66 @@
   <div class="game">
     <div class="glow" aria-hidden="true"></div>
 
+    <div class="game-title">⚽ GOAL KICK ⚽</div>
+
     <div class="hud">
-      <div class="chip badge">
-        <span class="icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#a5f3fc" stroke-width="1.5">
-            <circle cx="12" cy="12" r="9" fill="#ffffff"/>
-            <path d="M12 3.5c2.2 2 4.7 2.4 6.5 4.9M12 3.5c-2.5 2.2-5.1 2.4-6.8 5M4.5 12c2.8.8 4.1 2.7 6.6 4.5M19.5 12c-3 .7-4.3 2.5-7 4.3M12 20.5c-1.2-2.6-2.7-3.9-5.1-5.6M12 20.5c1.3-2.7 2.7-3.9 5.4-5.7" stroke="#94a3b8"/>
-          </svg>
-        </span>
-        <strong>GOALS</strong><span class="val" id="goals">0</span>
-      </div>
       <div class="chip warn">
         <span class="icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fcd34d" stroke-width="1.8" stroke-linecap="round">
-            <circle cx="12" cy="12" r="8.6" stroke="#fde68a"/>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#FFC300" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="8.6" stroke-width="1.5" stroke="#FFD64D"/>
             <path d="M12 6v6l4 2"/>
           </svg>
         </span>
         <strong>TIME</strong><span class="val" id="time">10:00</span>
       </div>
-      <div class="chip" id="multWrap">
+      <div class="chip badge">
         <span class="icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2">
-            <path d="M5 7l14 10M19 7L5 17"/>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#33D7FF" stroke-width="1.8">
+            <circle cx="12" cy="12" r="9" fill="rgba(255,255,255,0.1)"/>
+            <path d="M12 3.5c2.2 2 4.7 2.4 6.5 4.9M12 3.5c-2.5 2.2-5.1 2.4-6.8 5M4.5 12c2.8.8 4.1 2.7 6.6 4.5M19.5 12c-3 .7-4.3 2.5-7 4.3M12 20.5c-1.2-2.6-2.7-3.9-5.1-5.6M12 20.5c1.3-2.7 2.7-3.9 5.4-5.7" stroke-width="1.2" stroke="#B3F2FF"/>
           </svg>
         </span>
-        <strong>MULTI</strong><span class="val" id="mult">x1</span>
+        <strong>GOALS</strong><span class="val" id="goals">0</span>
       </div>
       <div class="chip">
         <div class="flag"><div id="windArrow" class="arrow"></div><span class="flag-txt" id="windTxt">0</span></div>
       </div>
       <div class="chip action btn" id="pauseBtn" aria-label="Pause">
         <span class="icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="#a5b4fc"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>
-        </span><span>PAUSE</span>
+          <svg viewBox="0 0 24 24" fill="#C7B8FF"><rect x="5" y="4" width="5" height="16" rx="2"/><rect x="14" y="4" width="5" height="16" rx="2"/></svg>
+        </span>
       </div>
     </div>
 
     <canvas id="game"></canvas>
+    <div class="instructions" id="hint" style="display:none;"></div>
 
-    <div class="instructions" id="hint">Drag to aim, release to shoot. While ball flies, swipe to bend! Targets give bonus time.</div>
-    <div class="power" id="power"><div class="power-bar" id="powerBar"></div></div>
+    <!-- Instructions Modal -->
+    <div class="overlay" id="instructionsModal">
+        <div class="panel grid">
+            <div class="title">How to Play</div>
+            <div class="subtitle" style="text-align: justify; line-height: 1.6; font-weight: 400; font-size: clamp(0.9rem, 4vw, 1.1rem);">
+                Drag to aim, release to shoot.<br>
+                While the ball is in the air, swipe to add curve!<br>
+                Hit the green drone targets for bonus time and goals.
+            </div>
+            <div class="cta">
+                <div class="btn-lg primary" id="closeInstructionsBtn">Got It!</div>
+            </div>
+        </div>
+    </div>
 
     <!-- Start -->
     <div class="overlay" id="menu">
       <div class="panel grid">
-        <div class="title">Goal Kick: Street League+</div>
+        <div class="title">Goal Kick</div>
         <div class="subtitle">Neon-night street pitch. Bend screamers past the keeper, stack combos, and chase a massive score.</div>
         <div class="row">
           <div>Select match length</div>
           <div class="row" id="lengthRow">
-            <div class="tag active" data-min="10">10 minutes</div>
-            <div class="tag" data-min="12">12 minutes</div>
-            <div class="tag" data-min="15">15 minutes</div>
+            <div class="tag active" data-min="10">10 min</div>
+            <div class="tag" data-min="12">12 min</div>
+            <div class="tag" data-min="15">15 min</div>
           </div>
         </div>
         <div class="row">
@@ -242,15 +290,13 @@
       const windTxt = document.getElementById('windTxt');
       const windArrow = document.getElementById('windArrow');
       const hint = document.getElementById('hint');
-      const powerBox = document.getElementById('power');
-      const powerBar = document.getElementById('powerBar');
       const pauseBtn = document.getElementById('pauseBtn');
-      const multEl = document.getElementById('mult');
 
       // Overlays
       const menu = document.getElementById('menu');
       const pause = document.getElementById('pause');
       const over = document.getElementById('over');
+      const instructionsModal = document.getElementById('instructionsModal');
 
       const lengthRow = document.getElementById('lengthRow');
       const difficultyRow = document.getElementById('difficultyRow');
@@ -260,6 +306,7 @@
       const restartBtn = document.getElementById('restartBtn');
       const quitBtn = document.getElementById('quitBtn');
       const againBtn = document.getElementById('againBtn');
+      const closeInstructionsBtn = document.getElementById('closeInstructionsBtn');
       const bestScoreEl = document.getElementById('bestScore');
       const finalGoalsEl = document.getElementById('finalGoals');
       const finalBestEl = document.getElementById('finalBest');
@@ -271,6 +318,8 @@
       // Game state
       let state = 'menu'; // menu, ready, aiming, kicked, scored, missed, paused, over
       let goals = 0;
+      let currentPower = 0; // New variable for circular power bar
+      let showPowerBar = false; // New flag for visibility
       let best = parseInt(localStorage.getItem('gk_best')||'0',10);
       bestScoreEl.textContent = best;
       let timeLeft = 600; // seconds
@@ -306,7 +355,7 @@
         x:0,y:0,vx:0,vy:0, r:12, spin:0, // -1..1
         trail:[], wobble:0,
         reset(){
-          this.x = W*0.5; this.y = H*0.78; this.vx=0; this.vy=0; this.spin=0; this.trail.length=0; this.wobble=0;
+          this.x = W*0.5; this.y = H*0.88; this.vx=0; this.vy=0; this.spin=0; this.trail.length=0; this.wobble=0;
         }
       };
 
@@ -410,10 +459,10 @@
         goal.x = W*0.14;
         goal.w = W*0.72;
         goal.h = H*0.24;
-        goal.y = H*0.11;
+        goal.y = H*0.18; // Move goal down further
         goal.depth = clamp(H*0.06, 26, 64);
 
-        ball.r = Math.max(10, Math.min(14, Math.round(W/40)));
+        ball.r = Math.max(12, Math.min(18, Math.round(W/35)));
         keeper.w = Math.max(40, Math.min(58, Math.round(W/18)));
         keeper.h = Math.max(62, Math.min(88, Math.round(H/8.5)));
 
@@ -435,13 +484,14 @@
         p.width = 128; p.height = 128;
         // base
         const grd = g.createLinearGradient(0,0,128,128);
-        grd.addColorStop(0,'#0f6d34'); grd.addColorStop(1,'#0b5d2d');
+        grd.addColorStop(0,'#0e6030'); // Slightly darker green
+        grd.addColorStop(1,'#0a5028'); // Slightly darker green
         g.fillStyle = grd; g.fillRect(0,0,128,128);
         // noise blades
-        for(let i=0;i<1800;i++){
+        for(let i=0;i<3000;i++){ // Increased count
           const x = Math.random()*128, y = Math.random()*128;
           const a = Math.random()*Math.PI*2;
-          g.strokeStyle = `rgba(255,255,255,${Math.random()*0.04})`;
+          g.strokeStyle = `rgba(255,255,255,${Math.random()*0.06})`; // Increased alpha
           g.beginPath();
           g.moveTo(x,y);
           g.lineTo(x+Math.cos(a)*1.2, y+Math.sin(a)*1.2);
@@ -464,14 +514,12 @@
         randomWind();
         target=null; targetTimer=0;
         state='ready';
-        hint.textContent = 'Drag to aim, release to shoot. While ball flies, swipe to bend! Targets give bonus time.';
-        hint.style.display='block';
+        showOverlay(instructionsModal, true); // Show instructions modal
       }
 
       function updateHUD(){
         goalsEl.textContent = goals;
         timeEl.textContent = formatTime(Math.max(0,timeLeft));
-        multEl.textContent = `x${multiplier}`;
       }
 
       function showOverlay(el, show=true){ el.style.display = show?'grid':'none'; }
@@ -741,6 +789,35 @@
         // Ball
         drawBall();
 
+        // Circular Power Bar
+        if (state === 'aiming' && showPowerBar) {
+          const radius = ball.r + 8; // Radius around the ball
+          const lineWidth = 6; // Thickness of the bar
+          const startAngle = -Math.PI / 2; // Start from top
+          const endAngle = startAngle + (currentPower / 100) * (Math.PI * 2); // Arc length based on power
+
+          ctx.save();
+          ctx.lineWidth = lineWidth;
+          ctx.lineCap = 'round'; // Rounded ends
+
+          // Background arc
+          ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, radius, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // Power arc with gradient
+          const powerGrad = ctx.createLinearGradient(ball.x - radius, ball.y, ball.x + radius, ball.y);
+          powerGrad.addColorStop(0, '#22c55e'); // Green
+          powerGrad.addColorStop(0.5, '#f59e0b'); // Yellow
+          powerGrad.addColorStop(1, '#ef4444'); // Red
+          ctx.strokeStyle = powerGrad;
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, radius, startAngle, endAngle);
+          ctx.stroke();
+          ctx.restore();
+        }
+
         // Particles
         for(const p of parts){
           ctx.beginPath();
@@ -785,64 +862,115 @@
           ctx.fill();
         }
 
-        // Pitch stripes with pattern
+        // Pitch dynamic gradient
+        const fieldGradient = ctx.createLinearGradient(0, 0, 0, H);
+        fieldGradient.addColorStop(0, '#107C41'); // Lighter green at the top
+        fieldGradient.addColorStop(1, '#0B572E'); // Darker green at the bottom
+        ctx.fillStyle = fieldGradient;
+        ctx.fillRect(0, 0, W, H);
+
+        // Pitch stripes (more subtle)
         const stripes = 10;
         for(let i=0;i<stripes;i++){
-          ctx.fillStyle = (i%2)?'rgba(9,83,37,0.98)':'rgba(13,104,47,0.98)';
+          ctx.fillStyle = (i%2)?'rgba(255,255,255,0.03)':'rgba(0,0,0,0.03)';
           const sw = W/stripes;
           ctx.fillRect(i*sw, 0, sw+1, H);
         }
+
         if(grassPattern){
           ctx.save();
-          ctx.globalAlpha = 0.18;
+          ctx.globalAlpha = 0.45; // Increased alpha for more prominent texture
           ctx.fillStyle = grassPattern;
           ctx.fillRect(0, 0, W, H);
           ctx.restore();
         }
 
-        // Penalty box & spot arcs (perspective)
-        ctx.strokeStyle = 'rgba(255,255,255,.28)';
-        ctx.lineWidth = 2;
+        // Subtle radial gradient for depth/lighting
+        const fieldGrad = ctx.createRadialGradient(W/2, H*0.8, H*0.1, W/2, H*0.5, H*0.8);
+        fieldGrad.addColorStop(0, 'rgba(0,0,0,0.1)'); // Darker at the bottom
+        fieldGrad.addColorStop(1, 'rgba(0,0,0,0)'); // Transparent towards the top
+        ctx.fillStyle = fieldGrad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Penalty box & spot arcs (perspective) - thicker lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.8)'; // Clearer white
+        ctx.lineWidth = 2; // Thicker lines
         roundRect(goal.x-50, goal.y-16, goal.w+100, goal.h+96, 12, false, true);
-        ctx.beginPath(); ctx.arc(W*0.5, H*0.78, 50, 0, Math.PI*2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(W*0.5, H*0.88, 50, 0, Math.PI*2); ctx.stroke();
       }
 
       function drawGoal(){
-        // posts & crossbar with subtle shading
+        const depth = goal.depth;
+        const topBackX = goal.x + depth * 0.4;
+        const topBackW = goal.w - depth * 0.8;
+        const topBackY = goal.y - depth * 0.6;
+        const groundBackX = goal.x - depth * 0.2;
+        const groundBackW = goal.w + depth * 0.4;
+
+        // Netting (perfect squares with perspective)
         ctx.save();
-        // frame
-        const shadow = ctx.createLinearGradient(goal.x,goal.y-4,goal.x,goal.y+goal.h+4);
-        shadow.addColorStop(0,'#f8fafc'); shadow.addColorStop(1,'#cbd5e1');
-        ctx.fillStyle=shadow;
-        ctx.fillRect(goal.x-5, goal.y-4, goal.w+10, 6); // crossbar
-        ctx.fillRect(goal.x-5, goal.y-2, 6, goal.h+2);  // left
-        ctx.fillRect(goal.x+goal.w-1, goal.y-2, 6, goal.h+2); // right
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; // Brighter net
+        ctx.lineWidth = 1.2;
+        ctx.lineCap = 'round';
+
+        const step = 18; // The size of the net squares
+
+        // Horizontal lines
+        for (let i = 0; i <= goal.h; i += step) {
+            const t = i / goal.h;
+            const sag = netSag * Math.sin(t * Math.PI) * 0.5;
+
+            const startX = lerp(goal.x, groundBackX, t);
+            const startY = lerp(goal.y + i, goal.y + i - t * depth * 0.6, t);
+            const endX = lerp(goal.x + goal.w, groundBackX + groundBackW, t);
+
+            ctx.beginPath();
+            ctx.moveTo(startX + sag, startY);
+            ctx.lineTo(endX - sag, startY);
+            ctx.stroke();
+        }
+
+        // Vertical lines
+        for (let i = 0; i <= goal.w; i += step) {
+            const t = i / goal.w;
+            const sag = netSag * Math.sin(t * Math.PI);
+
+            const frontX = goal.x + i;
+            const backTopX = topBackX + topBackW * t;
+            const backGroundX = groundBackX + groundBackW * t;
+
+            ctx.beginPath();
+            ctx.moveTo(frontX, goal.y);
+            ctx.lineTo(backTopX, topBackY);
+            ctx.lineTo(backGroundX + sag, goal.y + goal.h);
+            ctx.stroke();
+        }
         ctx.restore();
 
-        // net with slight sag animation
-        const sag = netSag;
+        // Front posts & crossbar with 3D shading
         ctx.save();
-        ctx.strokeStyle='rgba(255,255,255,.22)'; ctx.lineWidth=1;
-        const cols=14, rows=7;
-        for(let i=0;i<=cols;i++){
-          const t = i/cols;
-          const x = goal.x + goal.w*t;
-          ctx.beginPath();
-          ctx.moveTo(x, goal.y+2);
-          const sY = goal.y + goal.h + Math.sin((t*3 + performance.now()/500))*2 + sag*Math.sin(t*Math.PI);
-          ctx.lineTo(x, sY);
-          ctx.stroke();
-        }
-        for(let j=0;j<=rows;j++){
-          const t = j/rows;
-          const y = goal.y + goal.h*t;
-          ctx.beginPath();
-          const sx = goal.x - Math.sin((t*2 + performance.now()/600))*2;
-          const ex = goal.x+goal.w + Math.sin((t*2 + performance.now()/600))*2;
-          ctx.moveTo(sx, y + (sag*0.15)*(1-Math.abs(t-0.5)*2));
-          ctx.lineTo(ex, y + (sag*0.15)*(1-Math.abs(t-0.5)*2));
-          ctx.stroke();
-        }
+        const postWidth = 8;
+        // Crossbar
+        const crossbarGrad = ctx.createLinearGradient(goal.x, goal.y - postWidth, goal.x, goal.y);
+        crossbarGrad.addColorStop(0, '#ffffff');
+        crossbarGrad.addColorStop(0.5, '#e0e0e0');
+        crossbarGrad.addColorStop(1, '#c0c0c0');
+        ctx.fillStyle = crossbarGrad;
+        ctx.fillRect(goal.x - postWidth/2, goal.y - postWidth/2, goal.w + postWidth, postWidth);
+        // Left Post
+        const leftPostGrad = ctx.createLinearGradient(goal.x - postWidth, goal.y, goal.x, goal.y);
+        leftPostGrad.addColorStop(0, '#c0c0c0');
+        leftPostGrad.addColorStop(0.5, '#e0e0e0');
+        leftPostGrad.addColorStop(1, '#ffffff');
+        ctx.fillStyle = leftPostGrad;
+        ctx.fillRect(goal.x - postWidth/2, goal.y - postWidth/2, postWidth, goal.h + postWidth/2);
+        // Right Post
+        const rightPostGrad = ctx.createLinearGradient(goal.x + goal.w, goal.y, goal.x + goal.w + postWidth, goal.y);
+        rightPostGrad.addColorStop(0, '#ffffff');
+        rightPostGrad.addColorStop(0.5, '#e0e0e0');
+        rightPostGrad.addColorStop(1, '#c0c0c0');
+        ctx.fillStyle = rightPostGrad;
+        ctx.fillRect(goal.x + goal.w - postWidth/2, goal.y - postWidth/2, postWidth, goal.h + postWidth/2);
         ctx.restore();
       }
 
@@ -905,12 +1033,15 @@
         }
 
         // shadow
-        ctx.fillStyle='rgba(0,0,0,.35)';
-        ctx.beginPath(); ctx.ellipse(ball.x, ball.y+5, ball.r, ball.r/2, 0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='rgba(0,0,0,.25)';
+        ctx.beginPath(); ctx.ellipse(ball.x, ball.y+ball.r*0.4, ball.r*1.1, ball.r*0.5, 0,0,Math.PI*2); ctx.fill();
 
-        // ball fill
-        const grad = ctx.createRadialGradient(ball.x-ball.r/3, ball.y-ball.r/3, 2, ball.x, ball.y, ball.r+1);
-        grad.addColorStop(0,'#ffffff'); grad.addColorStop(.7,'#eaeaea'); grad.addColorStop(1,'#cfcfcf');
+        // ball fill with enhanced shine
+        const grad = ctx.createRadialGradient(ball.x-ball.r/2, ball.y-ball.r/2, 1, ball.x, ball.y, ball.r);
+        grad.addColorStop(0,'#ffffff');
+        grad.addColorStop(0.6,'#f0f0f0');
+        grad.addColorStop(0.8,'#d8d8d8');
+        grad.addColorStop(1,'#b0b0b0');
         ctx.fillStyle=grad;
         ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2); ctx.fill();
 
@@ -1045,7 +1176,7 @@
         aimEnd = {x:cx, y:cy};
         aimPath = [{x:aimEnd.x,y:aimEnd.y, t:performance.now()}];
         hint.style.display='none';
-        powerBox.style.display='block';
+        showPowerBar = true; // Set flag to true
         updatePowerBar();
       });
       canvas.addEventListener('pointermove', (e)=>{
@@ -1080,7 +1211,10 @@
         shoot();
       });
       canvas.addEventListener('pointercancel', ()=>{
-        if(state==='aiming') { powerBox.style.display='none'; state='ready'; }
+        if(state==='aiming') {
+          showPowerBar = false; // Set flag to false
+          state='ready';
+        }
         aftertouchActive=false; lastTouch=null;
       });
 
@@ -1088,15 +1222,14 @@
         const dx = aimEnd.x - aimStart.x;
         const dy = aimEnd.y - aimStart.y;
         const d = Math.hypot(dx,dy);
-        const power = clamp(d / 3.2, 0, 100);
-        powerBar.style.width = `${power}%`;
+        currentPower = clamp(d / 3.2, 0, 100); // Update currentPower
       }
 
       function shoot(){
         const dx = aimEnd.x - aimStart.x;
         const dy = aimEnd.y - aimStart.y;
         let d = Math.hypot(dx,dy);
-        if(d<10){ powerBox.style.display='none'; state='ready'; return; }
+        if(d<10){ state='ready'; return; }
         // Power scale by difficulty
         const maxSpeed = 24 + difficulty*4;
         const spd = Math.min(maxSpeed, d/10);
@@ -1119,7 +1252,7 @@
         keeper.dive = 0; keeper.gloveAnim = 0.5;
 
         state='kicked';
-        powerBox.style.display='none';
+        showPowerBar = false; // Set flag to false
         createBurst(ball.x,ball.y,'#e2e8f0',14);
         audio.kick();
         vibrate(30);
@@ -1171,6 +1304,9 @@
         showOverlay(menu,true);
         state='menu';
       });
+      closeInstructionsBtn.addEventListener('click', ()=>{
+        showOverlay(instructionsModal, false);
+      });
 
       // End match
       function endMatch(){
@@ -1189,7 +1325,7 @@
         setTimeout(()=>d.remove(), 1000);
       }
       function hintFlash(text){
-        hint.textContent = text;
+        hint.innerHTML = text; // Changed to innerHTML
         hint.style.display='block';
         hint.style.animation='none';
         void hint.offsetWidth;

@@ -6,6 +6,15 @@
   <meta name="theme-color" content="#0f172a">
   <title>Maze Runner</title>
   <style>
+    @font-face {
+      font-family: "VCR OSD Mono";
+      src: url("https://db.onlinewebfonts.com/t/2545d122b16126676225a5b52283ae23.eot");
+      src: url("https://db.onlinewebfonts.com/t/2545d122b16126676225a5b52283ae23.eot?#iefix") format("embedded-opentype"),
+      url("https://db.onlinewebfonts.com/t/2545d122b16126676225a5b52283ae23.woff2") format("woff2"),
+      url("https://db.onlinewebfonts.com/t/2545d122b16126676225a5b52283ae23.woff") format("woff"),
+      url("https://db.onlinewebfonts.com/t/2545d122b16126676225a5b52283ae23.ttf") format("truetype"),
+      url("https://db.onlinewebfonts.com/t/2545d122b16126676225a5b52283ae23.svg#VCR OSD Mono") format("svg");
+    }
     :root {
       --bg: linear-gradient(135deg, #1f2937 0%, #111827 100%);
       --fg: #ffffff;
@@ -40,36 +49,128 @@
       position: fixed;
       width: 100%;
     }
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: clamp(20px, 5vh, 40px) clamp(8px, 2vw, 12px) clamp(12px, 3vw, 24px);
+      text-align: center;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, transparent 80%);
+    }
+    .game-title {
+      font-family: "VCR OSD Mono", monospace;
+      font-size: clamp(36px, 10vw, 72px); /* Made larger */
+      color: #7dd3fc; /* Same as timer */
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.7), 0 3px 6px rgba(0,0,0,0.8);
+      margin: 0;
+      padding: 0;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% {
+        text-shadow: 0 0 12px rgba(56, 189, 248, 0.7), 0 3px 6px rgba(0,0,0,0.8);
+      }
+      50% {
+        text-shadow: 0 0 20px rgba(56, 189, 248, 1), 0 3px 6px rgba(0,0,0,0.8);
+      }
+    }
+    .background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(125, 211, 252, 0.5); /* Light blue */
+      box-shadow: 0 0 20px rgba(125, 211, 252, 0.5), 0 0 40px rgba(125, 211, 252, 0.3);
+      filter: blur(5px);
+      animation: float 20s infinite ease-in-out;
+    }
+    .orb1 { width: 80px; height: 80px; top: 20%; left: 10%; animation-duration: 25s; }
+    .orb2 { width: 120px; height: 120px; top: 70%; left: 80%; animation-duration: 30s; animation-delay: -5s; }
+    .orb3 { width: 50px; height: 50px; top: 80%; left: 20%; animation-duration: 18s; animation-delay: -10s; }
+    .orb4 { width: 150px; height: 150px; top: 10%; left: 90%; animation-duration: 35s; animation-delay: -15s; }
+    .orb5 { width: 60px; height: 60px; top: 50%; left: 50%; animation-duration: 22s; animation-delay: -20s; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+      50% { transform: translate(20vw, -30vh) scale(1.2); opacity: 0.6; }
+      100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+    }
+
+    .grid-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background-image:
+        linear-gradient(to right, #7dd3fc 1px, transparent 1px),
+        linear-gradient(to bottom, #7dd3fc 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: move-grid 60s linear infinite;
+      opacity: 0.1;
+    }
+    @keyframes move-grid {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(-50%, -50%);
+      }
+    }
     .hud {
       position: fixed;
-      top: env(safe-area-inset-top, 0px);
-      left: env(safe-area-inset-left, 0px);
-      right: env(safe-area-inset-right, 0px);
+      /* top is set dynamically by JS */
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      pointer-events: none; /* Allow clicks to pass through the container */
+      width: 90%;
+      max-width: 500px;
+    }
+    .hud-controls {
       display: flex;
       justify-content: space-between;
-      padding: clamp(8px, 2vw, 16px) clamp(12px, 3vw, 20px);
-      background: linear-gradient(180deg, rgba(0,0,0,0.7), transparent);
-      z-index: 10;
+      align-items: center;
+      width: 100%;
+    }
+    .hud .control-btn {
+      font-size: clamp(14px, 3.2vw, 18px);
+      padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px);
+      pointer-events: auto;
+    }
+    .hud-group {
+      display: flex;
+      gap: clamp(8px, 1.5vw, 12px);
     }
     .hud-item {
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: clamp(6px, 1.5vw, 10px) clamp(10px, 2.5vw, 14px);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px);
       font-weight: 700;
-      font-size: clamp(12px, 3vw, 16px);
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+      font-size: clamp(14px, 3.2vw, 18px);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
       box-shadow: var(--glass-shadow);
       display: flex;
       align-items: center;
       gap: 8px;
       color: var(--label);
+      pointer-events: auto; /* Re-enable pointer events for items */
     }
     .level-indicator #levelDisplay {
-      color: #c4b5fd;
-      text-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+      color: #7dd3fc;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
     }
     .time-indicator #timeDisplay {
       color: #7dd3fc;
@@ -96,29 +197,27 @@
       z-index: 10;
     }
     .control-btn {
-      background: #0b1220;
+      background: linear-gradient(180deg, #1e40af, #1d4ed8);
       color: #ffffff;
-      border: 1px solid rgba(255,255,255,0.25);
+      border: 2px solid #7dd3fc;
       padding: clamp(10px, 2.5vw, 14px) clamp(14px, 3.5vw, 20px);
       border-radius: 16px;
       font-weight: 800;
-      font-size: clamp(12px, 3vw, 14px);
+      font-size: clamp(14px, 3.5vw, 16px);
       cursor: pointer;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       transition: all 0.2s ease;
       user-select: none;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(125, 211, 252, 0.3) inset;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
     }
     .control-btn:active, .control-btn.pressed {
-      background: #0e1a33;
-      transform: scale(0.95);
-      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+      background: #1e3a8a;
+      transform: scale(0.96);
+      box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.6);
     }
     .control-btn:hover {
-      background: #0e1a33;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+      background: #1d4ed8;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(125, 211, 252, 0.4) inset;
     }
     .control-btn:focus-visible {
       outline: 3px solid #22c55e;
@@ -156,21 +255,36 @@
       from { opacity: 0; transform: translateY(-50px) scale(0.9); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
+    .game-over-panel:has(.collision-title) {
+      background: rgba(15, 23, 42, 0.85); /* Dark bluish-black */
+      border-color: rgba(56, 189, 248, 0.7);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+    }
+    .game-over-panel:has(.victory-title) {
+      background: rgba(15, 23, 42, 0.85); /* Dark bluish-black */
+      border-color: rgba(34, 197, 94, 0.7);
+      box-shadow: 0 0 25px rgba(34, 197, 94, 0.5);
+    }
     .victory-title {
-      font-size: clamp(20px, 5vw, 28px);
-      font-weight: 800;
+      font-family: "VCR OSD Mono", monospace;
+      font-size: clamp(24px, 6vw, 32px);
+      font-weight: normal;
       margin-bottom: 16px;
       color: #22c55e;
       text-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
       animation: pulse 2s ease-in-out infinite alternate;
+      text-align: center;
     }
     .collision-title {
-      font-size: clamp(20px, 5vw, 28px);
-      font-weight: 800;
+      font-family: "VCR OSD Mono", monospace;
+      font-size: clamp(24px, 6vw, 32px);
+      font-weight: bold;
+      text-transform: uppercase;
       margin-bottom: 16px;
       color: #ef4444;
       text-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
       animation: pulse 2s ease-in-out infinite alternate;
+      text-align: center;
     }
     .completion-stats {
       font-size: clamp(14px, 3.5vw, 18px);
@@ -178,8 +292,8 @@
       color: #7dd3fc;
       text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      justify-content: space-between;
+      width: 100%;
     }
     .instructions {
       font-size: clamp(12px, 3vw, 14px);
@@ -187,6 +301,7 @@
       margin-bottom: 24px;
       color: #e5e7eb;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+      text-align: justify;
     }
     @keyframes pulse { from { opacity: 0.85; } to { opacity: 1; } }
     .particle { position: absolute; pointer-events: none; border-radius: 50%; z-index: 5; }
@@ -196,33 +311,23 @@
     }
     .start-hint {
       position: fixed;
-      top: 50%;
+      /* top is set dynamically by JS */
       left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: clamp(16px, 4vw, 24px) clamp(20px, 5vw, 32px);
-      text-align: center;
-      font-size: clamp(14px, 3.5vw, 18px);
-      font-weight: 700;
-      color: var(--fg);
-      box-shadow: var(--glass-shadow);
+      transform: translateX(-50%);
+      text-align: justify;
+      font-size: clamp(10px, 2vw, 12px);
+      font-weight: 500;
+      color: var(--label);
       z-index: 15;
-      animation: bounce 2s ease-in-out infinite;
-      max-width: 80vw;
-    }
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translate(-50%, -50%) translateY(0); }
-      40% { transform: translate(-50%, -50%) translateY(-8px); }
-      60% { transform: translate(-50%, -50%) translateY(-4px); }
+      width: 90%;
+      max-width: 500px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
     }
     .mobile-controls {
       position: fixed;
-      bottom: clamp(60px, 15vw, 120px);
-      right: clamp(16px, 4vw, 24px);
+      bottom: clamp(10px, 2.5vw, 20px);
+      left: 50%;
+      transform: translateX(-50%);
       display: none;
       flex-direction: column;
       gap: clamp(8px, 2vw, 12px);
@@ -271,27 +376,44 @@
       .hud-item { padding: 4px 8px; font-size: 10px; }
       .controls { padding: 8px; }
       .control-btn { padding: 6px 10px; font-size: 10px; }
-      .mobile-controls { bottom: 60px; right: 12px; }
+      .mobile-controls { bottom: 20px; left: 50%; transform: translateX(-50%); }
       .dpad { width: 100px; height: 100px; }
     }
   </style>
 </head>
 <body>
+  <div class="background-animation">
+    <div class="grid-lines"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="orb orb4"></div>
+    <div class="orb orb5"></div>
+  </div>
+
+  <div class="header">
+    <h1 class="game-title">Maze Runner</h1>
+  </div>
+
   <div class="hud">
-    <div class="hud-item level-indicator">
-      <span>Level:</span>
-      <span id="levelDisplay">1</span>
-    </div>
-    <div class="hud-item time-indicator">
-      <span>Time:</span>
-      <span id="timeDisplay">0.0s</span>
+    <div class="hud-controls">
+      <div class="hud-group">
+        <div class="hud-item level-indicator">
+          <span>Level:</span>
+          <span id="levelDisplay">1</span>
+        </div>
+        <div class="hud-item time-indicator">
+          <span>Time:</span>
+          <span id="timeDisplay">0.0s</span>
+        </div>
+      </div>
+      <button class="control-btn" id="resetBtn" aria-label="Reset">Reset</button>
     </div>
   </div>
 
   <canvas id="gameCanvas" aria-label="Maze Canvas" role="img"></canvas>
 
   <div class="controls">
-    <button class="control-btn" id="resetBtn" aria-label="Reset">Reset</button>
     <button class="control-btn" id="nextLevelBtn" style="display:none;">Next Level</button>
   </div>
 
@@ -310,16 +432,15 @@
   </div>
 
   <div class="start-hint" id="startHint">
-    Swipe or use the D-pad to explore the maze.<br>
-    Avoid walls and reach the glowing goal!
+    <b>Controls:</b> Use Arrow Keys, WASD, Swipe, or the D-pad to move. Reach the green goal and avoid hitting the walls.
   </div>
 
   <div class="game-over-overlay" id="gameOverOverlay" role="dialog" aria-modal="true" aria-live="polite">
     <div class="game-over-panel">
       <div id="resultTitle" class="victory-title">Level Complete!</div>
       <div class="completion-stats" id="completionStats">
-        <div>Time: <span id="finalTime">0.0s</span></div>
         <div>Level: <span id="finalLevel">1</span></div>
+        <div>Time: <span id="finalTime">0.0s</span></div>
       </div>
       <div class="instructions" id="resultInstructions">Great job! Continue to the next level.</div>
       <button class="control-btn" onclick="continueGame()" id="continueBtn" aria-label="Continue">Continue</button>
@@ -388,7 +509,30 @@
       if (navigator.vibrate) navigator.vibrate(pattern);
     }
 
+    // HUD and Hint Positioning
+    function positionControls() {
+      if (!maze) return;
+      const hud = document.querySelector('.hud');
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const mazeTopInCanvas = (H - rows * cellSize) / 2 + 60;
+      const mazeTopInCss = mazeTopInCanvas / dpr;
+      const hudHeight = hud.offsetHeight;
+      const header = document.querySelector('.header');
+      const headerHeight = header ? header.offsetHeight : 0;
+      let topPos = mazeTopInCss - hudHeight - 10;
+      if (topPos < headerHeight + 10) topPos = headerHeight + 10; // Ensure it doesn't overlap header
+      hud.style.top = `${topPos}px`;
+    }
+
     // Responsive canvas
+    function positionHint() {
+      if (!maze) return;
+      const hint = document.getElementById('startHint');
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const offsetY = (H - rows * cellSize) / 2 + 60;
+      const mazeBottomCss = (offsetY + (rows * cellSize)) / dpr;
+      hint.style.top = `${mazeBottomCss + 10}px`;
+    }
     function resizeCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       W = Math.floor(window.innerWidth * dpr);
@@ -411,6 +555,8 @@
           dot.moving = false;
         }
       }
+      positionHint();
+      positionControls();
     }
     window.addEventListener('resize', resizeCanvas, { passive: true });
     window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 100), { passive: true });
@@ -737,7 +883,6 @@
         gameStarted = true;
         running = true;
         startTime = Date.now();
-        startHint.style.display = 'none';
         initAudio();
       }
 
@@ -821,6 +966,8 @@
       nextLevelBtn.style.display = 'none';
       if (animationId) cancelAnimationFrame(animationId);
       gameLoop();
+      positionHint();
+      positionControls();
     }
 
     function continueGame() {
@@ -838,7 +985,6 @@
         gameStarted = true;
         running = true;
         startTime = Date.now();
-        startHint.style.display = 'none';
         initAudio();
       }
     });
@@ -913,7 +1059,6 @@
         gameStarted = true;
         running = true;
         startTime = Date.now();
-        startHint.style.display = 'none';
         initAudio();
       }
       const t = e.changedTouches[0];

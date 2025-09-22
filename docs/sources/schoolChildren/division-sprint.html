@@ -73,9 +73,9 @@
       display:flex;
       flex-direction:column;
       gap:16px;
-      padding:16px;
+      padding: 3vh 16px 16px;
       align-items:center;
-      justify-content:center;
+      justify-content:flex-start;
       position:relative;
       z-index:1;
     }
@@ -92,7 +92,7 @@
       align-items:center;
       gap:10px;
       font-weight:800;
-      font-size:clamp(22px,5vw,34px);
+      font-size:clamp(28px, 6vw, 42px);
       color:#0b2450;
       text-shadow:0 2px 0 rgba(255,255,255,.6);
       letter-spacing:.5px;
@@ -139,11 +139,14 @@
       gap:14px;
     }
     .hint{
-      font-size:clamp(16px,3.8vw,20px);
-      color:var(--muted);
+      font-size:clamp(15px,3.2vw,18px);
+      color:#334155;
       display:flex;
       align-items:center;
       gap:8px;
+      text-align:center;
+      justify-content:center;
+      margin-bottom: 8px;
     }
     .problem{
       display:flex;
@@ -331,6 +334,23 @@
       pointer-events:none;
     }
     .swipe-tip.show{ opacity:1; transform: translateX(0) }
+    @media (max-width: 480px) {
+      .ctrl-btn {
+        padding: 10px;
+        min-width: 50px;
+      }
+      .ctrl-btn b {
+        display: none; /* Hide text on small screens */
+      }
+      .topbar {
+        justify-content: center; /* Center the controls container */
+      }
+      .title {
+        text-align: center;
+        width: 100%; /* Ensure it centers properly */
+        justify-content: center;
+      }
+    }
     @media (prefers-reduced-motion: reduce){
       *{ animation:none!important; transition:none!important }
     }
@@ -346,14 +366,14 @@
   </div>
 
   <div class="wrap">
+    <div class="title" aria-hidden="true"><span class="logo">➗</span> Division Fun!</div>
     <div class="topbar" aria-label="Game controls">
-      <div class="title" aria-hidden="true"><span class="logo">➗</span> Division Fun!</div>
       <div class="controls">
         <button class="ctrl-btn" id="sfxBtn" aria-pressed="true" aria-label="Toggle sound effects">
           <span id="sfxIcon">🔈</span><b>Sound</b>
         </button>
         <button class="ctrl-btn" id="voiceBtn" aria-pressed="true" aria-label="Toggle voice">
-          <span id="voiceIcon">🔊</span>
+          <span id="voiceIcon">🗣️</span>
           <b>Voice</b>
         </button>
         <button class="ctrl-btn" id="repeatBtn" aria-label="Repeat question">
@@ -706,7 +726,7 @@
     voiceBtn.addEventListener('click', ()=>{
       state.voiceOn = !state.voiceOn;
       voiceBtn.setAttribute('aria-pressed', String(state.voiceOn));
-      voiceIcon.textContent = state.voiceOn ? '🔊' : '🔇';
+      voiceIcon.textContent = state.voiceOn ? '🗣️' : '🤫';
       localStorage.setItem('voiceOn', JSON.stringify(state.voiceOn));
       vibrate(20);
       Sound.click();
@@ -783,7 +803,7 @@
     // Ensure UI matches saved settings
     function syncToggles(){
       voiceBtn.setAttribute('aria-pressed', String(state.voiceOn));
-      voiceIcon.textContent = state.voiceOn ? '🔊' : '🔇';
+      voiceIcon.textContent = state.voiceOn ? '🗣️' : '🤫';
       sfxBtn.setAttribute('aria-pressed', String(state.sfxOn));
       sfxIcon.textContent = state.sfxOn ? '🔈' : '🔇';
       // Prepare audio graph (deferred until first interaction on some browsers)

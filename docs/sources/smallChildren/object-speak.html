@@ -27,37 +27,34 @@
       touch-action: manipulation;
       user-select: none;
     }
-    .hud{
+    .header{
       position:fixed;
-      top:12px;
-      left:12px;
-      right:12px;
-      display:flex;
-      justify-content:center;
-      z-index:2;
-      pointer-events:none;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      font-size: clamp(18px, 4vw, 26px);
+      font-weight: 800;
+      color: #04182B;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.6);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
-    .pill{
-      pointer-events:auto;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      padding:.6rem .9rem;
-      border-radius:999px;
-      background: var(--glass);
-      border:1px solid var(--glass-border);
-      box-shadow: 0 6px 18px rgba(0,0,0,.08);
-      font-weight:800;
-      font-size: clamp(14px, 2.6vw, 18px);
-      letter-spacing:.3px;
-      backdrop-filter: blur(8px);
+    .header .icon {
+      font-size: 1.3em;
     }
-    .pill .icon{ font-size:1.2em }
   </style>
 </head>
 <body>
-  <div class="hud">
-    <div class="pill"><span class="icon">🔊</span><span>Tap a picture to hear the word</span></div>
+  <div class="header">
+    <span class="icon">🔊</span> Tap a picture
   </div>
   <canvas id="c" aria-label="Name the Object game"></canvas>
   <script>
@@ -114,6 +111,14 @@
 
       function toNice(s){ return s.charAt(0) + s.slice(1).toLowerCase(); }
 
+      let vibrationUnlocked = false;
+      function unlockVibration() {
+        if (!vibrationUnlocked) {
+          navigator.vibrate(1);
+          vibrationUnlocked = true;
+        }
+      }
+
       // speech
       function speak(word){
         try{
@@ -143,7 +148,7 @@
           o.start(t); o.stop(t+0.2);
         }catch(e){}
       }
-      function vib(ms=18){ if('vibrate' in navigator) try{ navigator.vibrate(ms); }catch(e){} }
+      function vib(ms=18){ if(vibrationUnlocked && 'vibrate' in navigator) try{ navigator.vibrate(ms); }catch(e){} }
 
       // clouds
       const clouds=[];
@@ -196,7 +201,7 @@
 
       function layoutNewSet(){
         removingCount=0;
-        const set = nextSet(5);
+        const set = nextSet(9);
         computeLayout(set);
       }
 
@@ -206,7 +211,7 @@
         tokenR = Math.max(44, Math.min(72, Math.min(W,H)/8));
         const columns = Math.min(count, Math.max(2, Math.floor(W / (tokenR*2.4))));
         const rows = Math.ceil(count/columns);
-        const gapX = tokenR*0.8, gapY = tokenR*0.9;
+        const gapX = tokenR*0.8, gapY = tokenR*1.3;
         const totalW = columns*tokenR*2 + (columns-1)*gapX;
         const totalH = rows*tokenR*2 + (rows-1)*gapY;
         const startX = Math.max(tokenR+12, (W-totalW)/2 + tokenR);
@@ -227,60 +232,75 @@
       }
 
       function drawToken(it, t){
+        if (it.scale < 0.01) return; // Prevent drawing when too small
+
         const bob = Math.sin(t*0.0015 + it.phase)*0.8;
         const scale = it.scale;
         const r = it.r * scale;
         const cx = it.x;
         const cy = it.y + bob;
 
-        // soft shadow + base
         x.save();
-        x.globalAlpha = 0.9*scale;
-        x.shadowColor = COLORS.shadow;
-        x.shadowBlur = 12;
-        x.shadowOffsetY = 4;
-        x.fillStyle = COLORS.token1;
-        x.beginPath(); x.arc(cx, cy, r, 0, Math.PI*2); x.fill();
+        x.globalAlpha = scale;
+
+        // Stronger shadow
+        x.shadowColor = 'rgba(0,0,0,0.2)';
+        x.shadowBlur = 8 * scale;
+        x.shadowOffsetY = 3 * scale;
+        
+        // Solid, friendly base color
+        x.fillStyle = '#FFFFF0'; // Ivory color
+        x.beginPath(); 
+        x.arc(cx, cy, r, 0, Math.PI*2); 
+        x.fill();
+        
+        // Clear shadow for other elements
+        x.shadowColor = 'transparent';
+
+        // Bright, solid border
+        const pulse = (Math.sin(t*0.003 + it.phase)+1)/2;
+        x.lineWidth = Math.max(3, r*0.1);
+        x.strokeStyle = `hsl(${200 + pulse*20}, 100%, 60%)`;
+        x.beginPath(); 
+        // Ensure radius is not negative before drawing the arc
+        const arcRadius = r - x.lineWidth/2;
+        if (arcRadius > 0) {
+          x.arc(cx, cy, arcRadius, 0, Math.PI*2); 
+          x.stroke();
+        }
+
         x.restore();
 
-        // ring glow
-        const pulse = (Math.sin(t*0.003 + it.phase)+1)/2;
-        x.lineWidth = Math.max(2, r*0.08);
-        const grad = x.createRadialGradient(cx,cy,r*0.6,cx,cy,r);
-        grad.addColorStop(0, `rgba(156,209,255,${0.25*scale})`);
-        grad.addColorStop(1, `rgba(79,157,253,${0.8*scale*(0.5+0.5*pulse)})`);
-        x.strokeStyle = grad;
-        x.beginPath(); x.arc(cx, cy, r, 0, Math.PI*2); x.stroke();
-
-        // glossy inner
-        const g2 = x.createLinearGradient(cx, cy-r, cx, cy+r);
-        g2.addColorStop(0,'#ffffff'); g2.addColorStop(1,'#e9f3ff');
-        x.fillStyle = g2;
-        x.beginPath(); x.arc(cx, cy, r*0.92, 0, Math.PI*2); x.fill();
-
-        // highlight
-        x.fillStyle = 'rgba(255,255,255,0.7)';
-        x.beginPath(); x.ellipse(cx - r*0.25, cy - r*0.45, r*0.46, r*0.22, -0.6, 0, Math.PI*2); x.fill();
-
-        // emoji icon
+        // emoji icon - drawn at full opacity
         x.font = `bold ${Math.floor(r*1.05)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",system-ui,sans-serif`;
-        x.textAlign='center'; x.textBaseline='middle';
+        x.textAlign='center'; 
+        x.textBaseline='middle';
+        x.globalAlpha = scale;
         x.fillText(it.emoji, cx, cy);
+        x.globalAlpha = 1;
 
         // label
         const label = toNice(it.name);
         x.save();
-        x.globalAlpha = 0.95*scale;
-        const lh = Math.max(20, r*0.38);
-        x.font = `700 ${Math.floor(lh*0.55)}px system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, sans-serif`;
-        const lw = x.measureText(label).width + 24;
-        const ly = cy + r + lh*0.8;
+        x.globalAlpha = scale;
+        const lh = Math.max(22, r*0.4);
+        x.font = `800 ${Math.floor(lh*0.6)}px system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, sans-serif`;
+        const lw = x.measureText(label).width + lh;
+        const ly = cy + r + lh*0.7;
         const lx = cx - lw/2;
+        
+        // Label background
         roundRect(x, lx, ly-lh/2, lw, lh, lh/2);
-        x.fillStyle = 'rgba(255,255,255,0.9)'; x.fill();
-        x.lineWidth = 1; x.strokeStyle = 'rgba(79,157,253,0.6)'; x.stroke();
-        x.fillStyle = COLORS.text;
-        x.fillText(label, cx, ly+0.5);
+        x.fillStyle = 'rgba(255,255,255,1)'; 
+        x.shadowColor = 'rgba(0,0,0,0.15)';
+        x.shadowBlur = 6;
+        x.shadowOffsetY = 2;
+        x.fill();
+        x.shadowColor = 'transparent';
+
+        // Label text
+        x.fillStyle = '#04182B';
+        x.fillText(label, cx, ly+1);
         x.restore();
       }
 
@@ -304,7 +324,7 @@
         it.removing = true;
         it.targetScale = 0.001;
         removingCount++;
-        if(removingCount >= 5){
+        if(removingCount >= 9){
           celebrate();
           setTimeout(()=>layoutNewSet(), 1000);
         }
@@ -335,29 +355,21 @@
       }
 
       function drawBackground(t){
-        // sky gradient
-        const g = x.createLinearGradient(0,0,0,H);
-        g.addColorStop(0,'#c6ebff');
-        g.addColorStop(1,'#fdfcff');
-        x.fillStyle = g; x.fillRect(0,0,W,H);
-        // sun
-        const sunX = W - 100, sunY = 80, sunR = 40;
-        const sgrad = x.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunR*2.2);
-        sgrad.addColorStop(0,'rgba(255,230,120,1)'); sgrad.addColorStop(1,'rgba(255,230,120,0)');
-        x.fillStyle = sgrad; x.beginPath(); x.arc(sunX, sunY, sunR*2.2, 0, Math.PI*2); x.fill();
-        x.fillStyle = '#ffe680'; x.beginPath(); x.arc(sunX, sunY, sunR, 0, Math.PI*2); x.fill();
-        // clouds
-        x.fillStyle = 'rgba(255,255,255,0.92)';
-        for(const cl of clouds){
-          const cx = (cl.x + (t*cl.v*0.02 + cl.phase) % (W+200)) - 100;
-          const cy = cl.y;
-          x.beginPath();
-          x.arc(cx, cy, 18*cl.s, 0, Math.PI*2);
-          x.arc(cx+20*cl.s, cy+6*cl.s, 22*cl.s, 0, Math.PI*2);
-          x.arc(cx+42*cl.s, cy, 26*cl.s, 0, Math.PI*2);
-          x.arc(cx+66*cl.s, cy+8*cl.s, 20*cl.s, 0, Math.PI*2);
-          x.closePath(); x.fill();
-        }
+        const hue1 = (t * 0.01) % 360;
+        const hue2 = (hue1 + 40) % 360;
+        const color1 = `hsl(${hue1}, 90%, 85%)`;
+        const color2 = `hsl(${hue2}, 90%, 90%)`;
+
+        const centerX = W / 2 + Math.sin(t * 0.0002) * W * 0.2;
+        const centerY = H / 2 + Math.cos(t * 0.0002) * H * 0.2;
+        const maxRadius = Math.hypot(W, H) * 0.8;
+
+        const grad = x.createRadialGradient(centerX, centerY, 0, centerX, centerY, maxRadius);
+        grad.addColorStop(0, color1);
+        grad.addColorStop(1, color2);
+
+        x.fillStyle = grad;
+        x.fillRect(0,0,W,H);
       }
 
       function tick(t){
@@ -393,7 +405,6 @@
         x.setTransform(1,0,0,1,0,0);
         x.scale(dpr,dpr);
         W=w; H=h;
-        makeClouds();
         if(items.length){
           const set = items.map(it=>({name:it.name,emoji:it.emoji}));
           computeLayout(set);
@@ -407,6 +418,7 @@
 
       c.addEventListener('pointerdown', (e)=>{
         if(e.pointerType === 'mouse' && e.button !== 0) return;
+        unlockVibration(); // Unlock vibration on the first interaction
         const {mx,my} = getPos(e);
         handleTap(mx,my);
       }, {passive:true});

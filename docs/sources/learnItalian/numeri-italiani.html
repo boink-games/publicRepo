@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Italian Numbers 1–10 Trainer</title>
+<title>Italian Numbers 1-10</title>
 <meta name="theme-color" content="#0f172a">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap');
@@ -79,11 +79,14 @@
   }
   h1{
     margin:0;
-    font-size: clamp(22px, 3.5vw, 34px);
+    font-size: clamp(28px, 5vw, 48px); /* Larger font size */
+    font-weight: 900; /* Bolder font */
     letter-spacing:.2px;
     display:flex;
     align-items:center;
     gap:.5ch;
+    color:#fff; /* White */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtle shadow */
   }
   .badge{
     font-size:.65em;
@@ -125,7 +128,7 @@
     transform: translateY(-2px);
     box-shadow: 0 12px 30px rgba(0,0,0,0.15);
   }
-  .pill small{color:var(--muted); font-weight:500}
+  .pill small{color:#1a2b4c; font-weight:500} /* Dark blue */
   .btn-reset{
     appearance:none;
     border:none;
@@ -133,7 +136,8 @@
     border-radius:16px;
     padding:12px 20px;
     background:linear-gradient(135deg, #667eea, #764ba2);
-    color:#fff;
+    color:#fff; /* White */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Subtle shadow */
     font-weight:800;
     letter-spacing:.5px;
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
@@ -228,9 +232,9 @@
   }
   .subtext{
     text-align:center;
-    color:var(--muted);
+    color:#1a2b4c; /* Dark blue */
     margin-top:-8px;
-    font-size: clamp(12px, 2.4vw, 14px);
+    font-size: clamp(16px, 3vw, 20px); /* Larger font size */
   }
   .options{
     display:grid;
@@ -247,7 +251,8 @@
     width:100%;
     border:none;
     cursor:pointer;
-    color:#fff;
+    color:#fff; /* White */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Subtle shadow */
     font-weight:900;
     letter-spacing:.02em;
     font-size: clamp(18px, 2.6vw, 22px);
@@ -302,10 +307,10 @@
     letter-spacing:.04em;
   }
   .option.correct{
-    background: linear-gradient(135deg, #2ee59d, #20b86b);
-    color:#062114;
-    box-shadow: 0 10px 30px rgba(20,200,120,.35), inset 0 1px 0 rgba(255,255,255,.35);
-    animation: pop .35s ease;
+    background: #4CAF50; /* Solid vibrant green */
+    color:#fff; /* White text for contrast */
+    box-shadow: 0 10px 30px rgba(76, 175, 80, 0.5), inset 0 1px 0 rgba(255,255,255,.35); /* Adjusted shadow color */
+    animation: pop .4s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Slightly longer and more bouncy pop */
   }
   .option.wrong{
     background: linear-gradient(135deg, #ff7b7b, #ff4d4d);
@@ -333,8 +338,16 @@
     font-weight:600;
     letter-spacing:.2px;
   }
-  .feedback.good{color:#8af0b4}
-  .feedback.bad{color:#ffb3b3}
+  .feedback.good{
+    color:#22c55e; /* Green text */
+    font-size: clamp(18px, 4vw, 28px); /* Larger font size */
+    font-weight: 900; /* Bolder */
+  }
+  .feedback.bad{
+    color:#ef4444; /* Red text */
+    font-size: clamp(18px, 4vw, 28px); /* Larger font size */
+    font-weight: 900; /* Bolder */
+  }
   .instructions{
     background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
     border:1px solid #22304b;
@@ -345,33 +358,33 @@
   .instructions h2{
     margin:0 0 6px 0;
     font-size: clamp(16px, 2.6vw, 18px);
-    color:#e9f1ff;
+    color:#1a2b4c; /* Dark blue */
   }
   .instructions ul{
     margin:6px 0 0 18px;
     padding:0;
-    color:#c7d7f7;
+    color:#1a2b4c; /* Dark blue */
     line-height:1.45;
     font-size: clamp(13px, 2.6vw, 15px);
   }
   .foot{
     margin-top:6px;
     font-size:12px;
-    color:#90a7cf;
-    text-align:center;
+    color:#1a2b4c; /* Dark blue */
+    text-align:justify;
   }
 </style>
 </head>
 <body>
 <div class="app" role="application" aria-label="Italian Numbers Game">
   <header>
-    <h1>Italian Numbers <span class="badge">1–10</span></h1>
+    <h1>Italian Numbers <span class="badge">1-10</span></h1>
     <div class="scoreboard" aria-live="polite">
       <div class="pill"><small>Score</small> <span id="score">0</span></div>
       <div class="pill"><small>Streak</small> <span id="streak">0</span></div>
       <div class="pill"><small>Best</small> <span id="best">0</span></div>
-      <button id="resetBtn" class="btn-reset" type="button" aria-label="Reset score and streak">Reset</button>
     </div>
+    <button id="resetBtn" class="btn-reset" type="button" aria-label="Reset score and streak">Reset</button>
   </header>
 
   <main>
@@ -396,7 +409,7 @@
         <li>Keyboard: press 1, 2, or 3 to choose an answer.</li>
         <li>A new number appears after each correct answer. Try to build a streak!</li>
       </ul>
-      <div class="foot">Tip: Wrong answers don't reduce your score—keep trying until you get it right.</div>
+      <div class="foot"><strong>Tip</strong>: Wrong answers don\'t reduce your score—keep trying until you get it right.</div>
     </section>
   </main>
 </div>

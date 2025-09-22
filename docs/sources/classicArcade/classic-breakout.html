@@ -3,8 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Neon Breakout</title>
+<title>Classic Breakout</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
   :root {
     --bg1: #06060a;
     --bg2: #0b0b14;
@@ -44,18 +55,22 @@
     max-width: min(92vw, 820px);
     padding: clamp(16px, 3.5vmin, 28px);
     border-radius: 16px;
-    background: linear-gradient(180deg, rgba(15,18,26,0.86), rgba(10,12,18,0.86));
-    border: 1px solid rgba(0,229,255,0.2);
-    box-shadow: 0 10px 60px rgba(0,229,255,0.12), 0 0 0 1px rgba(255,255,255,0.03) inset;
+    background: linear-gradient(180deg, rgba(15,18,26,0.92), rgba(10,12,18,0.92)); /* Slightly more opaque */
+    border: 2px solid rgba(0, 229, 255, 0.4);
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.3), 0 0 50px rgba(255, 46, 196, 0.2), 0 0 0 1px rgba(255,255,255,0.05) inset;
     text-align: center;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px); /* Increased blur */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeInScale 0.5s ease-out forwards;
   }
   .title {
     font-weight: 800;
     font-size: clamp(28px, 6.2vmin, 56px);
     letter-spacing: 0.02em;
     color: #eaffff;
-    text-shadow: 0 0 10px rgba(0,229,255,0.5), 0 0 30px rgba(255,46,196,0.25);
+    text-shadow: 0 0 12px rgba(0, 229, 255, 0.7), 0 0 40px rgba(255, 46, 196, 0.4);
     margin-bottom: 0.2em;
   }
   .subtitle {
@@ -63,17 +78,76 @@
     opacity: 0.9;
     margin-bottom: 0.8em;
   }
-  .instructions {
+  .instructions { display: none; }
+  .instructions-container {
+    display: flex;
+    gap: clamp(16px, 4vmin, 40px);
+    width: 100%;
+    justify-content: center;
+    margin: 1em 0;
+    border-top: 1px solid rgba(0,229,255,0.15);
+    border-bottom: 1px solid rgba(0,229,255,0.15);
+    padding: 1.2em 0;
+  }
+  .instructions-column {
     text-align: left;
-    margin: 0 auto 1em auto;
-    line-height: 1.5;
+  }
+  .instructions-column h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: clamp(16px, 3vmin, 20px);
+    margin: 0 0 0.5em 0;
+    color: var(--neon-cyan);
+  }
+  .instructions-column h3 svg {
+    width: clamp(18px, 3.2vmin, 22px);
+    height: clamp(18px, 3.2vmin, 22px);
+    stroke-width: 2.5;
+  }
+  .instructions-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     font-size: clamp(13px, 2.5vmin, 16px);
     color: #d7f9ff;
+    line-height: 1.6;
+  }
+  .instructions-column ul strong {
+    color: #fff;
+    font-weight: 600;
+  }
+  .powerups-section {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1em;
+  }
+  .powerups-section h3 {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: clamp(16px, 3vmin, 20px);
+    margin: 0 0 0.5em 0;
+    color: var(--neon-magenta);
+  }
+  .powerups-section h3 svg {
+    width: clamp(18px, 3.2vmin, 22px);
+    height: clamp(18px, 3.2vmin, 22px);
+  }
+  .powerup-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: clamp(13px, 2.5vmin, 16px);
+  }
+  .powerup-list strong {
+    color: #fff;
+    font-weight: 600;
   }
   .btn {
     display: inline-block;
     margin-top: 0.6em;
-    padding: 12px 22px;
+    padding: 14px 28px;
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -83,7 +157,7 @@
     box-shadow: 0 8px 30px rgba(0,229,255,0.35), 0 0 0 1px rgba(255,255,255,0.08) inset;
     border: none;
     cursor: pointer;
-    font-size: clamp(14px, 2.5vmin, 16px);
+    font-size: clamp(16px, 3vmin, 18px);
   }
   .btn:active { transform: translateY(1px); }
   .hidden { display: none; }
@@ -91,8 +165,9 @@
     position: fixed;
     left: 0; right: 0; top: 0;
     display: flex;
-    padding: env(safe-area-inset-top) clamp(10px, 2.6vmin, 18px) 8px;
-    justify-content: space-between;
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the left */
+    padding: env(safe-area-inset-top) clamp(10px, 2.6vmin, 18px) clamp(10px, 3vmin, 20px); /* Adjusted padding */
     gap: 10px;
     pointer-events: none;
     user-select: none;
@@ -100,6 +175,50 @@
     font-variant-numeric: tabular-nums;
     color: #e9feff;
     text-shadow: 0 0 12px rgba(0,229,255,0.6), 0 0 28px rgba(255,46,196,0.25);
+  }
+  .hud-title {
+    /* Removed width and text-align center */
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(28px, 6vmin, 48px); /* Made it even bigger */
+    font-weight: 900; /* Using the boldest weight */
+    letter-spacing: 0.1em; /* Added more letter spacing */
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 15px rgba(0,229,255,0.4), 0 0 35px rgba(255,46,196,0.2);
+    margin-bottom: 15px; /* Increased margin to push stats down */
+    padding-top: 10px; /* Added padding to push everything down */
+    pointer-events: none;
+    white-space: nowrap; /* Ensures title stays on one line */
+  }
+  #closeBtn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: clamp(28px, 5vmin, 40px);
+    height: clamp(28px, 5vmin, 40px);
+    background: rgba(10,14,22,0.6);
+    border: 1px solid rgba(0,229,255,0.18);
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: clamp(16px, 3vmin, 22px);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: all 0.2s ease;
+  }
+  #closeBtn:hover {
+    background: rgba(0,229,255,0.2);
+    box-shadow: 0 0 15px rgba(0,229,255,0.5);
+  }
+  .hud-stats {
+    display: flex;
+    justify-content: flex-start; /* Align stats to the left */
+    gap: 20px; /* Add space between stats */
   }
   .hud .item {
     background: rgba(10,14,22,0.6);
@@ -128,18 +247,36 @@
 
 <div class="overlay" id="menuOverlay">
   <div class="panel">
-    <div class="title">Neon Breakout</div>
-    <div class="subtitle">Bounce the ball, smash the neon bricks, catch power-ups.</div>
-    <div class="instructions">
-      How to play:
-      <ul>
-        <li>Desktop: Move with mouse or arrow/A-D keys. Press Space to launch. P to pause.</li>
-        <li>Mobile: Drag your finger left/right anywhere. Tap to launch.</li>
-        <li>Catch power-ups: Widen Paddle (W) and Multi-Ball (M).</li>
-        <li>Don't let all balls fall! You have limited lives.</li>
-      </ul>
+    <div class="title">Classic Breakout</div>
+    <div class="subtitle">Smash all the neon bricks to advance to the next level.</div>
+
+    <div class="instructions-container">
+        <div class="instructions-column">
+            <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="6" y1="8" x2="6" y2="8"></line><line x1="10" y1="8" x2="10" y2="8"></line><line x1="14" y1="8" x2="14" y2="8"></line><line x1="18" y1="8" x2="18" y2="8"></line><line x1="6" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="10" y2="12"></line><line x1="14" y1="12" x2="14" y2="12"></line><line x1="18" y1="12" x2="18" y2="12"></line><line x1="8" y1="16" x2="16" y2="16"></line></svg> Desktop</h3>
+            <ul>
+                <li><strong>Move:</strong> Mouse or A/D Keys</li>
+                <li><strong>Launch Ball:</strong> Spacebar</li>
+                <li><strong>Pause:</strong> P Key</li>
+            </ul>
+        </div>
+        <div class="instructions-column">
+            <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18v-5.5a2.5 2.5 0 0 1 5 0V18"></path><path d="M3 18h4"></path><path d="M12 18h5"></path><path d="M14 13.5a2.5 2.5 0 1 1 5 0V18"></path><path d="M17 18h2.5a2.5 2.5 0 0 0 0-5V12a2.5 2.5 0 0 0-5 0v1.5"></path></svg> Mobile</h3>
+            <ul>
+                <li><strong>Move:</strong> Drag Finger</li>
+                <li><strong>Launch Ball:</strong> Tap Screen</li>
+            </ul>
+        </div>
     </div>
-    <button class="btn" id="startBtn">Tap / Click or Press Space to Start</button>
+
+    <div class="powerups-section">
+        <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Power-ups</h3>
+        <div class="powerup-list">
+            <span><strong>W:</strong> Widen Paddle</span>
+            <span><strong>M:</strong> Multi-Ball</span>
+        </div>
+    </div>
+
+    <button class="btn" id="startBtn">Start Game</button>
   </div>
 </div>
 
@@ -152,9 +289,13 @@
 </div>
 
 <div class="hud" id="hud">
-  <div class="item" id="scoreHud">Score: 0</div>
-  <div class="item" id="livesHud">Lives: 3</div>
-  <div class="item" id="levelHud">Level: 1</div>
+  <a href="/docs/index.html" id="closeBtn">&times;</a>
+  <div class="hud-title">Classic Breakout</div>
+  <div class="hud-stats">
+    <div class="item" id="scoreHud">Score: 0</div>
+    <div class="item" id="livesHud">Lives: 3</div>
+    <div class="item" id="levelHud">Level: 1</div>
+  </div>
 </div>
 
 <div class="hint" id="hint">Drag to move • Tap/Space to launch • P to Pause</div>
@@ -253,7 +394,7 @@
     cols = clamp(Math.floor(W/(90*DPR)), 6, 12);
     rows = clamp(5 + Math.floor(level/2), 5, 9);
     brickMargin = clamp(W/cols*0.1, 6*DPR, 18*DPR);
-    brickTopOffset = clamp(H*0.09, 60*DPR, 120*DPR);
+    brickTopOffset = clamp(H*0.2, 120*DPR, 240*DPR); // Increased top offset
     brickH = clamp(H*0.025, 18*DPR, 28*DPR);
   }
 

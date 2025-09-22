@@ -17,8 +17,49 @@
     html,body{height:100%;margin:0;overflow:hidden;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,Ubuntu,Cantarell,Arial;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
     *{box-sizing:border-box}
     canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-user-select:none;user-select:none}
-    .hud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;right:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none;z-index:5}
-    .hud-left,.hud-right{display:flex;gap:8px;align-items:center}
+        .hud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;right:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none;z-index:5}
+        .hud-left{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;width:100%;gap:8px}
+    .hud-group{display:flex;gap:8px;align-items:center}
+
+    @media (max-width: 768px) {
+      .hud-left {
+        justify-content: center;
+      }
+      .hud-group {
+        margin-bottom: 8px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hud {
+        flex-direction: column;
+      }
+      .hud-left, .hud-right {
+        justify-content: center;
+        width: 100%;
+      }
+      .hud-left {
+        margin-bottom: 8px;
+      }
+    }
+    .hud-group{display:flex;gap:8px}
+    @media (max-width: 600px) {
+      .hud-left {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .hud-group {
+        margin-bottom: 8px;
+      }
+      .pill {
+        padding: 4px 10px;
+        font-size: 12px;
+      }
+      .btn {
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+    }
     .pill{background:rgba(12,20,40,.55);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:6px 12px;font-weight:800;font-size:14px;backdrop-filter:blur(6px);box-shadow:var(--shadow);pointer-events:auto;letter-spacing:.2px;white-space:nowrap}
     .pill[data-accent]{border-color:rgba(126,203,255,.35)}
     .pill small{opacity:.8;font-weight:700}
@@ -30,12 +71,19 @@
     .overlay.show{display:flex}
     .panel{width:min(680px, 94vw);background:rgba(11,20,48,.75);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px 16px 16px;backdrop-filter:blur(10px);box-shadow:var(--shadow);text-align:center}
     .panel h1{margin:6px 0 4px;font-size:30px;letter-spacing:.5px;color:#dff5ff}
+    .panel hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+      margin: 15px 0;
+    }
     .panel h2{margin:6px 0 0;font-size:24px}
-    .panel p{margin:6px 0 10px;color:var(--muted)}
+    .panel p{margin:6px 0 10px;color:var(--muted);text-align:justify}
+    .panel p.center { text-align: center; }
     .panel .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
     .panel .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
     .kbd{display:inline-block;border:1px solid rgba(255,255,255,.15);border-bottom-width:3px;border-radius:8px;padding:4px 8px;margin:2px;background:rgba(255,255,255,.06);font-weight:800}
-    .list{margin:8px auto 0;max-width:62ch;text-align:left;font-size:14px;color:#c9d6ff}
+    .list{margin:8px auto 0;max-width:62ch;text-align:justify;font-size:14px;color:#c9d6ff}
     .list li{margin:6px 0}
     .badge{display:inline-block;padding:3px 8px;border-radius:999px;background:rgba(126,203,255,.15);border:1px solid rgba(126,203,255,.35);font-weight:800;color:#d7f9ff}
     @media (min-width:600px){
@@ -48,21 +96,28 @@
     .glow{box-shadow:0 0 0 0 rgba(126,203,255,.45);animation:glow 2.2s ease-out infinite}
     @keyframes glow{from{box-shadow:0 0 0 0 rgba(126,203,255,.45)}to{box-shadow:0 0 0 16px rgba(126,203,255,0)}}
     .hidden{display:none}
+    #btnHUDMute {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
   <div class="hud" aria-hidden="false">
     <div class="hud-left">
-      <div class="pill" id="scorePill" data-accent>Score: <span id="score">0</span></div>
-      <div class="pill">Best: <span id="best">0</span></div>
-      <div class="pill" id="livesPill"><span id="lives">❤❤❤</span></div>
-      <div class="pill">Lv <span id="level">1</span></div>
-      <div class="pill hidden" id="comboPill">Combo x<span id="comboVal">1</span></div>
-      <div class="pill" id="windPill">Wind: <span id="windVal">0</span></div>
-    </div>
-    <div class="hud-right">
-      <button class="btn glow" id="btnPause" aria-label="Pause (P)">Pause</button>
-      <button class="btn" id="btnHUDMute" aria-pressed="false" aria-label="Sound">🔈</button>
+      <div class="hud-group">
+        <div class="pill" id="scorePill" data-accent>Score: <span id="score">0</span></div>
+        <div class="pill">Best: <span id="best">0</span></div>
+        <div class="pill" id="livesPill"><span id="lives">❤❤❤</span></div>
+        <div class="pill">Lv <span id="level">1</span></div>
+      </div>
+      <div class="hud-group">
+        <div class="pill hidden" id="comboPill">Combo x<span id="comboVal">1</span></div>
+        <div class="pill" id="windPill">Wind: <span id="windVal">0</span></div>
+        <button class="btn glow" id="btnPause" aria-label="Pause (P)">Pause</button>
+        <button class="btn" id="btnHUDMute" aria-pressed="false" aria-label="Sound">🔈</button>
+      </div>
     </div>
   </div>
 
@@ -72,15 +127,10 @@
 
   <div class="overlay show" id="ovStart" aria-modal="true" role="dialog">
     <div class="panel">
-      <h1>Archery & Target+ Nature</h1>
+      <h1>Archery Challenge</h1>
+      <hr>
       <p>More realistic experience: wooden target, wind, bonus birds, power‑ups and challenges. Designed for 10–15 minute sessions.</p>
-      <div class="row">
-        <span class="badge">Dynamic Wind</span>
-        <span class="badge">Realistic Target</span>
-        <span class="badge">Bonus Birds</span>
-        <span class="badge">Responsive + Touch</span>
-        <span class="badge">Combos & Power‑ups</span>
-      </div>
+      
       <ul class="list">
         <li>Hold/swipe left to draw, release to shoot. Watch the guide trajectory.</li>
         <li>Up/Down arrows for fine aim. Space/Enter to draw/release.</li>
@@ -92,7 +142,7 @@
         <button id="btnStart" class="btn" style="font-size:18px">Play</button>
         <button id="btnMute" class="btn" aria-pressed="false">🔈 Sound</button>
       </div>
-      <p class="blink" style="margin-top:10px;color:#cfe0ff">Press Play to start</p>
+      <p class="blink center" style="margin-top:10px;color:#cfe0ff">Press Play to start</p>
     </div>
   </div>
 
@@ -1244,23 +1294,8 @@
       cx.globalAlpha = 1;
 
       // UI effect timers bars
-      const bars = [];
-      if (Game.effects.slow>0) bars.push({name:'Slow', v:Game.effects.slow/7, col:'#7ecbff'});
-      if (Game.effects.bigTarget>0) bars.push({name:'Big', v:Game.effects.bigTarget/7, col:'#ffd166'});
-      if (Game.effects.double>0) bars.push({name:'x2', v:Game.effects.double/10, col:'#8cff9a'});
-      if (bars.length){
-        const bx = 12, by = Math.max(54, (parseFloat(getComputedStyle(document.querySelector('.hud')).top) || 10) + 48);
-        bars.forEach((b, i)=>{
-          const w = 86, h = 6, gap = 10;
-          cx.fillStyle='rgba(255,255,255,.15)';
-          cx.fillRect(bx, by + i*(h+gap), w, h);
-          cx.fillStyle = b.col;
-          cx.fillRect(bx, by + i*(h+gap), Math.max(0, b.v*w), h);
-          cx.fillStyle='#dfe9ff';
-          cx.font='bold 10px system-ui'; cx.textAlign='left'; cx.textBaseline='bottom';
-          cx.fillText(b.name, bx, by + i*(h+gap) - 2);
-        });
-      }
+      
+      const controlsGroup = document.getElementById('hud-controls-group');
 
       // Wind indicator flag
       const wx = 10, wy = H - 60;

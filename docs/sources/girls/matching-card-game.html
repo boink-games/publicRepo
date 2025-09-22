@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Match Friends - Kid Friendly Memory Game</title>
+<title>Matching Card</title>
 <style>
   :root{
     --bg1:#fef6ff;
@@ -23,7 +23,9 @@
     margin:0;
     font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
     color:#2c2c2c;
-    background: radial-gradient(100% 100% at 100% 0%, var(--bg1) 0%, var(--bg2) 100%);
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpath id='star' d='M50 0L61.8 38.2L100 38.2L69.1 61.8L80.9 100L50 76.4L19.1 100L30.9 61.8L0 38.2L38.2 38.2Z'/%3E%3C/defs%3E%3Cg opacity='0.6'%3E%3Cuse href='%23star' x='10' y='10' transform='scale(0.15)' fill='%23FFD700'/%3E%3Cuse href='%23star' x='40' y='50' transform='scale(0.1)' fill='%23FF69B4'/%3E%3Cuse href='%23star' x='70' y='20' transform='scale(0.12)' fill='%2387CEEB'/%3E%3Cuse href='%23star' x='20' y='80' transform='scale(0.08)' fill='%2398FB98'/%3E%3Cuse href='%23star' x='80' y='80' transform='scale(0.13)' fill='%23FFA07A'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 100px 100px; /* Adjust size as needed */
+    background-color: #fef6ff; /* Fallback color */
     overflow-x:hidden;
   }
   .wrap{
@@ -32,9 +34,8 @@
     max-width:800px;
     min-height:100%;
     display:flex;
-    flex-direction:column;
-    gap:12px;
-  }
+            flex-direction:column;
+            gap:30px;  }
   .topbar{
     display:flex;
     align-items:center;
@@ -63,6 +64,14 @@
   @keyframes floaty{
     0%,100%{ transform: translateY(0) }
     50%{ transform: translateY(-6px) }
+  }
+  #gameTitle {
+    font-size: clamp(40px, 9vw, 60px); /* Increased size */
+    font-weight: bold;
+    color: #6A5ACD; /* Slate Blue (purple shade) */
+    text-align: center;
+    font-family: "Cooper Black", sans-serif;
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
   }
   .controls{
     display:flex;
@@ -108,7 +117,8 @@
   }
 
   .hint{
-    margin:2px 2px 6px;
+    margin:20px auto 20px;
+    text-align: left;
     font-size:clamp(14px, 3.5vw, 16px);
     color:#5b5b5b;
   }
@@ -116,7 +126,7 @@
   .grid{
     display:grid;
     gap:12px;
-    grid-template-columns: repeat(auto-fit, minmax(clamp(76px, 22vw, 120px), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(clamp(60px, 18vw, 100px), 1fr));
     justify-items:stretch;
     align-items:stretch;
   }
@@ -149,7 +159,7 @@
   .face.back{
     background:
       radial-gradient(circle at 25% 25%, rgba(255,255,255,.45) 0 30%, transparent 31%) 0 0/22px 22px,
-      linear-gradient(135deg, #80deea, #4fc3f7);
+      linear-gradient(135deg, #8A2BE2, #9370DB); /* Purple gradient with pattern */
     color:#fff;
     transform: rotateY(0deg);
   }
@@ -239,7 +249,7 @@
 <body>
   <div class="wrap">
     <header class="topbar" role="banner">
-      <h1 class="title"><span class="bubble" aria-hidden="true">🎈</span> Match Friends</h1>
+      <h1 id="gameTitle">Matching card</h1>
       <div class="controls">
         <div class="status" aria-live="polite" aria-atomic="true">Pairs: <span id="pairs">0</span>/8</div>
         <button id="restart" class="btn round" title="Restart" aria-label="Restart game">🔄</button>

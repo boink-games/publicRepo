@@ -42,9 +42,9 @@
     filter: blur(1px);
     animation: float 18s linear infinite;
   }
-  .bubble.b1{ top:10%; left:-60px; animation-duration:22s}
-  .bubble.b2{ top:70%; left:10%; width:160px; height:160px; animation-duration:26s}
-  .bubble.b3{ top:30%; right:-80px; width:180px; height:180px; animation-duration:20s}
+  .bubble.b1{ top:5%; left:-60px; animation-duration:22s}
+  .bubble.b2{ top:15%; left:40%; width:160px; height:160px; animation-duration:26s}
+  .bubble.b3{ top:10%; right:-80px; width:180px; height:180px; animation-duration:20s}
   @keyframes float{
     from{ transform: translateY(20px) translateX(0)}
     50%{ transform: translateY(-10px) translateX(10px)}
@@ -89,7 +89,7 @@
   .scores .sunC{ color:#ffd34d}
   .scores .moonC{ color:#a7c9ff}
   .controls{
-    display:flex; gap:8px; justify-content:center;
+    display:flex; gap:8px; justify-content:space-between;
   }
   .btn{
     appearance:none; border:0; cursor:pointer; border-radius:14px;
@@ -102,7 +102,6 @@
     font-size:clamp(14px, 2.8vmin, 18px);
   }
   .btn:active{ transform: scale(.97)}
-  .btn.secondary{ background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03))}
   .btn .ico{ font-size:1.2em }
   .board{
     width:100%;

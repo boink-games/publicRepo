@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#b5fffc" />
   <title>Math Sprint 🌈</title>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Bangers&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg1:#FFDEE9; --bg2:#B5FFFC; --bg3:#FEC4FF; --bg4:#B2F7EF;
@@ -40,12 +40,14 @@
     @media (prefers-reduced-motion: reduce){
       body{ animation: none; }
     }
-    .wrap{ width:min(760px, 96vw); display:flex; flex-direction:column; align-items:center; gap: clamp(12px, 2.5vw, 24px); }
+    .wrap{ width:min(760px, 96vw); display:flex; flex-direction:column; align-items:center; justify-content:center; gap: clamp(12px, 2.5vw, 24px); position: relative; z-index: 1; min-height: 100%; }
     .title{
       margin:0;
-      font-size: clamp(26px, 7vw, 48px);
+      font-family: "Bangers", cursive;
+      font-size: clamp(32px, 8vw, 56px);
+      letter-spacing: 2px;
       text-align:center;
-      color:#0b1324;
+      color: #0b1324;
       text-shadow: 0 2px 0 rgba(255,255,255,.6);
       display:flex; align-items:center; justify-content:center; gap:.4em;
     }
@@ -69,8 +71,14 @@
       cursor: pointer;
     }
     .ghost-btn:active{ transform: translateY(1px); }
-    .ghost-btn[aria-pressed="false"] .off{ display:none; }
-    .ghost-btn[aria-pressed="true"] .on{ display:none; }
+    .ghost-btn[aria-pressed="true"] .off{ display:none; }
+    .ghost-btn[aria-pressed="false"] .on{ display:none; }
+    .top-left-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+    }
 
     .card{
       width:100%;
@@ -120,13 +128,17 @@
 
     .expr{
       font-weight:800;
-      font-size: clamp(36px, 12vw, 76px);
+      font-size: clamp(42px, 14vw, 88px); /* Increased font size */
       letter-spacing: 1.5px;
       text-align:center;
-      color:#111827;
-      line-height:1.05;
+      color:#0b1324; /* Darker color for more contrast */
+      line-height:1.1;
       display:flex; align-items:center; justify-content:center; gap:.35em; flex-wrap:wrap;
-      text-shadow: 0 2px 0 rgba(255,255,255,.7);
+      text-shadow: none; /* Remove old shadow */
+      background: rgba(255,255,255,0.5); /* Add background */
+      border-radius: 18px; /* Add border-radius */
+      padding: clamp(10px, 2vw, 20px); /* Add padding */
+      box-shadow: inset 0 -2px 4px rgba(0,0,0,0.05); /* Add subtle inset shadow */
     }
     .expr .qmark{ color:var(--accent); filter: drop-shadow(0 2px 0 rgba(255,255,255,.7)); }
     .expr.correct{ animation: bounce 600ms ease; color: #065f46; }
@@ -234,6 +246,7 @@
       background: linear-gradient(90deg, rgba(255,255,255,.9), rgba(255,255,255,.75));
       border-radius: 14px;
       border: 2px solid rgba(255,255,255,.9);
+      width: 100%;
     }
     .stat{ display:flex; align-items:center; gap:.35em; font-weight:800; }
     .stat.good{ color:#065f46; }
@@ -241,7 +254,6 @@
     .stat.time{ color:#1e3a8a; }
 
     .bar{
-      flex:1 1 100%;
       width:100%;
       height: 18px;
       border-radius: 999px;
@@ -318,19 +330,44 @@
       clip: rect(0,0,0,0);
       white-space: nowrap; border:0;
     }
+    .math-symbols {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .math-symbol {
+      position: absolute;
+      color: rgba(0, 0, 0, 0.08);
+      font-size: clamp(20px, 5vw, 40px);
+      animation: float-symbol 25s linear infinite;
+      user-select: none;
+    }
+    @keyframes float-symbol {
+      from {
+        transform: translateY(100vh) rotate(0deg);
+      }
+      to {
+        transform: translateY(-10vh) rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="math-symbols" aria-hidden="true"></div>
   <div id="confetti" aria-hidden="true"></div>
 
   <div class="wrap">
+    <button class="ghost-btn top-left-btn" id="soundToggle" type="button" aria-pressed="true" aria-label="Toggle sound">
+      <span class="on">🔊</span><span class="off">🔇</span> Sound <span class="state">(On)</span>
+    </button>
     <h1 class="title"><span class="sparkle">✨</span> Math Sprint <span class="sparkle">🚀</span></h1>
 
     <div class="toolbar" role="toolbar" aria-label="Game controls">
       <div style="flex:1"></div>
-      <button class="ghost-btn" id="soundToggle" type="button" aria-pressed="true" aria-label="Toggle sound">
-        <span class="on">🔊</span><span class="off">🔈</span> Sound
-      </button>
     </div>
 
     <div class="card" id="card">
@@ -683,6 +720,10 @@
       soundToggle.addEventListener('click', ()=>{
         sfx.enabled = !sfx.enabled;
         soundToggle.setAttribute('aria-pressed', String(sfx.enabled));
+        const stateEl = soundToggle.querySelector('.state');
+        if (stateEl) {
+          stateEl.textContent = sfx.enabled ? '(On)' : '(Off)';
+        }
         sfx.click();
       });
 
@@ -697,6 +738,26 @@
 
       // Init
       resetGame();
+
+      // Generate background symbols
+      (function createBgSymbols() {
+        const container = document.querySelector('.math-symbols');
+        if (!container) return;
+        const symbols = ['+', '−', '×', '÷'];
+        const count = 20;
+        for (let i = 0; i < count; i++) {
+          const span = document.createElement('span');
+          span.className = 'math-symbol';
+          span.textContent = symbols[i % symbols.length];
+          span.style.left = `${Math.random() * 100}vw`;
+          span.style.top = `${Math.random() * 100}vh`;
+          span.style.fontSize = `${1 + Math.random() * 1.5}rem`;
+          span.style.opacity = `${0.1 + Math.random() * 0.2}`;
+          span.style.animationDuration = `${15 + Math.random() * 20}s`;
+          span.style.animationDelay = `${Math.random() * -25}s`;
+          container.appendChild(span);
+        }
+      })();
     })();
   </script>
 </body>

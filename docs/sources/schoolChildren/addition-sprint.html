@@ -16,7 +16,7 @@
       --btn:#ffffff; --shadow:0 10px 30px rgba(0,0,0,.15);
       --focus:#fb923c;
       --ring:0 0 0 4px rgba(251,146,60,.35);
-      --btn-size:92px;
+      --btn-size:100px;
     }
     *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
     html,body{height:100%;margin:0}
@@ -35,9 +35,9 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:center;
-      padding:18px;
-      gap:18px;
+      justify-content:flex-start; /* Align items to the top */
+      padding:60px 18px 18px 18px; /* Further increased top padding */
+      gap:8px; /* Reduced gap */
       position:relative;
     }
 
@@ -47,6 +47,7 @@
       color:#0b1533; text-shadow:0 2px 0 rgba(255,255,255,.7);
       user-select:none;
       letter-spacing:.3px;
+      margin-top: 20px; /* Added margin to push title down */
     }
     .mascot{
       font-size:1.4em; filter:drop-shadow(0 6px 6px rgba(0,0,0,.15));
@@ -58,15 +59,18 @@
     }
 
     .card{
-      width:min(720px, 96vw);
+      width:min(900px, 96vw); /* Increased width */
+      min-height: 350px; /* Further reduced min-height */
       background:var(--card);
-      border-radius:24px;
+      border-radius:12px; /* Reduced border-radius */
       box-shadow:var(--shadow);
-      padding:18px 16px 20px;
+      padding:18px 16px 68px; /* Adjusted bottom padding to match top spacing */
       position:relative;
       overflow:hidden;
       backdrop-filter:saturate(1.2) blur(.5px);
       isolation:isolate;
+      margin-top: auto; /* Push card down */
+      margin-bottom: auto; /* Pull card up */
     }
     .card::after{
       content:"";
@@ -80,6 +84,12 @@
     .topbar{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       margin-bottom:8px;
+    }
+
+    .separator{
+      height:1px;
+      background-color:#e2e8f0; /* Light gray line */
+      margin:10px 0; /* Some vertical spacing */
     }
 
     .streak{
@@ -96,7 +106,7 @@
     @keyframes pop{ 0%{ transform:scale(.3) rotate(-15deg) } 70%{ transform:scale(1.2) } 100%{ transform:scale(1) } }
 
     .meter{
-      height:8px; width:92px; background:#e2e8f0; border-radius:9999px; overflow:hidden; box-shadow:inset 0 1px 1px rgba(0,0,0,.08);
+      height:8px; width:180px; background:#e2e8f0; border-radius:9999px; overflow:hidden; box-shadow:inset 0 1px 1px rgba(0,0,0,.08);
     }
     .meter .fill{
       height:100%; width:0%; background:linear-gradient(90deg, #34d399, #60a5fa);
@@ -120,15 +130,24 @@
     .iconbtn:focus-visible{ outline:none; box-shadow:var(--ring) }
     .iconbtn .emoji{ font-size:20px }
 
+    .iconbtn-small{
+      padding:6px 8px; /* Smaller padding */
+      border-radius:12px; /* Slightly smaller border-radius */
+    }
+    .iconbtn-small .emoji{
+      font-size:16px; /* Smaller emoji font size */
+    }
+
     .expression{
       display:flex; flex-direction:column; align-items:center; justify-content:center;
-      margin:6px auto 10px;
+      margin:60px auto 10px; /* Increased top margin to push content down */
       text-align:center; user-select:none;
     }
     .prompt{
       font-size:clamp(20px, 4.2vw, 24px);
       color:var(--sub);
       margin-bottom:4px;
+      text-align: center; /* Explicitly center text */
     }
     .big{
       font-size:clamp(44px, 12vw, 84px);
@@ -137,11 +156,13 @@
       -webkit-background-clip:text; background-clip:text; color:transparent;
       text-shadow:0 2px 0 rgba(255,255,255,.5);
       padding:4px 10px; border-radius:12px;
+      width: 100%; /* Ensure it takes full width */
+      text-align: center; /* Explicitly center text */
     }
     .big.touchhint{ box-shadow:0 0 0 6px rgba(14,165,233,.18) }
 
     .opts{
-      margin-top:10px;
+      margin-top:40px; /* Adjusted margin-top to raise options */
       display:grid;
       grid-template-columns:repeat(2, minmax(130px, 1fr));
       gap:12px;
@@ -151,10 +172,13 @@
       .opts{ grid-template-columns:repeat(4, 1fr) }
     }
     .btn{
-      appearance:none; border:none; border-radius:18px;
+      appearance:none; border:2px solid var(--accent2); /* Added border */
+      border-radius:9999px; /* More rounded */
       background:linear-gradient(180deg,#ffffff,#f1f5f9);
-      padding:14px 12px; min-height:var(--btn-size);
-      font-size:clamp(28px, 8vw, 40px); font-weight:900; color:#0b1533;
+      padding:18px 16px; /* Increased padding */
+      min-height:var(--btn-size);
+      font-size:clamp(32px, 9vw, 44px); /* Increased font size */
+      font-weight:900; color:#0b1533;
       box-shadow:0 8px 18px rgba(0,0,0,.12), inset 0 2px 0 rgba(255,255,255,.9);
       cursor:pointer; transition:transform .06s ease, box-shadow .18s ease, background .18s ease, filter .2s ease;
       touch-action:manipulation; position:relative; overflow:hidden;
@@ -274,14 +298,15 @@
           <div class="meter" aria-hidden="true"><div class="fill" id="streakFill"></div></div>
         </div>
         <div class="controls">
-          <button class="iconbtn" id="repeatBtn" aria-label="Repeat the question">
-            <span class="emoji">🔊</span><span>Repeat</span>
+          <button class="iconbtn iconbtn-small" id="repeatBtn" aria-label="Repeat the question">
+            <span class="emoji">🔄</span>
           </button>
-          <button class="iconbtn" id="muteBtn" aria-label="Toggle sound" aria-pressed="false">
-            <span class="emoji" id="muteIcon">🔊</span><span id="muteLabel">Sound</span>
+          <button class="iconbtn iconbtn-small" id="muteBtn" aria-label="Toggle sound" aria-pressed="false">
+            <span class="emoji" id="muteIcon">🔊</span>
           </button>
         </div>
       </div>
+      <div class="separator"></div> <!-- Added separator -->
 
       <div class="expression" id="exprWrap" title="Tap to hear the question">
         <div class="prompt">What is</div>
@@ -564,7 +589,7 @@
         muted = !!state;
         localStorage.setItem('sprintMuted', muted ? '1' : '0');
         muteIcon.textContent = muted ? '🔇' : '🔊';
-        muteLabel.textContent = muted ? 'Muted' : 'Sound';
+        
         muteBtn.setAttribute('aria-pressed', String(!muted));
         announce(muted ? 'Sound off' : 'Sound on');
         if(!muted){ speak('Sound on') }

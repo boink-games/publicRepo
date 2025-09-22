@@ -295,19 +295,23 @@ export class StoryCard {
         try {
             const logoEl = this.element.querySelector('.game-logo');
             if (logoEl) {
-                if (this.post?.type === 'microgame' && logo) {
-                    logoEl.textContent = logo;
-                    logoEl.style.visibility = 'visible';
+                if (logo) {
+                    // Check if logo is a URL or an emoji
+                                            if (logo.startsWith('http') || logo.startsWith('/')) {
+                        logoEl.innerHTML = `<img src="${logo}" alt="logo">`;
+                    } else {
+                        logoEl.textContent = logo;
+                    }                    logoEl.style.visibility = 'visible';
                 } else {
-                    logoEl.textContent = '';
+                    logoEl.innerHTML = ''; // Clear content
                     logoEl.style.visibility = 'hidden';
                 }
             }
         } catch (_) {}
+
         const titleElements = this.element.querySelectorAll('.card-title');
         titleElements.forEach(el => {
             if (!el) return;
-            // Title no longer includes emoji; emoji is shown separately as logo
             el.textContent = cleanTitle;
         });
 
@@ -378,7 +382,10 @@ export class StoryCard {
     getGameLogo() {
         try {
             if (!this.post || this.post.isSelectionCard) return '';
+            // Prioritize image URL if it exists
+            if (this.post.image && typeof this.post.image === 'string') return this.post.image;
             if (this.post.logo && typeof this.post.logo === 'string') return this.post.logo;
+            if (this.post.icon && typeof this.post.icon === 'string') return this.post.icon;
             const tag = (this.post.tag || '').toLowerCase();
             const title = (this.post.title || '').toLowerCase();
             const map = {
@@ -1008,16 +1015,23 @@ export class StoryCard {
         // Populate sources list
         sourcesList.innerHTML = '';
 
-        const onChange = async (source) => {
-            let newCategories = [];
-            let newExternal = [];
+        const onChange = async (source, isChecked) => {
+            let { categories: selectedCategories, external: selectedExternal } = await window.SourcesManager.getSelectedSources();
 
             if (source.type === 'external') {
-                newExternal.push(source.url);
+                if (isChecked) {
+                    selectedExternal.push(source.url);
+                } else {
+                    selectedExternal = selectedExternal.filter(url => url !== source.url);
+                }
             } else {
-                newCategories.push(source.id);
+                if (isChecked) {
+                    selectedCategories.push(source.id);
+                } else {
+                    selectedCategories = selectedCategories.filter(id => id !== source.id);
+                }
             }
-            await window.SourcesManager.saveSelectedSources(newCategories, newExternal);
+            await window.SourcesManager.saveSelectedSources(selectedCategories, selectedExternal);
             // Refresh feed immediately
             const refreshButton = document.querySelector('#refresh-button');
             if (refreshButton) {
@@ -1033,98 +1047,161 @@ export class StoryCard {
         }
 
         // Render visible sources
-        visibleSourcesOnly.forEach(source => {
-            const sourceItem = document.createElement('div');
-            sourceItem.className = 'source-item';
-            if (source.removable) {
-                sourceItem.classList.add('removable');
-            }
-
-            const radio = document.createElement('input');
-            radio.type = 'radio';
-            radio.name = 'source-selection';
-            radio.className = 'source-radio';
-
-            // Set ID based on source type
-            const sourceId = source.type === 'external' ?
-                `source-url:${encodeURIComponent(source.url)}` :
-                `source-${source.id}`;
-            radio.id = sourceId;
-
-            // Check if selected
-            radio.checked = source.type === 'external' ?
-                selectedSet.has(source.url) :
-                selectedSet.has(source.id);
-
-            const label = document.createElement('label');
-            label.className = 'source-label';
-            label.htmlFor = sourceId;
-
-            // Display text with hashtags for all sources
-            if (source.tag) {
-                label.textContent = source.tag;
-                label.classList.add('hashtag');
-            } else if (source.type === 'external') {
-                label.textContent = source.url.split('/').pop().replace('.json', '');
-                label.classList.add('hashtag');
-            } else {
-                // For sources without tag, use name or derive from id
-                label.textContent = source.name || source.id;
-            }
-
-            sourceItem.appendChild(radio);
-            sourceItem.appendChild(label);
-
-            // Add delete button for removable sources
-            if (source.removable) {
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete-source-btn';
-                deleteBtn.innerHTML = '×';
-                deleteBtn.title = 'Remove source';
-                deleteBtn.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-
-                    // Remove from allSources
-                    const updatedSources = allSources.filter(s => {
-                        if (source.type === 'external') {
-                            return s.url !== source.url;
-                        }
-                        return s.id !== source.id;
-                    });
-
-                    await window.LocalStorage.set('allNewsSources', updatedSources);
-
-                    // Also remove from legacy storage for external sources
-                    if (source.type === 'external') {
-                        const extSources = await window.LocalStorage.get('externalPostSources') || [];
-                        const updatedExt = extSources.filter(s => s.url !== source.url);
-                        await window.LocalStorage.set('externalPostSources', updatedExt);
-
-                        const selectedExt = await window.LocalStorage.get('selectedExternalPostsUrls') || [];
-                        const updatedSelExt = selectedExt.filter(url => url !== source.url);
-                        await window.LocalStorage.set('selectedExternalPostsUrls', updatedSelExt);
-                    }
-
-                    // Refresh the selector
-                    this.setupDataSourcesSelector();
-                });
-                sourceItem.appendChild(deleteBtn);
-            }
-
-            sourcesList.appendChild(sourceItem);
-
-            // Make the whole item clickable (except delete button)
-            sourceItem.addEventListener('click', (e) => {
-                if (e.target !== radio && !e.target.classList.contains('delete-source-btn')) {
-                    if(!radio.checked){
-                        radio.checked = true;
-                        onChange(source);
-                    }
-                }
+        const subCategoriesPromises = visibleSourcesOnly
+            .filter(source => source.isContainer)
+            .map(source => {
+                const sourceUrl = `.${source.url}`;
+                return fetch(sourceUrl, { cache: 'no-store' })
+                    .then(response => response.ok ? response.json() : [])
+                    .then(subCategories => ({ ...source, subCategories }));
             });
-            radio.addEventListener('change', ()=>onChange(source));
+
+        const sourcesWithSubCategories = await Promise.all(subCategoriesPromises);
+
+        const sources = visibleSourcesOnly.map(source => {
+            if (source.isContainer) {
+                return sourcesWithSubCategories.find(s => s.id === source.id);
+            }
+            return source;
         });
+
+        for (const source of sources) {
+            if (source.isContainer) {
+                const sourceItem = document.createElement('div');
+                sourceItem.className = 'source-item-container';
+                
+                const label = document.createElement('div');
+                label.className = 'source-label-container';
+                label.textContent = source.tag;
+                sourceItem.appendChild(label);
+
+                const subSourcesList = document.createElement('div');
+                subSourcesList.className = 'sub-sources-list';
+                sourceItem.appendChild(subSourcesList);
+
+                source.subCategories.forEach(subCat => {
+                    const subSourceItem = document.createElement('div');
+                    subSourceItem.className = 'source-item';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.name = 'source-selection';
+                    checkbox.className = 'source-checkbox';
+                    const sourceId = `source-${subCat.id}`;
+                    checkbox.id = sourceId;
+                    checkbox.checked = selectedSet.has(subCat.id);
+
+                    const subLabel = document.createElement('label');
+                    subLabel.className = 'source-label';
+                    subLabel.htmlFor = sourceId;
+                    subLabel.textContent = subCat.tag;
+                    subLabel.classList.add('hashtag');
+
+                    subSourceItem.appendChild(checkbox);
+                    subSourceItem.appendChild(subLabel);
+                    subSourcesList.appendChild(subSourceItem);
+
+                    subSourceItem.addEventListener('click', (e) => {
+                        if (e.target !== checkbox) {
+                            checkbox.checked = !checkbox.checked;
+                            onChange(subCat, checkbox.checked);
+                        }
+                    });
+                    checkbox.addEventListener('change', (e)=>onChange(subCat, e.target.checked));
+                });
+                sourcesList.appendChild(sourceItem);
+
+            } else {
+                const sourceItem = document.createElement('div');
+                sourceItem.className = 'source-item';
+                if (source.removable) {
+                    sourceItem.classList.add('removable');
+                }
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'source-selection';
+                checkbox.className = 'source-checkbox';
+
+                // Set ID based on source type
+                const sourceId = source.type === 'external' ?
+                    `source-url:${encodeURIComponent(source.url)}` :
+                    `source-${source.id}`;
+                checkbox.id = sourceId;
+
+                // Check if selected
+                checkbox.checked = source.type === 'external' ?
+                    selectedSet.has(source.url) :
+                    selectedSet.has(source.id);
+
+                const label = document.createElement('label');
+                label.className = 'source-label';
+                label.htmlFor = sourceId;
+
+                // Display text with hashtags for all sources
+                if (source.tag) {
+                    label.textContent = source.tag;
+                    label.classList.add('hashtag');
+                } else if (source.type === 'external') {
+                    label.textContent = source.url.split('/').pop().replace('.json', '');
+                    label.classList.add('hashtag');
+                } else {
+                    // For sources without tag, use name or derive from id
+                    label.textContent = source.name || source.id;
+                }
+
+                sourceItem.appendChild(checkbox);
+                sourceItem.appendChild(label);
+
+                // Add delete button for removable sources
+                if (source.removable) {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-source-btn';
+                    deleteBtn.innerHTML = '×';
+                    deleteBtn.title = 'Remove source';
+                    deleteBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+
+                        // Remove from allSources
+                        const updatedSources = allSources.filter(s => {
+                            if (source.type === 'external') {
+                                return s.url !== source.url;
+                            }
+                            return s.id !== source.id;
+                        });
+
+                        await window.LocalStorage.set('allNewsSources', updatedSources);
+
+                        // Also remove from legacy storage for external sources
+                        if (source.type === 'external') {
+                            const extSources = await window.LocalStorage.get('externalPostSources') || [];
+                            const updatedExt = extSources.filter(s => s.url !== source.url);
+                            await window.LocalStorage.set('externalPostSources', updatedExt);
+
+                            const selectedExt = await window.LocalStorage.get('selectedExternalPostsUrls') || [];
+                            const updatedSelExt = selectedExt.filter(url => url !== source.url);
+                            await window.LocalStorage.set('selectedExternalPostsUrls', updatedSelExt);
+                        }
+
+                        // Refresh the selector
+                        this.setupDataSourcesSelector();
+                    });
+                    sourceItem.appendChild(deleteBtn);
+                }
+
+                sourcesList.appendChild(sourceItem);
+
+                // Make the whole item clickable (except delete button)
+                sourceItem.addEventListener('click', (e) => {
+                    if (e.target !== checkbox && !e.target.classList.contains('delete-source-btn')) {
+                        checkbox.checked = !checkbox.checked;
+                        onChange(source, checkbox.checked);
+                    }
+                });
+                checkbox.addEventListener('change', (e)=>onChange(source, e.target.checked));
+            }
+        }
 
         // Padding bottom managed by card height computation; keep list padding minimal
         try {

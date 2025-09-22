@@ -3,7 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <title>Shape Dash - Reaction</title>
+  <title>ReactShape - Reaction Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg1:#0b0f17;
@@ -20,7 +23,7 @@
       --bad:#ef4444;
       --warn:#f59e0b;
       --ring:#60a5fa;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --shadow: 0 10px 30px rgba(0,0,0,.4), 0 0 25px rgba(96,165,250,.15);
     }
     *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     html,body{ height:100%; }
@@ -50,7 +53,7 @@
 
     .topbar{
       width:100%; max-width: min(920px, 96vw);
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      display:flex; flex-direction:column; align-items:flex-start; gap:4px;
       padding:8px 12px; border-radius:16px;
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       border:1px solid rgba(255,255,255,.08);
@@ -60,13 +63,36 @@
     .brand{
       display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.3px;
     }
-    .badge{
-      width:28px; height:28px; border-radius:9px;
-      background: radial-gradient(circle at 30% 30%, var(--grad3), transparent 55%), linear-gradient(135deg, var(--grad1), var(--grad2));
-      box-shadow: 0 6px 16px rgba(14,165,233,.35), inset 0 0 18px rgba(255,255,255,.12);
+    .brand div{
+      font-family: 'Orbitron', sans-serif;
+      font-size: 32px;
+      letter-spacing: 1px;
+      color: #e0f2fe; /* Light Sky Blue */
+      text-shadow: 0 0 8px rgba(0, 168, 255, 0.7), 0 0 16px rgba(0, 168, 255, 0.5);
     }
-    .stats{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; color:var(--muted); font-size:13px; }
-    .stat b{ color:var(--text); font-size:14px; margin-left:6px; }
+    .logo-svg{
+      width:28px; height:28px;
+      animation: slow-spin 20s linear infinite;
+    }
+    .logo-svg .shape{
+      animation: shape-shift 8s ease-in-out infinite;
+      transform-origin: center;
+    }
+    .logo-svg .shape:nth-child(2){ animation-delay: -2s; }
+    .logo-svg .shape:nth-child(3){ animation-delay: -4s; }
+
+    @keyframes slow-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes shape-shift {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+      25% { transform: scale(1.1) rotate(15deg); opacity: 0.7; }
+      75% { transform: scale(0.9) rotate(-15deg); opacity: 0.7; }
+    }
+    .stats{ display:flex; align-items:center; gap:24px; flex-wrap:wrap; color:var(--muted); font-size:16px; font-weight: 600; padding-left: 38px; }
+    .stat b{ color: #e0f2fe; font-size:20px; margin-left:8px; text-shadow: 0 0 5px rgba(0, 168, 255, 0.6); }
+    .header-controls{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top: 8px; }
 
     .stage-card{
       width:100%; max-width:min(920px, 96vw);
@@ -97,7 +123,7 @@
       font-size:14px; color:var(--muted);
     }
     .time{
-      margin-left:auto; font-weight:800; font-size: clamp(18px, 4.4vw, 28px);
+      font-weight:800; font-size: clamp(18px, 4.4vw, 28px);
       letter-spacing:.4px;
       color:var(--text);
     }
@@ -135,22 +161,22 @@
     .btn:active{ transform: translateY(1px) scale(.99); filter: brightness(.96); }
     .btn[disabled]{ opacity:.6; filter:saturate(.3); cursor:not-allowed; }
     .chip{
-      display:inline-flex; align-items:center; gap:8px; padding:10px 12px;
-      border-radius:12px; border:1px solid rgba(255,255,255,.12);
+      display:inline-flex; align-items:center; gap:5px; padding:6px 10px;
+      border-radius:10px; border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.05);
-      color:var(--text); font-weight:700; font-size:13px;
+      color:var(--text); font-weight:700; font-size:12px;
       transition: background .2s;
       user-select:none;
     }
-    .chip input{ appearance:none; width:20px; height:12px; background:#0b1220; border:1px solid rgba(255,255,255,.2); border-radius:999px; position:relative; outline:none; }
+    .chip input{ appearance:none; width:18px; height:10px; background:#0b1220; border:1px solid rgba(255,255,255,.2); border-radius:999px; position:relative; outline:none; }
     .chip input::after{
       content:""; position:absolute; top:50%; left:1px; transform:translate(0,-50%);
-      width:10px; height:10px; border-radius:50%; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.4);
+      width:8px; height:8px; border-radius:50%; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.4);
       transition: transform .18s ease, background .18s ease;
     }
     .chip input:checked{ background: linear-gradient(135deg, #22c55e, #10b981); border-color: transparent; }
     .chip input:checked::after{ transform:translate(8px, -50%); background:#f0fdf4; }
-    .chip .ico{ width:16px; height:16px; opacity:.9; }
+    .chip .ico{ width:14px; height:14px; opacity:.9; }
 
     .footer{
       margin-top:auto; opacity:.7; font-size:12px;
@@ -168,13 +194,15 @@
   <div class="app" id="app">
     <header class="topbar" role="banner" aria-label="Game header">
       <div class="brand" aria-label="Title">
-        <div class="badge" aria-hidden="true"></div>
-        <div>Shape Dash</div>
+        <svg class="logo-svg" viewBox="0 0 100 100" aria-hidden="true">
+          <rect class="shape" x="15" y="15" width="70" height="70" rx="15" fill="#0f1b34" />
+          <circle class="shape" cx="50" cy="50" r="30" fill="#60a5fa" />
+          <polygon class="shape" points="50,10 90,90 10,90" fill="#22d3ee" />
+        </svg>
+        <div>ReactShape</div>
       </div>
       <div class="stats" aria-live="polite" aria-atomic="true">
         <div class="stat">Best<b id="best">—</b></div>
-        <div class="stat">Average<b id="avg">—</b></div>
-        <div class="stat">Rounds<b id="rounds">0</b></div>
         <div class="stat">Streak<b id="streak">0</b></div>
       </div>
     </header>
@@ -183,39 +211,39 @@
       <div class="hud">
         <div class="hud-left">
           <div class="dot" id="statusDot" title="status"></div>
-          <div class="msg" id="msg">Tap Start, listen for the shape, then tap it fast.</div>
+          <div class="time" id="time">0 ms</div>
         </div>
-        <div class="time" id="time">0 ms</div>
+        <div class="hud-right">
+          <span class="chip" title="Enable/Disable sound effects">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 3.23v17.54c0 .64-.76.96-1.2.51L8.5 17H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3.5l4.3-4.28c.44-.45 1.2-.13 1.2.51z"/></svg>
+            <input type="checkbox" id="sfxToggle" checked aria-label="Toggle sound effects">
+          </span>
+          <span class="chip" title="Enable/Disable voice prompts">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3m5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0z"/></svg>
+            <input type="checkbox" id="voiceToggle" checked aria-label="Toggle voice prompts">
+          </span>
+          <span class="chip" id="autoToggleWrap" title="Auto-start next round">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 3v2h8a3 3 0 0 1 0 6H7v3l-4-4l4-4v3h7a1 1 0 0 0 0-2H6V3m12 18v-2h-8a3 3 0 0 1 0-6h7v-3l4 4l-4 4v-3h-7a1 1 0 0 0 0 2h8v2z"/></svg>
+            <input type="checkbox" id="autoToggle" checked aria-label="Toggle auto next">
+          </span>
+        </div>
       </div>
 
       <div class="canvas-wrap" id="stageWrap">
         <canvas id="stage" width="800" height="450" aria-label="Game canvas"></canvas>
       </div>
 
+      <div class="msg" id="msg" style="width:100%; text-align:center; color:var(--muted); font-size:14px; min-height:20px;">Tap Start, listen for the shape, then tap it fast.</div>
+      
       <div class="controls">
         <div class="left-controls">
           <button class="btn" id="startBtn" aria-label="Start round">Start</button>
-          <span class="chip" title="Enable/Disable sound effects">
-            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 3.23v17.54c0 .64-.76.96-1.2.51L8.5 17H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3.5l4.3-4.28c.44-.45 1.2-.13 1.2.51z"/></svg>
-            SFX
-            <input type="checkbox" id="sfxToggle" checked aria-label="Toggle sound effects">
-          </span>
-          <span class="chip" title="Enable/Disable voice prompts">
-            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3m5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0z"/></svg>
-            Voice
-            <input type="checkbox" id="voiceToggle" checked aria-label="Toggle voice prompts">
-          </span>
-          <span class="chip" id="autoToggleWrap" title="Auto-start next round">
-            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 3v2h8a3 3 0 0 1 0 6H7v3l-4-4l4-4v3h7a1 1 0 0 0 0-2H6V3m12 18v-2h-8a3 3 0 0 1 0-6h7v-3l4 4l-4 4v-3h-7a1 1 0 0 0 0 2h8v2z"/></svg>
-            Auto
-            <input type="checkbox" id="autoToggle" checked aria-label="Toggle auto next">
-          </span>
         </div>
         <div class="right-controls">
-          <span class="chip" title="Reset stats">
-            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 6V3L8 7l4 4V8a4 4 0 1 1-4 4H6a6 6 0 1 0 6-6Z"/></svg>
-            <button class="btn" id="resetBtn" style="background:linear-gradient(135deg,#ef4444,#f43f5e); padding:8px 12px; font-size:12px;">Reset</button>
-          </span>
+          <button class="btn" id="resetBtn" title="Reset stats" style="background:linear-gradient(135deg,#f97316,#fb923c); padding:14px 18px; display:inline-flex; align-items:center; gap:8px;">
+            <svg class="ico" style="width:18px; height:18px;" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 6V3L8 7l4 4V8a4 4 0 1 1-4 4H6a6 6 0 1 0 6-6Z"/></svg>
+            <span>Reset</span>
+          </button>
         </div>
       </div>
     </section>
@@ -237,8 +265,6 @@
       const autoToggle = document.getElementById('autoToggle');
       const statusDot = document.getElementById('statusDot');
       const bestEl = document.getElementById('best');
-      const avgEl = document.getElementById('avg');
-      const roundsEl = document.getElementById('rounds');
       const streakEl = document.getElementById('streak');
       const resetBtn = document.getElementById('resetBtn');
 
@@ -329,9 +355,6 @@
       }
       function updateStatsUI(){
         bestEl.textContent = stats.best != null ? `${stats.best} ms` : '—';
-        const avg = stats.okCount > 0 ? Math.round(stats.sum / stats.okCount) : null;
-        avgEl.textContent = avg != null ? `${avg} ms` : '—';
-        roundsEl.textContent = String(stats.played);
         streakEl.textContent = String(stats.streak);
       }
 
@@ -356,8 +379,8 @@
 
       function layoutPositions(){
         const cx = W/2, cy = H/2;
-        radius = Math.max(28, Math.min( Math.min(W,H) * 0.12, 82 ));
-        const gap = Math.max(radius*1.2, Math.min(160, W*0.12));
+        radius = Math.max(40, Math.min( Math.min(W,H) * 0.2, 110 ));
+        const gap = Math.max(radius*1.4, Math.min(180, W*0.16));
         positions = [
           { x: cx - gap, y: cy, r: radius, type:'circle' },
           { x: cx,       y: cy, r: radius, type:'square' },
@@ -403,11 +426,11 @@
           const stroke = ctx.createLinearGradient(-p.r,-p.r,p.r,p.r);
           stroke.addColorStop(0, '#60a5fa');
           stroke.addColorStop(1, '#22d3ee');
-          ctx.lineWidth = 5;
+          ctx.lineWidth = 7;
           ctx.strokeStyle = stroke;
           ctx.fillStyle = 'rgba(15, 27, 52, .55)';
-          ctx.shadowColor = 'rgba(34,211,238,.35)';
-          ctx.shadowBlur = 18;
+          ctx.shadowColor = 'rgba(34,211,238,.55)';
+          ctx.shadowBlur = 25;
           ctx.shadowOffsetY = 2;
 
           if(p.type==='circle'){
@@ -456,10 +479,13 @@
 
           // Labels (accessibility hint)
           ctx.save();
-          ctx.fillStyle = 'rgba(229,231,235,.5)';
-          ctx.font = `${Math.max(12, Math.floor(p.r*0.45))}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif`;
+          ctx.fillStyle = 'rgba(229,231,235,.85)';
+          ctx.font = `bold ${Math.max(12, Math.floor(p.r*0.25))}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif`;
           ctx.textAlign='center';
-          ctx.fillText(p.type.toUpperCase(), p.x, p.y + p.r + Math.max(16, p.r*0.4));
+          ctx.textBaseline = 'middle';
+          ctx.shadowColor = 'rgba(0,0,0,.8)';
+          ctx.shadowBlur = 5;
+          ctx.fillText(p.type.toUpperCase(), p.x, p.y + p.r + Math.max(22, p.r*0.4));
           ctx.restore();
         }
 
@@ -575,6 +601,13 @@
         const ok = (s === targetShape);
         timeEl.textContent = `${elapsed} ms`;
 
+        // Common state resets for end of a round
+        pending = false;
+        startAt = 0;
+        targetShape = null;
+        clearTimeout(timeoutId);
+        timeoutId = null;
+
         if(ok){
           stats.played++;
           stats.okCount++;
@@ -582,12 +615,20 @@
           stats.best = (stats.best == null) ? elapsed : Math.min(stats.best, elapsed);
           stats.streak++;
           stats.bestStreak = Math.max(stats.bestStreak || 0, stats.streak);
-          msgEl.textContent = (elapsed<300? 'Great! ':'Nice! ') + `${elapsed} ms — Tap Start for next.`;
           statusDot.className = 'dot go';
           speak(`Good. ${elapsed} milliseconds`);
           SFX.ok();
           ripple(pos.x, pos.y, true);
-        }else{
+
+          if (autoToggle.checked) {
+            msgEl.textContent = (elapsed < 300 ? 'Great! ' : 'Nice! ') + `${elapsed} ms — Next round...`;
+            setTimeout(startRound, 1200);
+          } else {
+            msgEl.textContent = (elapsed < 300 ? 'Great! ' : 'Nice! ') + `${elapsed} ms — Tap Start for next.`;
+            startBtn.disabled = false;
+            startBtn.textContent = 'Start';
+          }
+        } else {
           stats.played++;
           stats.streak = 0;
           msgEl.textContent = 'Wrong shape! Tap Start to try again.';
@@ -595,15 +636,11 @@
           speak('Wrong shape');
           SFX.bad();
           ripple(pos.x, pos.y, false);
+          startBtn.disabled = false;
+          startBtn.textContent = 'Start';
         }
-        updateStatsUI(); saveStats();
-        pending = false; startAt = 0; targetShape = null;
-        startBtn.disabled = false;
-        startBtn.textContent = 'Start';
-        if(autoToggle.checked){
-          // Auto next round after short pause
-          setTimeout(()=>{ startRound(); }, ok ? 900 : 1200);
-        }
+        updateStatsUI();
+        saveStats();
       }
 
       function ripple(x,y, ok){
@@ -672,6 +709,97 @@
 
       // Prevent context menu on long press (mobile)
       window.addEventListener('contextmenu', (e)=>{ e.preventDefault(); });
+
+    })();
+  </script>
+</body>
+</html>;
+        saveStats(); updateStatsUI();
+        msgEl.textContent = 'Stats reset. Tap Start to play!';
+        timeEl.textContent = '0 ms';
+        statusDot.className = 'dot';
+      });
+
+      // Start
+      resize();
+      window.addEventListener('resize', resize, {passive:true});
+      requestAnimationFrame(draw);
+
+      // Auto start after a short moment if user interacts; otherwise wait for button
+      setTimeout(()=>{
+        // Show a subtle prompt
+        msgEl.textContent = 'Tap Start, listen for the shape, then tap it fast.';
+      }, 300);
+
+      // Accessibility: keyboard Enter to start when focused on button
+      startBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); startBtn.click(); } });
+
+      // Prevent context menu on long press (mobile)
+      window.addEventListener('contextmenu', (e)=>{ e.preventDefault(); });
+
+    })();
+  </script>
+</body>
+</html>er('contextmenu', (e)=>{ e.preventDefault(); });
+
+    })();
+  </script>
+</body>
+</html>
+      startBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); startBtn.click(); } });
+
+      // Prevent context menu on long press (mobile)
+      window.addEventListener('contextmenu', (e)=>{ e.preventDefault(); });
+
+    })();
+  </script>
+</body>
+</html>.className = 'dot';
+      });
+
+      // Start
+      resize();
+      window.addEventListener('resize', resize, {passive:true});
+      requestAnimationFrame(draw);
+
+      // Auto start after a short moment if user interacts; otherwise wait for button
+      setTimeout(()=>{
+        // Show a subtle prompt
+        msgEl.textContent = 'Tap Start, listen for the shape, then tap it fast.';
+      }, 300);
+
+      // Accessibility: keyboard Enter to start when focused on button
+      startBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); startBtn.click(); } });
+
+      // Prevent context menu on long press (mobile)
+      window.addEventListener('contextmenu', (e)=>{ e.preventDefault(); });
+
+    })();
+  </script>
+</body>
+</html>er('contextmenu', (e)=>{ e.preventDefault(); });
+
+    })();
+  </script>
+</body>
+</html>
+      startBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); startBtn.click(); } });
+
+      // Prevent context menu on long press (mobile)
+      window.addEventListener('contextmenu', (e)=>{ e.preventDefault(); });
+
+    })();
+  </script>
+</body>
+</html>Default(); startBtn.click(); } });
+
+      // Prevent context menu on long press (mobile)
+      window.addEventListener('contextmenu', (e)=>{ e.preventDefault(); });
+
+    })();
+  </script>
+</body>
+</html>(); });
 
     })();
   </script>

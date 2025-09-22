@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Path Defender - Single File TD</title>
+<title>Tower Defense</title>
 <style>
   :root{
     --bg:#0e1220;
@@ -45,31 +45,37 @@
     align-items:center;
     flex-wrap:wrap;
     gap:8px 12px;
+    justify-content:center;
   }
   header .title{
     font-weight:800;
     letter-spacing:0.5px;
-    font-size: clamp(16px, 2.5vw, 22px);
+    font-size: clamp(24px, 4vw, 36px);
     display:flex;
     align-items:center;
     gap:8px;
+    font-family: "Arial Black", Gadget, sans-serif;
   }
   .pill{
-    padding:6px 10px;
+    padding:4px 8px;
     border-radius:999px;
     background:rgba(255,255,255,0.06);
     border:1px solid rgba(255,255,255,0.08);
     font-weight:600;
     display:flex;
     align-items:center;
-    gap:6px;
+    gap:4px;
     white-space:nowrap;
+    font-size:13px;
+  }
+  .pill strong{
+    font-size:14px;
   }
   .stats{
     display:flex;
     align-items:center;
-    gap:8px;
-    flex-wrap:wrap;
+    gap:4px;
+    flex-wrap:nowrap;
     flex:1;
   }
   .controls{
@@ -214,9 +220,9 @@
     display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:8px;
   }
   .legend .dot{ width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,0.6); }
-  .dot.basic{ background:#5dd1ff; border-color:#b9ecff; }
-  .dot.slow{ background:#8cff8c; border-color:#d6ffd6; }
-  .dot.cannon{ background:#ffb36b; border-color:#ffe0be; }
+  .dot.basic{ background:#007bff; border-color:#66b3ff; }
+  .dot.slow{ background:#28a745; border-color:#71dd8a; }
+  .dot.cannon{ background:#dc3545; border-color:#ff7b86; }
   .right{
     margin-left:auto;
   }
@@ -226,8 +232,8 @@
 <div id="gameRoot">
   <header>
     <div class="title">
-      <span style="display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:linear-gradient(180deg,#5dd1ff,#2a9dd3);box-shadow:inset 0 0 0 2px rgba(255,255,255,0.3);">TD</span>
-      Path Defender
+      <span style="display:inline-grid;place-items:center;width:40px;height:40px;border-radius:8px;background:linear-gradient(180deg,#5dd1ff,#2a9dd3);box-shadow:inset 0 0 0 2px rgba(255,255,255,0.3);">TD</span>
+      Tower Defense
     </div>
     <div class="stats">
       <div class="pill"><span>Wave</span><strong id="uiWave">1</strong></div>
@@ -249,7 +255,7 @@
   <footer>
     <div class="shop">
       <div class="item">
-        <div class="icon" style="background:linear-gradient(180deg,#4db9e8,#2a9dd3);">1</div>
+        <div class="icon" style="background:linear-gradient(180deg,#007bff,#0056b3);">1</div>
         <div class="meta">
           <div class="name">Archer</div>
           <div class="cost">Cost: <strong id="costBasic">50</strong></div>
@@ -257,7 +263,7 @@
         <button id="buyBasic">Buy</button>
       </div>
       <div class="item">
-        <div class="icon" style="background:linear-gradient(180deg,#58d76e,#3aa14f);">2</div>
+        <div class="icon" style="background:linear-gradient(180deg,#28a745,#1e7e34);">2</div>
         <div class="meta">
           <div class="name">Frost</div>
           <div class="cost">Cost: <strong id="costSlow">70</strong></div>
@@ -265,7 +271,7 @@
         <button id="buySlow">Buy</button>
       </div>
       <div class="item">
-        <div class="icon" style="background:linear-gradient(180deg,#ffb36b,#e8922a);">3</div>
+        <div class="icon" style="background:linear-gradient(180deg,#dc3545,#bd2130);">3</div>
         <div class="meta">
           <div class="name">Cannon</div>
           <div class="cost">Cost: <strong id="costCannon">90</strong></div>
@@ -401,9 +407,9 @@
   };
 
   const COLORS = {
-    basic: '#5dd1ff',
-    slow: '#8cff8c',
-    cannon: '#ffb36b',
+    basic: '#007bff',
+    slow: '#28a745',
+    cannon: '#dc3545',
     enemy: '#ff6b8c',
     enemyFast: '#ffd36b',
     enemyTank: '#ff6b6b',

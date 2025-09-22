@@ -4,18 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <title>Dress Match</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#83c5ff">
   <style>
     :root{
-      --bg1:#b3e5ff;
-      --bg2:#f5e4ff;
+      --bg1:#ffe0b2;
+      --bg2:#fff9c4;
       --panel:#ffffffee;
       --ink:#0f172a;
       --soft:#e6eefb;
       --accent:#6ee7b7;
-      --accent2:#60a5fa;
-      --stroke:#d6def7;
+      --accent2:#f5c76e;
+      --stroke:#b08968;
       --shadow:0 10px 28px rgba(31,41,55,.18);
+      --tool-bg: rgba(255,255,255,0.7);
     }
     *{box-sizing:border-box;touch-action:manipulation}
     html,body{height:100%;margin:0}
@@ -29,14 +31,19 @@
       height:100dvh;
       padding:10px 10px calc(10px + env(safe-area-inset-bottom));
       display:grid;
-      grid-template-rows:auto auto auto auto;
+      grid-template-rows:auto 1fr auto auto;
       align-content:center;
       justify-items:center;
       gap:10px;
     }
     .title{
-      font-weight:800;letter-spacing:.5px;color:#0b194f;text-shadow:0 2px 0 #ffffff80;
-      font-size:clamp(16px,3.4vw,26px);
+      font-family: 'Quicksand', sans-serif;
+      font-weight:700;
+      letter-spacing:.5px;
+      color:#8B4513;
+      text-shadow: 2px 2px 0 #ffffff, 4px 4px 0 rgba(0,0,0,0.2);
+      font-size:clamp(30px, 6vw, 50px);
+      margin-top: 20px;
     }
     .layout{
       display:grid;
@@ -48,15 +55,18 @@
       max-width:920px;
     }
     .stage{
-      width:min(360px,84vw);
+      width:min(300px,70vw);
       aspect-ratio:3/4;
       background:radial-gradient(120% 140% at 50% 10%, #fff 0%, var(--soft) 65%, #eaf2ff 100%);
-      border:2px solid var(--stroke);
+border:1px solid var(--stroke);
       border-radius:20px;
       position:relative;
       overflow:hidden;
       box-shadow:var(--shadow);
       justify-self:center;
+      display:flex; /* Add flexbox */
+      align-items:center; /* Center vertically */
+      justify-content:center; /* Center horizontally */
     }
     canvas{width:100%;height:100%;display:block}
     .fx{position:absolute;inset:0;pointer-events:none}
@@ -80,14 +90,11 @@
     .hint{font-size:12px;color:#24466b99;text-align:center}
     .toolbar,.palette,.controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
     .tool{
-      background:#fff;border:2px solid var(--stroke);border-radius:12px;padding:6px 8px;min-width:58px;
+      background:var(--tool-bg);border:2px solid var(--stroke);border-radius:12px;padding:6px 8px;min-width:58px;
       display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
       box-shadow:0 6px 14px rgba(0,0,0,.06);cursor:pointer;user-select:none;font-weight:700;color:#243b6b
     }
-    .tool .ico{font-size:20px;line-height:1}
-    .tool .lab{font-size:11px;opacity:.9}
-    .tool:active{transform:scale(.98)}
-    .tool.active{outline:3px solid var(--accent2);box-shadow:0 0 0 6px #60a5fa2b}
+    .tool.active{background:var(--accent2);color:var(--ink);box-shadow:0 0 0 6px #60a5fa2b, 0 0 15px var(--accent2);}
     .palette{
       background:#ffffffb5;border:2px solid var(--stroke);border-radius:12px;padding:8px;box-shadow:0 6px 14px rgba(0,0,0,.04);
       display:grid;grid-template-columns:repeat(auto-fit,minmax(30px,1fr));gap:8px
@@ -161,7 +168,7 @@
   <script>
     (()=>{'use strict';
 
-      // Speech (friendly for kids)
+      // Speech
       function speak(text){
         try{
           if(!('speechSynthesis' in window)) return;

@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Tetris - Modern Compact</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg1:#0f1220;
@@ -30,7 +33,7 @@
         linear-gradient(180deg,var(--bg1),var(--bg2));
       display:grid;
       grid-template-rows:min-content 1fr min-content;
-      gap:8px;
+      gap:4px;
       height:100dvh;
       overflow:hidden;
       overscroll-behavior:none;
@@ -38,18 +41,36 @@
     header{
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      padding:6px 10px;
+            justify-content: center;
+      padding:2px 10px;
       border-bottom:1px solid var(--border);
       background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0));
       backdrop-filter:saturate(120%) blur(4px);
+    }
+    .title-hud-wrapper {
+      display: flex;
+      flex-direction: column;
+            align-items: center;
+      gap: 4px;
     }
     .title{
       display:flex; gap:8px; align-items:center;
       font-weight:700; letter-spacing:.4px;
       text-transform:uppercase;
-      font-size: clamp(.9rem, 1.8vw, 1.05rem);
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-family: 'Press Start 2P', cursive;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+      margin-top: 10px;
     }
+    .title span {
+      display: inline-block;
+    }
+    .title .t:nth-of-type(1) { color: #ff477e; }
+    .title .e { color: #3bc9ff; }
+    .title .t:nth-of-type(2) { color: #2ef7a0; }
+    .title .r { color: #d26bff; }
+    .title .i { color: #ff9f43; }
+    .title .s { color: #ffd166; }
     .title .dot{
       width:10px; height:10px; border-radius:50%;
       background: linear-gradient(135deg, #61ffe2, #3bc8ff);
@@ -57,14 +78,14 @@
     }
     .hud{
       display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      font-size: clamp(.8rem, 1.8vw, .95rem);
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
     }
     .stat{display:flex; gap:6px; align-items:center; color:var(--muted); white-space:nowrap}
     .stat b{color:var(--text)}
     .next-wrap{display:flex; gap:6px; align-items:center;}
     .next-label{color:var(--muted)}
     #next{
-      width:56px; height:56px;
+      width:40px; height:40px;
       border-radius:10px; background:#0f1328;
       border:1px solid var(--border);
       display:block;
@@ -165,8 +186,7 @@
     .ico.left{border-width:10px 14px 10px 0;border-color: transparent var(--text) transparent transparent}
     .ico.right{border-width:10px 0 10px 14px;border-color: transparent transparent transparent var(--text)}
     .ico.down{border-width:14px 10px 0 10px;border-color: var(--text) transparent transparent transparent}
-    .ico.rotate{width:22px;height:22px;border-radius:50%;border:3px solid var(--text); position:relative}
-    .ico.rotate:after{content:''; position:absolute; top:-6px; right:-6px; width:0; height:0; border-style:solid; border-width:8px 6px 0 6px; border-color: var(--text) transparent transparent transparent; transform:rotate(45deg)}
+    
     .ico.drop{width:20px;height:20px;border-radius:6px; background: linear-gradient(135deg, #61ffe2, #3bc8ff); box-shadow: 0 0 10px #3bc8ff}
 
     /* Landscape tweaks: tighter header and controls */
@@ -177,27 +197,30 @@
       .row{gap:6px}
       .btn{min-height: clamp(44px, 16vh, 56px); min-width: clamp(44px, 12vw, 64px)}
       .btn.wide{min-width: clamp(80px, 20vw, 120px)}
-      #next{width:48px; height:48px}
+      #next{width:40px; height:40px}
     }
 
     /* Larger screens: side panel layout available space, bigger next */
     @media (min-width: 860px){
       .game-area{padding:12px 20px 0}
       .title{font-size:1.05rem}
-      #next{width:84px;height:84px}
+      #next{width:72px;height:72px}
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="title"><span class="dot"></span> Tetris</div>
-    <div class="hud">
-      <div class="stat">Score: <b id="score">0</b></div>
-      <div class="stat">Lines: <b id="lines">0</b></div>
-      <div class="stat">Level: <b id="level">0</b></div>
-      <div class="next-wrap">
-        <span class="next-label">Next</span>
-        <canvas id="next" width="96" height="96"></canvas>
+    <div class="title-hud-wrapper">
+      <div class="title">
+        <span class="t">T</span><span class="e">E</span><span class="t">T</span><span class="r">R</span><span class="i">I</span><span class="s">S</span>
+      </div>
+      <div class="hud">
+        <div class="stat">Lines: <b id="lines">0</b></div>
+        <div class="stat">Level: <b id="level">0</b></div>
+        <div class="next-wrap">
+          <span class="next-label">Next</span>
+          <canvas id="next" width="96" height="96"></canvas>
+        </div>
       </div>
     </div>
   </header>
@@ -217,7 +240,7 @@
   <nav class="controls" aria-label="Game controls">
     <div class="row">
       <button class="btn" id="btnLeft" aria-label="Move left"><span class="ico left"></span></button>
-      <button class="btn wide" id="btnRotate" aria-label="Rotate"><span class="ico rotate"></span></button>
+            <button class="btn wide" id="btnRotate" aria-label="Rotate" style="font-size: 28px; font-weight: bold;">&#x21bb;</button>
       <button class="btn" id="btnRight" aria-label="Move right"><span class="ico right"></span></button>
     </div>
     <div class="row">
@@ -237,8 +260,7 @@
       const nextCanvas = document.getElementById('next');
       const nctx = nextCanvas.getContext('2d', { alpha: true });
 
-      const scoreEl = document.getElementById('score');
-      const linesEl = document.getElementById('lines');
+            const linesEl = document.getElementById('lines');
       const levelEl = document.getElementById('level');
       const scoreBadge = document.getElementById('scoreBadge');
       const bestEl = document.getElementById('best');
@@ -585,8 +607,8 @@
         roundRect(x + 0.06, y + 0.06, 0.88, 0.88, r, () => {
           ctx.fillStyle = grad;
           ctx.fill();
-          ctx.strokeStyle = hexWithAlpha('#ffffff', ghost ? 0.12 : 0.3);
-          ctx.lineWidth = 0.04;
+          ctx.strokeStyle = darken(base, 0.4);
+          ctx.lineWidth = 0.08;
           ctx.stroke();
         });
 
@@ -634,7 +656,6 @@
       }
 
       function updateScore() {
-        scoreEl.textContent = player.score;
         linesEl.textContent = player.lines;
         levelEl.textContent = player.level;
         scoreBadge.textContent = player.score;

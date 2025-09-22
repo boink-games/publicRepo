@@ -3,156 +3,345 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Snake Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #333;
+            background-color: #1a1a1a;
             color: #fff;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Press Start 2P', cursive;
             text-align: center;
             margin: 0;
+            touch-action: manipulation;
+            position: relative;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #ff00ff;
+            text-shadow: 3px 3px 0px #00ffff;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+        }
+        #score {
+            color: #00ffff;
+        }
+        #level {
+            color: #ff00ff;
         }
         canvas {
             background-color: #000;
-            border: 2px solid #fff;
+            border: 4px solid #ff00ff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+        .d-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 50px);
+            grid-template-rows: repeat(3, 50px);
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+            opacity: 0.5;
+        }
+        .d-pad button {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            color: #fff;
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            font-size: 24px;
+            box-shadow: 3px 3px 5px #000000, -3px -3px 5px #3c3c3c;
+            transition: all 0.1s ease-in-out;
+        }
+        .d-pad button:active {
+            box-shadow: inset 3px 3px 5px #000000, inset -3px -3px 5px #3c3c3c;
+        }
+        #up {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+        }
+        #left {
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+        }
+        #right {
+            grid-column: 3 / 4;
+            grid-row: 2 / 3;
+        }
+        #down {
+            grid-column: 2 / 3;
+            grid-row: 3 / 4;
+        }
+        #startBtn {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            color: #fff;
+            border: 2px solid #ff00ff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 3px 3px 5px #000000, -3px -3px 5px #3c3c3c;
+            transition: all 0.1s ease-in-out;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #startBtn:active {
+            box-shadow: inset 3px 3px 5px #000000, inset -3px -3px 5px #3c3c3c;
+        }
+        #restartBtn {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            color: #fff;
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 3px 3px 5px #000000, -3px -3px 5px #3c3c3c;
+            transition: all 0.1s ease-in-out;
+        }
+        #restartBtn:active {
+            box-shadow: inset 3px 3px 5px #000000, inset -3px -3px 5px #3c3c3c;
+        }
+        .game-container {
+            position: relative;
+            display: inline-block;
+        }
+        #gameOver {
+            display: none;
+            animation: fadeIn 1s;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #gameOver h2 {
+            color: red;
         }
     </style>
 </head>
 <body>
     <h1>Snake Game</h1>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="top-bar">
+        <div id="level">Level:1</div>
+        <div id="score">Score:0</div>
+    </div>
+    <div class="game-container">
+        <canvas id="gameCanvas" width="300" height="300"></canvas>
+        <div id="gameOver">
+            <h2>Game Over</h2>
+            <p id="finalScore"></p>
+        </div>
+        <button id="restartBtn">🔄 Restart</button>
+    </div>
+    <button id="startBtn">▶️</button>
+    <div class="d-pad">
+        <button id="up">↑</button>
+        <button id="left">←</button>
+        <button id="right">→</button>
+        <button id="down">↓</button>
+    </div>
+
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const startBtn = document.getElementById('startBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            const gameOverDisplay = document.getElementById('gameOver');
+            const scoreDisplay = document.getElementById('score');
+            const finalScoreDisplay = document.getElementById('finalScore');
+            const levelDisplay = document.getElementById('level');
 
-        let snake = [{ x: 200, y: 200 }];
-        let food = {};
-        let score = 0;
-        let dx = 0;
-        let dy = 0;
-        let changingDirection = false;
+            let snake, food, score, level, dx, dy, changingDirection, gameRunning, touchStartX, touchStartY;
 
-        function main() {
-            if (didGameEnd()) return;
-
-            changingDirection = false;
-            setTimeout(function onTick() {
-                clearCanvas();
-                drawFood();
-                moveSnake();
-                drawSnake();
-                main();
-            }, 100)
-        }
-
-        function clearCanvas() {
-            ctx.fillStyle = 'black';
-            ctx.strokeStyle = 'black';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function drawSnake() {
-            snake.forEach(drawSnakePart);
-        }
-
-        function drawSnakePart(snakePart) {
-            ctx.fillStyle = 'lightgreen';
-            ctx.strokeStyle = 'darkgreen';
-            ctx.fillRect(snakePart.x, snakePart.y, 20, 20);
-            ctx.strokeRect(snakePart.x, snakePart.y, 20, 20);
-        }
-
-        function didGameEnd() {
-            for (let i = 4; i < snake.length; i++) {
-                const didCollide = snake[i].x === snake[0].x && snake[i].y === snake[0].y
-                if (didCollide) return true
-            }
-
-            const hitLeftWall = snake[0].x < 0;
-            const hitRightWall = snake[0].x > canvas.width - 20;
-            const hitToptWall = snake[0].y < 0;
-            const hitBottomWall = snake[0].y > canvas.height - 20;
-
-            return hitLeftWall || hitRightWall || hitToptWall || hitBottomWall
-        }
-
-        function randomTen(min, max) {
-            return Math.round((Math.random() * (max - min) + min) / 20) * 20;
-        }
-
-        function createFood() {
-            food.x = randomTen(0, canvas.width - 20);
-            food.y = randomTen(0, canvas.height - 20);
-
-            snake.forEach(function isFoodOnSnake(part) {
-                const foodIsOnSnake = part.x == food.x && part.y == food.y
-                if (foodIsOnSnake)
-                    createFood();
-            });
-        }
-
-        function drawFood() {
-            ctx.fillStyle = 'red';
-            ctx.strokeStyle = 'darkred';
-            ctx.fillRect(food.x, food.y, 20, 20);
-            ctx.strokeRect(food.x, food.y, 20, 20);
-        }
-
-        function moveSnake() {
-            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-            snake.unshift(head);
-
-            const didEatFood = snake[0].x === food.x && snake[0].y === food.y;
-            if (didEatFood) {
-                score += 10;
-                createFood();
-            } else {
-                snake.pop();
-            }
-        }
-
-        document.addEventListener("keydown", changeDirection);
-
-        function changeDirection(event) {
-            const LEFT_KEY = 37;
-            const RIGHT_KEY = 39;
-            const UP_KEY = 38;
-            const DOWN_KEY = 40;
-
-            if (changingDirection) return;
-            changingDirection = true;
-
-            const keyPressed = event.keyCode;
-            const goingUp = dy === -20;
-            const goingDown = dy === 20;
-            const goingRight = dx === 20;
-            const goingLeft = dx === -20;
-
-            if (keyPressed === LEFT_KEY && !goingRight) {
-                dx = -20;
-                dy = 0;
-            }
-
-            if (keyPressed === UP_KEY && !goingDown) {
-                dx = 0;
-                dy = -20;
-            }
-
-            if (keyPressed === RIGHT_KEY && !goingLeft) {
+            function initializeGame() {
+                snake = [{ x: 140, y: 140 }];
+                food = {};
+                score = 0;
+                level = 1;
                 dx = 20;
                 dy = 0;
+                changingDirection = false;
+                gameRunning = true;
+                gameOverDisplay.style.display = 'none';
+                restartBtn.style.display = 'none';
+                startBtn.style.display = 'none';
+                scoreDisplay.textContent = 'Score:0';
+                levelDisplay.textContent = `Level:${level}`;
+                createFood();
+                main();
             }
 
-            if (keyPressed === DOWN_KEY && !goingUp) {
-                dx = 0;
-                dy = 20;
-            }
-        }
+            startBtn.addEventListener('click', initializeGame);
+            restartBtn.addEventListener('click', initializeGame);
 
-        createFood();
-        main();
+            function main() {
+                if (!gameRunning || didGameEnd()) {
+                    gameRunning = false;
+                    gameOverDisplay.style.display = 'block';
+                    restartBtn.style.display = 'block';
+                    finalScoreDisplay.textContent = `Final Score:${score}`;
+                    return;
+                }
+
+                changingDirection = false;
+                setTimeout(function onTick() {
+                    clearCanvas();
+                    drawFood();
+                    moveSnake();
+                    drawSnake();
+                    main();
+                }, 200 - (level * 10));
+            }
+
+            function clearCanvas() {
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            function drawSnake() {
+                snake.forEach((part, index) => {
+                    ctx.fillStyle = index === 0 ? '#00ffff' : '#ff00ff';
+                    ctx.fillRect(part.x, part.y, 20, 20);
+                    ctx.strokeStyle = '#1a1a1a';
+                    ctx.strokeRect(part.x, part.y, 20, 20);
+                });
+            }
+
+            function didGameEnd() {
+                for (let i = 4; i < snake.length; i++) {
+                    if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true;
+                }
+                const hitLeftWall = snake[0].x < 0;
+                const hitRightWall = snake[0].x >= canvas.width;
+                const hitTopWall = snake[0].y < 0;
+                const hitBottomWall = snake[0].y >= canvas.height;
+                return hitLeftWall || hitRightWall || hitTopWall || hitBottomWall;
+            }
+
+            function randomTen(min, max) {
+                return Math.round((Math.random() * (max - min) + min) / 20) * 20;
+            }
+
+            function createFood() {
+                food.x = randomTen(0, canvas.width - 20);
+                food.y = randomTen(0, canvas.height - 20);
+                snake.forEach(part => {
+                    if (part.x === food.x && part.y === food.y) createFood();
+                });
+            }
+
+            function drawFood() {
+                ctx.fillStyle = '#ff00ff';
+                ctx.fillRect(food.x, food.y, 20, 20);
+                ctx.strokeStyle = '#1a1a1a';
+                ctx.strokeRect(food.x, food.y, 20, 20);
+            }
+
+            function moveSnake() {
+                const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+                snake.unshift(head);
+                if (snake[0].x === food.x && snake[0].y === food.y) {
+                    score += 10;
+                    scoreDisplay.textContent = `Score:${score}`;
+                    if(score % 50 === 0){
+                        level++;
+                        levelDisplay.textContent = `Level:${level}`;
+                    }
+                    createFood();
+                } else {
+                    snake.pop();
+                }
+            }
+
+            function changeDirection(event) {
+                const LEFT_KEY = 37;
+                const RIGHT_KEY = 39;
+                const UP_KEY = 38;
+                const DOWN_KEY = 40;
+
+                if (changingDirection) return;
+                changingDirection = true;
+
+                const keyPressed = event.keyCode;
+                const goingUp = dy === -20;
+                const goingDown = dy === 20;
+                const goingRight = dx === 20;
+                const goingLeft = dx === -20;
+
+                if (keyPressed === LEFT_KEY && !goingRight) { dx = -20; dy = 0; }
+                if (keyPressed === UP_KEY && !goingDown) { dx = 0; dy = -20; }
+                if (keyPressed === RIGHT_KEY && !goingLeft) { dx = 20; dy = 0; }
+                if (keyPressed === DOWN_KEY && !goingUp) { dx = 0; dy = 20; }
+            }
+
+            canvas.addEventListener('touchstart', e => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            });
+
+            canvas.addEventListener('touchmove', e => {
+                if (!touchStartX || !touchStartY) {
+                    return;
+                }
+
+                let touchEndX = e.touches[0].clientX;
+                let touchEndY = e.touches[0].clientY;
+
+                let diffX = touchEndX - touchStartX;
+                let diffY = touchEndY - touchStartY;
+
+                if (Math.abs(diffX) > Math.abs(diffY)) { // Horizontal swipe
+                    if (diffX > 0 && dx !== -20) { // Right
+                        dx = 20; dy = 0;
+                    } else if (diffX < 0 && dx !== 20) { // Left
+                        dx = -20; dy = 0;
+                    }
+                } else { // Vertical swipe
+                    if (diffY > 0 && dy !== -20) { // Down
+                        dx = 0; dy = 20;
+                    } else if (diffY < 0 && dy !== 20) { // Up
+                        dx = 0; dy = -20;
+                    }
+                }
+
+                touchStartX = null;
+                touchStartY = null;
+            });
+
+            document.addEventListener("keydown", changeDirection);
+
+            document.getElementById('up').addEventListener('click', () => {
+                if (dy !== 20) { dx = 0; dy = -20; }
+            });
+            document.getElementById('down').addEventListener('click', () => {
+                if (dy !== -20) { dx = 0; dy = 20; }
+            });
+            document.getElementById('left').addEventListener('click', () => {
+                if (dx !== 20) { dx = -20; dy = 0; }
+            });
+            document.getElementById('right').addEventListener('click', () => {
+                if (dx !== -20) { dx = 20; dy = 0; }
+            });
+        });
     </script>
 </body>
 </html>

@@ -4,10 +4,12 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>¡Toca la figura! Aprende formas y colores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
 <meta name="color-scheme" content="light dark">
 <style>
 :root{
-  --bg:#f6f7fb;
   --panel:#ffffff;
   --text:#1d1d1f;
   --muted:#6a6a6f;
@@ -19,12 +21,14 @@
 }
 @media (prefers-color-scheme:dark){
   :root{
-    --bg:#0f1115;
     --panel:#171923;
     --text:#f0f1f5;
     --muted:#a4a8b3;
     --shadow:0 8px 20px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.4);
     --ring:0 0 0 4px rgba(123,133,255,.35);
+  }
+  body {
+    background: linear-gradient(135deg, #3c1053 0%, #ad5389 100%);
   }
 }
 *{box-sizing:border-box}
@@ -32,7 +36,7 @@ html,body{height:100%}
 body{
   margin:0;
   font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
-  background: radial-gradient(1200px 800px at 10% -10%, rgba(88,101,242,.08), transparent 60%), radial-gradient(1200px 800px at 110% 110%, rgba(255,206,84,.08), transparent 60%), var(--bg);
+  background: linear-gradient(135deg, #E0EAFC 0%, #CFDEF3 100%);
   color:var(--text);
   display:flex;
   min-height:100vh;
@@ -54,6 +58,17 @@ h1{
   margin:0;
   font-size:clamp(22px, 3.5vw, 34px);
   letter-spacing:.3px;
+}
+.coloredTitle{
+  background:linear-gradient(120deg, #5865f2 0%, #ff6584 50%, #ffc85b 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+@media (prefers-color-scheme:dark){
+  .coloredTitle{
+    background:linear-gradient(120deg, #7b85ff 0%, #ff89a3 50%, #ffd782 100%);
+  }
 }
 .controls{
   display:flex;
@@ -104,11 +119,16 @@ button.primary{
 }
 .headerRow{
   display:flex;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   align-items:center;
   justify-content:space-between;
   gap:10px;
   margin-bottom:10px;
+}
+@media (max-width: 480px) {
+  .headerRow .mini.small {
+    display: none;
+  }
 }
 .prompt{
   display:flex;
@@ -119,7 +139,7 @@ button.primary{
 }
 #targetText{
   color:var(--accent);
-  padding:2px 10px;
+  padding:8px 12px;
   border-radius:10px;
   background:rgba(88,101,242,.12);
 }
@@ -144,6 +164,7 @@ button.primary{
   align-items:center;
   justify-content:space-between;
   outline:none;
+  border: 2px solid #a4a8b3;
 }
 @media (prefers-color-scheme:dark){
   .card{
@@ -221,21 +242,36 @@ button.primary{
 }
 .modal{
   width:min(680px, 92vw);
-  background:var(--panel);
-  color:var(--text);
+  background: linear-gradient(135deg, #2193b0, #0d47a1);
+  color: white;
   border-radius:18px;
-  padding:22px;
+  padding: 28px;
   text-align:center;
-  box-shadow:var(--shadow);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  border: 2px solid rgba(255,255,255,0.5);
 }
 .modal h2{
-  margin:0 0 8px 0;
-  font-size:clamp(22px, 3.2vw, 28px);
+  margin:0 0 12px 0;
+  font-size:clamp(24px, 3.5vw, 32px);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  font-family: 'Luckiest Guy', cursive;
 }
 .modal p{
-  margin:8px 0 16px 0;
-  color:var(--muted);
-  font-size:15px;
+  margin:8px 0 20px 0;
+  color: rgba(255,255,255,0.95);
+  font-size:16px;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+.modal .primary {
+    font-size: 20px !important;
+    padding: 14px 24px !important;
+    background: linear-gradient(to bottom, #f5b041, #f39c12) !important;
+    color: white !important;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 .confetti-layer{
   position:absolute;
@@ -286,40 +322,87 @@ button.primary{
 }
 .score{
   display:flex;align-items:center;gap:8px;
-}
-.pill{
-  padding:8px 12px;border-radius:12px;background:rgba(0,0,0,.06);
+  font-size:clamp(18px, 3vw, 24px);
   font-weight:800;
 }
+.pill{
+  padding:8px 12px;
+  border-radius:10px;
+  background:rgba(88,101,242,.12);
+  color: var(--accent);
+  font-weight:800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 @media (prefers-color-scheme:dark){
-  .pill{background:rgba(255,255,255,.06)}
+  .pill{background:rgba(123,133,255,.18)}
 }
 .toggle.on{outline:3px solid rgba(88,101,242,.35)}
 .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+
+/* Custom button styles */
+.instructions-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.instructions-step span {
+  background-color: var(--accent);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.controls .btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.controls .pill {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+#repeatBtn {
+  background: linear-gradient(to top, #3498db, #5dade2);
+}
+#labelsBtn {
+  background: linear-gradient(to top, #f39c12, #f5b041);
+}
+#muteBtn {
+  background: linear-gradient(to top, #8e44ad, #a569bd);
+}
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="topbar">
-    <h1>¡Toca la figura!</h1>
-    <div class="controls">
-      <div class="score">
-        <span class="pill">Aciertos: <span id="score">0</span></span>
-      </div>
+  <h1 style="text-align: center; font-family: 'Luckiest Guy', cursive; font-size: 9vw; font-weight: bold; color: #90EE90; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-top: -10px; margin-bottom: 25px;">Formas y Colores</h1>
+  <div class="controls" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 40px;">
       <button id="repeatBtn" title="Repetir voz (R)" class="btn">Repetir voz</button>
       <button id="labelsBtn" title="Mostrar/ocultar etiquetas (L)" class="btn toggle on">Etiquetas ON</button>
       <button id="muteBtn" title="Silenciar/activar sonidos (M)" class="btn">Sonido ON</button>
-    </div>
   </div>
   <div class="wrap" id="gameWrap">
     <div class="headerRow">
       <div class="prompt">Encuentra: <span id="targetText">—</span></div>
+      <div class="score">
+        <span class="pill">Aciertos: <span id="score">0</span></span>
+      </div>
       <div class="mini small">Teclas: <span class="kbd">←</span><span class="kbd">→</span><span class="kbd">↑</span><span class="kbd">↓</span> mover • <span class="kbd">Enter</span> elegir • <span class="kbd">R</span> repetir</div>
     </div>
     <div id="grid" class="grid" role="group" aria-label="Opciones de figuras"></div>
     <div class="footer">
       <div class="instructions big">
-        1) Escucha la voz en español. 2) Toca o haz clic en la figura con el color pedidos. 3) ¡Suma aciertos y aprende!
+        <div class="instructions-step"><span>1</span> Escucha la voz en español.</div>
+        <div class="instructions-step"><span>2</span> Toca o haz clic en la figura con el color pedidos.</div>
+        <div class="instructions-step"><span>3</span> ¡Suma aciertos y aprende!</div>
       </div>
       <div class="mini small">Sugerencia: Toca “Repetir voz” si lo necesitas.</div>
     </div>

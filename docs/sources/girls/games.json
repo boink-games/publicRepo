@@ -9,6 +9,7 @@
     "author": "Boink.Games",
     "category": "Game",
     "essence": "Choose colors for dress and shoes, then tap Check Match. Learn simple color pairing with friendly feedback",
+    "icon": "👗",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
@@ -32,7 +33,7 @@
   {
     "id": "microgame:girls:matching-card-game",
     "type": "microgame",
-    "title": "Matching Card Game",
+    "title": "Matching Card",
     "source": "/sources/girls/matching-card-game.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
     "feedName": "Boink.Games #girls",

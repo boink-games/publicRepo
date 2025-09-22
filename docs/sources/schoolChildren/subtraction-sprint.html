@@ -4,58 +4,340 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Subtraction Sprint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg1:#0b1020;
-      --bg2:#0a1433;
-      --card:#0f172aee;
-      --border:#1f2a44;
-      --text:#eaf0ff;
-      --muted:#a8b1c7;
-      --accent:#5eead4;
-      --accent-2:#60a5fa;
-      --success:#22c55e;
-      --danger:#f43f5e;
-      --shadow:0 12px 30px rgba(0,0,0,.35);
-      --radius:16px;
-      --gap:14px;
-      --btn-bg:#12223a;
-      --btn-bg-press:#0d1a2e;
+    @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
+    :root {
+      --bg: #f0fdf4; /* Light Green Background */
+      --bubble-color: #fef9c3; /* Light Yellow Bubbles */
+      --card: #fffde7; /* Pale Yellow */
+      --border: #ffffff80;
+      --text: #166534; /* Dark Green */
+      --muted: #4d7c0f; /* Olive Green */
+      --accent: #fbbf24; /* Amber */
+      --accent-2: #60a5fa; /* Sky Blue */
+      --success: #22c55e; /* Bright Green */
+      --danger: #ef4444; /* Bright Red */
+      --shadow: 0 10px 25px rgba(22, 101, 52, .2);
+      --radius: 20px;
     }
+
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;color:var(--text);background:radial-gradient(1200px 800px at 20% -10%, #16244a 5%, transparent 40%), radial-gradient(1200px 800px at 120% 110%, #1a2b55 5%, transparent 40%), linear-gradient(160deg,var(--bg1),var(--bg2));font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
-    body{overflow-x:hidden}
-    .stars{pointer-events:none;position:fixed;inset:0;background:
-      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.25) 40%, transparent 45%),
-      radial-gradient(2px 2px at 70% 20%, rgba(255,255,255,.2) 40%, transparent 45%),
-      radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,.18) 40%, transparent 45%),
-      radial-gradient(2px 2px at 80% 80%, rgba(255,255,255,.22) 40%, transparent 45%);
-      animation: twinkle 5s ease-in-out infinite alternate;
-      opacity:.5
+    html,body{
+      height:100%;
+      margin:0;
+      color:var(--text);
+      background-color: var(--bg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
     }
-    @keyframes twinkle{to{opacity:.9; transform:translateY(-2px)}}
-    .wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:18px;gap:16px}
-    .topbar{width:min(720px,96vw);display:flex;align-items:center;justify-content:space-between;padding:10px 12px;margin-top:8px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:14px;backdrop-filter:blur(6px)}
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{width:28px;height:28px;border-radius:8px;background:conic-gradient(from 200deg, var(--accent), var(--accent-2), #a78bfa, var(--accent));box-shadow:0 0 18px rgba(94,234,212,.35)}
-    .title{font-weight:800;letter-spacing:.3px}
-    .stats{display:flex;align-items:center;gap:12px;color:var(--muted);font-weight:700}
-    .badge{display:inline-flex;align-items:center;gap:6px;background:#0f1a33;border:1px solid #23325a;color:#cbd5ff;padding:6px 10px;border-radius:999px;font-size:13px}
-    .controls{display:flex;align-items:center;gap:8px}
-    .tbtn{appearance:none;outline:none;border:1px solid #253456;background:#0f1a33;color:#dbe7ff;border-radius:999px;padding:6px 10px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .06s ease, background .2s ease, border-color .2s ease}
-    .tbtn:active{transform:scale(.98)}
-    .tbtn[data-off="true"]{opacity:.75;background:#0c1429;border-color:#1e2b49}
-    .card{width:min(720px,96vw);background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;backdrop-filter:blur(6px)}
-    .big{font-size: clamp(28px, 6vw, 56px);font-weight:900;letter-spacing:.8px;text-align:center;line-height:1.15}
-    .big .op{color:var(--accent-2);text-shadow:0 0 10px rgba(96,165,250,.25)}
-    .sub{color:var(--muted);text-align:center;margin-top:-6px}
-    .opts{display:grid;grid-template-columns:repeat(auto-fit, minmax(120px,1fr));gap:12px;margin-top:6px}
-    .btn{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#132644,#0f1f39);color:#ffffff;border:1px solid #1f3256;border-radius:14px;padding:16px 14px;font-weight:800;font-size:clamp(18px,4.5vw,22px);cursor:pointer;transition:transform .08s ease, box-shadow .2s ease, background .2s ease; box-shadow:0 6px 18px rgba(0,0,0,.25)}
-    .btn::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(80% 60% at 50% 0%, rgba(255,255,255,.08), transparent 60%);pointer-events:none}
-    .btn:hover{box-shadow:0 10px 26px rgba(0,0,0,.35)}
-    .btn:active{transform:translateY(1px) scale(.99);background:linear-gradient(180deg,#10213b,#0c192e)}
-    .btn.correct{border-color:rgba(34,197,94,.8);box-shadow:0 6px 22px rgba(34,197,94,.35)}
-    .btn.wrong{border-color:rgba(244,63,94,.7);box-shadow:0 6px 22px rgba(244,63,94,.25)}
+
+    .bubbles{
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      z-index: -1;
+    }
+    .bubble {
+      position: absolute;
+      bottom: -50px;
+      background: var(--bubble-color);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: rise 20s infinite ease-in;
+    }
+    .bubble:nth-child(1) { left: 10%; animation-duration: 22s; width: 20px; height: 20px; }
+    .bubble:nth-child(2) { left: 20%; animation-duration: 18s; width: 15px; height: 15px; animation-delay: 2s; }
+    .bubble:nth-child(3) { left: 30%; animation-duration: 25s; width: 25px; height: 25px; }
+    .bubble:nth-child(4) { left: 40%; animation-duration: 16s; width: 18px; height: 18px; animation-delay: 4s; }
+    .bubble:nth-child(5) { left: 50%; animation-duration: 28s; width: 22px; height: 22px; }
+    .bubble:nth-child(6) { left: 60%; animation-duration: 19s; width: 16px; height: 16px; animation-delay: 1s; }
+    .bubble:nth-child(7) { left: 70%; animation-duration: 24s; width: 24px; height: 24px; }
+    .bubble:nth-child(8) { left: 80%; animation-duration: 17s; width: 17px; height: 17px; animation-delay: 3s; }
+    .bubble:nth-child(9) { left: 90%; animation-duration: 26s; width: 21px; height: 21px; }
+        :root {
+      --bg: #f0fdf4; /* Light Green Background */
+      --bubble-color: #fef9c3; /* Light Yellow Bubbles */
+      --card: #fffde7; /* Pale Yellow */
+      --border: #ffffff80;
+      --text: #166534; /* Dark Green */
+      --muted: #4d7c0f; /* Olive Green */
+      --accent: #fbbf24; /* Amber */
+      --accent-2: #60a5fa; /* Sky Blue */
+      --success: #22c55e; /* Bright Green */
+      --danger: #ef4444; /* Bright Red */
+      --shadow: 0 10px 25px rgba(22, 101, 52, .2);
+      --radius: 20px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      height:100%;
+      margin:0;
+      color:var(--text);
+      background-color: var(--bg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    .bubbles{
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      z-index: -1;
+    }
+    .bubble {
+      position: absolute;
+      bottom: -50px;
+      background: var(--bubble-color);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: rise 20s infinite ease-in;
+    }
+    .bubble:nth-child(1) { left: 10%; animation-duration: 22s; width: 20px; height: 20px; }
+    .bubble:nth-child(2) { left: 20%; animation-duration: 18s; width: 15px; height: 15px; animation-delay: 2s; }
+    .bubble:nth-child(3) { left: 30%; animation-duration: 25s; width: 25px; height: 25px; }
+    .bubble:nth-child(4) { left: 40%; animation-duration: 16s; width: 18px; height: 18px; animation-delay: 4s; }
+    .bubble:nth-child(5) { left: 50%; animation-duration: 28s; width: 22px; height: 22px; }
+    .bubble:nth-child(6) { left: 60%; animation-duration: 19s; width: 16px; height: 16px; animation-delay: 1s; }
+    .bubble:nth-child(7) { left: 70%; animation-duration: 24s; width: 24px; height: 24px; }
+    .bubble:nth-child(8) { left: 80%; animation-duration: 17s; width: 17px; height: 17px; animation-delay: 3s; }
+    .bubble:nth-child(9) { left: 90%; animation-duration: 26s; width: 21px; height: 21px; }
+    .bubble:nth-child(10) { left: 95%; animation-duration: 20s; width: 19px; height: 19px; animation-delay: 5s; }
+
+    @keyframes rise {
+      0% { transform: translateY(0) translateX(0); }
+      100% { transform: translateY(-1080px) translateX(calc(var(--i, 1) * 40px)); }
+    }
+
+    .wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:18px;gap:16px;}
+    .topbar{
+      width:min(720px,96vw);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 12px;
+      margin-top:8px;
+      background:rgba(255,255,255,.5); /* More opaque */
+      border:1px solid rgba(255,255,255,.4);
+      border-radius:16px;
+      backdrop-filter:blur(8px);
+    }
+    .logo{
+      width: 60px;
+      height: 60px;
+      overflow: visible;
+      margin-top: -15px; /* Move the bear up */
+    }
+    .balloon circle, .balloon line {
+      animation: sway 3s ease-in-out infinite alternate;
+      transform-origin: 50px 70px;
+    }
+
+    @keyframes sway {
+      from { transform: rotateZ(-8deg); }
+      to { transform: rotateZ(8deg); }
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) translateX(0); }
+      100% { transform: translateY(-1080px) translateX(calc(var(--i, 1) * 40px)); }
+    }
+
+    .wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:18px;gap:16px;}
+    .topbar{
+      width:min(720px,96vw);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 12px;
+      margin-top:8px;
+      background:rgba(255,255,255,.3);
+      border:1px solid rgba(255,255,255,.4);
+      border-radius:16px;
+      backdrop-filter:blur(8px);
+    }
+    .logo{
+      width: 60px; /* Increased size */
+      height: 60px;
+      overflow: visible;
+    }
+    .balloon circle, .balloon line {
+      animation: sway 3s ease-in-out infinite alternate;
+      transform-origin: 50px 70px; /* Animate from the bear's hand */
+    }
+
+    @keyframes sway {
+      from { transform: rotateZ(-8deg); }
+      to { transform: rotateZ(8deg); }
+    }
+        .wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:18px;gap:16px;}
+    .topbar{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center; /* Center the group */
+      padding:10px 12px;
+      margin-top:8px;
+    }
+    .top-bar-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-around; /* Distribute items evenly */
+      width: min(720px, 96vw);      /* Match card width */
+      background: rgba(255, 255, 255, .5);
+      border: 1px solid rgba(255, 255, 255, .4);
+      border-radius: 999px; /* Pill shape */
+      padding: 6px 12px;
+      backdrop-filter: blur(8px);
+    }
+    .logo{
+      width: 60px;
+      height: 60px;
+      overflow: visible;
+      margin-top: -15px; /* Move the bear up */
+    }
+    .balloon circle, .balloon line {
+      animation: sway 3s ease-in-out infinite alternate;
+      transform-origin: 50px 70px;
+    }
+
+    @keyframes sway {
+      from { transform: rotateZ(-8deg); }
+      to { transform: rotateZ(8deg); }
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 90px; /* Increased width */
+      text-align: center;
+    }
+    .stat-item .label {
+      font-size: 14px; /* Increased font size */
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    #levelBadge .label, #scoreBadge .label, #streakBadge .label, .control-btn .label {
+      color: #4a148c; /* Dark Purple */
+    }
+    .stat-item strong {
+      font-size: 24px;
+      font-weight: 900;
+      color: black;
+      line-height: 1.2;
+    }
+    .controls{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .control-btn {
+      cursor: pointer;
+      transition: transform .1s ease, background-color .2s ease;
+    }
+    .control-btn:hover {
+      background: rgba(255, 255, 255, .6);
+    }
+    .control-btn:active {
+      transform: scale(0.97);
+    }
+    .control-btn[data-off="true"] {
+      opacity: .6;
+      background: rgba(255, 255, 255, .2);
+    }
+    .title-container {
+      display: flex;
+      flex-direction: column; /* Stack logo and title vertically */
+      align-items: center;   /* Center horizontally */
+      justify-content: center;
+      gap: 0; /* Adjust gap as needed */
+      margin-bottom: 10px;
+    }
+    .game-title {
+      font-family: 'Bangers', cursive;
+      text-align: center;
+      font-size: 40px;
+      font-weight: 400;
+      margin: 0;
+      letter-spacing: 2px;
+      color: #4a148c; /* Dark Purple */
+      white-space: nowrap; /* Keep title on one line */
+    }
+
+    @media (max-width: 380px) {
+      .game-title {
+        font-size: 30px; /* Slightly smaller font on very narrow screens */
+      }
+      .logo {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    .card{
+      width:min(720px,96vw);
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:24px;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      backdrop-filter:blur(8px)
+    }
+    .big{font-size: clamp(32px, 7vw, 64px);font-weight:900;letter-spacing:.8px;text-align:center;line-height:1.15; color: black;}
+    .big .op{color: black; text-shadow: none;}
+    .sub{color:#4a148c;text-align:center;margin-top:-6px;font-size:18px;}
+    .opts{display:grid;grid-template-columns:repeat(auto-fit, minmax(120px,1fr));gap:14px;margin-top:10px}
+    .btn{
+      position:relative;
+      isolation:isolate;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: black; /* Dark text color */
+      border:1px solid rgba(0,0,0,.05);
+      border-bottom: 4px solid rgba(0,0,0,.15);
+      border-radius:16px;
+      padding:20px 18px;
+      font-weight:800;
+      font-size:clamp(24px, 6vw, 32px);
+      cursor:pointer;
+      transition:transform .08s ease, box-shadow .2s ease, background .2s ease;
+      box-shadow:0 6px 18px rgba(0,0,0,.05);
+    }
+    .btn-color-1 { background-color: rgba(41, 182, 246, 0.4); } /* Lighter Blue */
+    .btn-color-2 { background-color: rgba(255, 167, 38, 0.4); } /* Lighter Orange */
+    .btn-color-3 { background-color: rgba(171, 71, 188, 0.4); } /* Lighter Purple */
+    .btn-color-4 { background-color: rgba(236, 64, 122, 0.4); } /* Lighter Pink */
+
+    .btn:hover{box-shadow:0 10px 26px rgba(0,0,0,.1); transform: translateY(-1px);}
+    .btn:active{transform:translateY(2px); border-bottom-width: 2px; box-shadow:0 4px 12px rgba(0,0,0,.1);}
+    .btn.correct{
+      background-color: var(--success) !important;
+      border-color: rgba(0,0,0,.1) !important;
+      box-shadow:0 6px 22px rgba(34, 197, 94, .35);
+      color: white !important; /* Ensure text is white on correct */
+    }
+    .btn.wrong{
+      background-color: var(--danger) !important;
+      border-color: rgba(0,0,0,.1) !important;
+      box-shadow:0 6px 22px rgba(239, 68, 68, .25);
+      color: white !important; /* Ensure text is white on wrong */
+    }
     .shake{animation:shake .35s ease}
     @keyframes shake{
       10%,90%{transform:translateX(-2px)}
@@ -68,48 +350,115 @@
       from{opacity:0; transform:translateY(10px)}
       to{opacity:1; transform:translateY(0)}
     }
-    .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);z-index:10}
-    .overlay .bubble{display:flex;align-items:center;justify-content:center;width:160px;height:160px;border-radius:999px;background:radial-gradient(60% 60% at 50% 40%, rgba(255,255,255,.2), rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(4px);box-shadow:0 10px 40px rgba(0,0,0,.45)}
-    .overlay .num{font-size:88px;font-weight:900;text-shadow:0 6px 22px rgba(0,0,0,.6);animation:pop .6s cubic-bezier(.2,1.1,.2,1) infinite}
+    .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);z-index:10; backdrop-filter: blur(4px);}
+    .overlay .bubble{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:180px; /* Slightly larger */
+      height:180px;
+      border-radius:999px;
+      background:radial-gradient(60% 60% at 50% 40%, rgba(255,255,255,.6), rgba(255,255,255,.3));
+      border:1px solid rgba(255,255,255,.4);
+      box-shadow:0 10px 40px rgba(0,0,0,.25)
+    }
+    .overlay .num{font-size:96px;font-weight:900;color:white;text-shadow:0 6px 22px rgba(0,0,0,.4);animation:pop .6s cubic-bezier(.2,1.1,.2,1) infinite}
     @keyframes pop{0%{transform:scale(.9);opacity:.9} 50%{transform:scale(1);opacity:1} 100%{transform:scale(.9);opacity:.95}}
     .confetti{pointer-events:none;position:fixed;inset:0;overflow:hidden;z-index:20}
     .piece{position:absolute;width:10px;height:14px;opacity:0.9;will-change:transform}
     .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-    .footer{color:#9fb0d9a1;text-align:center;font-size:12px}
+    .footer{color:#4a1c8c;text-align:center;font-size:14px; margin-top: 10px;}
     @media (prefers-reduced-motion: reduce){
-      .fadeUp,.shake,.overlay .num{animation:none}
-      .stars{animation:none}
+      .fadeUp,.shake,.overlay .num, .bubble{animation:none}
     }
+
+    @media (max-width: 480px) {
+      .top-bar-group {
+        gap: 4px;
+        padding: 4px 6px;
+      }
+      .stat-item {
+        min-width: 60px; /* Tighter min-width */
+        padding: 4px 6px;   /* Tighter padding */
+      }
+      .stat-item .label {
+        font-size: 9px; /* Smaller label */
+      }
+      .stat-item strong {
+        font-size: 16px; /* Smaller number */
+      }
+    }
+
     /* Touch polish */
     button, .tbtn, .btn{-webkit-tap-highlight-color:transparent; touch-action:manipulation}
     .noselect{user-select:none; -webkit-user-select:none}
   </style>
 </head>
 <body>
-  <div class="stars" aria-hidden="true"></div>
+  <div class="bubbles" aria-hidden="true">
+    <div class="bubble" style="--i:1"></div>
+    <div class="bubble" style="--i:-1"></div>
+    <div class="bubble" style="--i:1"></div>
+    <div class="bubble" style="--i:-1"></div>
+    <div class="bubble" style="--i:1"></div>
+    <div class="bubble" style="--i:-1"></div>
+    <div class="bubble" style="--i:1"></div>
+    <div class="bubble" style="--i:-1"></div>
+    <div class="bubble" style="--i:1"></div>
+    <div class="bubble" style="--i:-1"></div>
+  </div>
   <div class="wrap noselect">
     <div class="topbar">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div class="title">Subtraction Sprint</div>
-      </div>
-      <div class="stats">
-        <span class="badge" id="scoreBadge">Score: <strong id="score">0</strong></span>
-        <span class="badge" id="streakBadge">Streak: <strong id="streak">0</strong></span>
-      </div>
-      <div class="controls">
-        <button class="tbtn" id="soundBtn" aria-pressed="false" title="Toggle sound">🔊 Sound</button>
-        <button class="tbtn" id="voiceBtn" aria-pressed="true" title="Toggle voice">🗣 Voice</button>
+      <div class="top-bar-group">
+        <div class="stat-item" id="levelBadge">
+          <span class="label">LEVEL</span>
+          <strong id="level">1</strong>
+        </div>
+        <div class="stat-item" id="scoreBadge">
+          <span class="label">SCORE</span>
+          <strong id="score">0</strong>
+        </div>
+        <div class="stat-item" id="streakBadge">
+          <span class="label">STREAK</span>
+          <strong id="streak">0</strong>
+        </div>
+        <div class="stat-item control-btn" id="soundBtn" role="button" aria-pressed="false" title="Toggle sound">
+          <span class="label">SOUND</span>
+          <strong>🔊</strong>
+        </div>
+        <div class="stat-item control-btn" id="voiceBtn" role="button" aria-pressed="true" title="Toggle voice">
+          <span class="label">VOICE</span>
+          <strong>🗣</strong>
+        </div>
       </div>
     </div>
 
     <div class="card">
+      <div class="title-container">
+        <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" font-family="'Lilita One', cursive" font-weight="400">
+          <g class="bear">
+            <circle cx="50" cy="80" r="18" fill="#A0522D"/>
+            <circle cx="50" cy="55" r="15" fill="#D2B48C"/>
+            <circle cx="40" cy="42" r="6" fill="#A0522D"/>
+            <circle cx="60" cy="42" r="6" fill="#A0522D"/>
+            <circle cx="45" cy="55" r="1.5" fill="black"/>
+            <circle cx="55" cy="55" r="1.5" fill="black"/>
+            <circle cx="50" cy="60" r="3" fill="#8B4513"/>
+          </g>
+          <g class="balloon">
+            <line x1="50" y1="70" x2="50" y2="25" stroke="#aeaeae" stroke-width="0.5"/>
+            <circle cx="50" cy="15" r="12" fill="#3b82f6"/>
+            <text x="50" y="15" dy=".1em" font-size="16" text-anchor="middle" dominant-baseline="middle" fill="white">-</text>
+          </g>
+        </svg>
+        <h1 class="game-title">Subtraction Sprint</h1>
+      </div>
       <div class="big" id="expr"><span class="numA">6</span> <span class="op">−</span> <span class="numB">2</span> = ?</div>
       <div class="sub" id="hint">Choose the correct answer</div>
       <div class="opts" id="opts"></div>
     </div>
 
-    <div class="footer">Tip: Tap an answer or use 1–4 keys. Toggle sound/voice in the top right.</div>
+    <div class="footer"><strong>Tip:</strong> Tap an answer or use 1–4 keys. Toggle sound/voice in the top right.</div>
   </div>
 
   <div class="overlay" id="overlay" aria-hidden="true">
@@ -134,12 +483,13 @@
     const confettiEl = $('#confetti');
     const scoreEl = $('#score');
     const streakEl = $('#streak');
+    const levelEl = $('#level');
     const soundBtn = $('#soundBtn');
     const voiceBtn = $('#voiceBtn');
     const live = $('#live');
 
     let a=0,b=0,ans=0, locked=false;
-    let score=0, streak=0;
+    let score=0, streak=0, level=1;
     let allowSound = JSON.parse(localStorage.getItem('soundOn') ?? 'true');
     let allowVoice = JSON.parse(localStorage.getItem('voiceOn') ?? 'true');
 
@@ -147,10 +497,10 @@
     function updateTogglesUI(){
       soundBtn.dataset.off = String(!allowSound);
       soundBtn.setAttribute('aria-pressed', String(allowSound));
-      soundBtn.textContent = (allowSound? '🔊':'🔇') + ' Sound';
+      soundBtn.querySelector('strong').textContent = allowSound ? '🔊' : '🔇';
       voiceBtn.dataset.off = String(!allowVoice);
       voiceBtn.setAttribute('aria-pressed', String(allowVoice));
-      voiceBtn.textContent = (allowVoice? '🗣':'🤫') + ' Voice';
+      voiceBtn.querySelector('strong').textContent = allowVoice ? '🗣' : '🤫';
     }
     soundBtn.addEventListener('click', () => {
       allowSound = !allowSound;
@@ -221,28 +571,35 @@
     })();
 
     // Confetti
-    function launchConfetti(count=28){
+    function launchConfetti(count=50){
       const colors = ['#60a5fa','#5eead4','#a78bfa','#f472b6','#fbbf24','#34d399'];
       const w = window.innerWidth, h = window.innerHeight;
+      const originX = w / 2;
+      const originY = h / 2;
+
       for(let i=0;i<count;i++){
         const piece = document.createElement('div');
         piece.className='piece';
         const c = colors[(Math.random()*colors.length)|0];
-        const x = Math.random()*w*0.9 + w*0.05;
-        const rot = Math.random()*360;
-        piece.style.left = x + 'px';
-        piece.style.top = '-20px';
+        piece.style.left = originX + 'px';
+        piece.style.top = originY + 'px';
         piece.style.background = c;
-        piece.style.transform = `rotate(${rot}deg)`;
         confettiEl.appendChild(piece);
-        const fall = 800 + Math.random()*800;
-        const drift = (Math.random()*60 - 30);
-        const scale = 0.7 + Math.random()*0.8;
+
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = 150 + Math.random() * 200;
+        const endX = Math.cos(angle) * distance;
+        const endY = Math.sin(angle) * distance;
+        const duration = 900 + Math.random() * 500;
+        const rot = Math.random() * 720 - 360;
+        const scale = 0.8 + Math.random() * 0.7;
+
         piece.animate([
-          { transform:`translate3d(0,0,0) rotate(${rot}deg) scale(${scale})`, opacity:1 },
-          { transform:`translate3d(${drift}px, ${h+40}px, 0) rotate(${rot+360}deg) scale(${scale})`, opacity:0.9 }
-        ], { duration: fall, easing:'cubic-bezier(.2,.7,.2,1)' });
-        setTimeout(()=> piece.remove(), fall+50);
+          { transform: `translate(0, 0) rotate(0deg) scale(1)`, opacity: 1 },
+          { transform: `translate(${endX}px, ${endY}px) rotate(${rot}deg) scale(${scale})`, opacity: 0 }
+        ], { duration: duration, easing: 'cubic-bezier(0.1, 1, 0.7, 1)' });
+
+        setTimeout(()=> piece.remove(), duration);
       }
     }
 
@@ -250,9 +607,29 @@
 
     function newExpr(){
       locked = false;
-      a = randint(3, 12);
-      b = randint(1, a-1);
+
+      if (level === 1) {
+        // Level 1: Single digit subtraction (e.g., 8 - 3)
+        a = randint(2, 9);
+        b = randint(1, a - 1);
+      } else if (level === 2) {
+        // Level 2: Subtraction from 10 (e.g., 10 - 6)
+        a = 10;
+        b = randint(1, 9);
+      } else if (level === 3) {
+        // Level 3: Subtraction from numbers up to 20 (e.g., 17 - 9)
+        a = randint(11, 20);
+        b = randint(1, a - 1);
+      } else { // Level 4 and beyond
+        // Level 4: Two-digit subtraction (e.g., 56 - 23)
+        const minA = 21 + ((level - 4) * 10);
+        const maxA = 50 + ((level - 4) * 20);
+        a = randint(minA, maxA);
+        b = randint(10, a - 1);
+      }
+      
       ans = a - b;
+
       exprEl.innerHTML = `<span class="numA">${a}</span> <span class="op">−</span> <span class="numB">${b}</span> = ?`;
       hintEl.textContent = 'Choose the correct answer';
       live.textContent = `What is ${a} minus ${b}?`;
@@ -265,7 +642,7 @@
       const set = new Set([correct]);
       const options = [correct];
       while(options.length < 4){
-        const delta = randint(-4, 6);
+        const delta = randint(-level * 2, level * 3) || 1;
         let v = correct + delta;
         if(v < 0) v = Math.abs(delta);
         if(!set.has(v)){
@@ -278,15 +655,15 @@
 
     function renderOptions(values){
       optsEl.innerHTML = '';
+      const colors = ['btn-color-1', 'btn-color-2', 'btn-color-3', 'btn-color-4'].sort(() => Math.random() - 0.5);
       values.forEach((v, i)=>{
         const btn = document.createElement('button');
         btn.className = 'btn fadeUp';
+        btn.classList.add(colors[i]);
         btn.style.animationDelay = `${i*60}ms`;
         btn.textContent = v;
         btn.setAttribute('data-val', v);
         btn.addEventListener('click', ()=> pick(v, btn), {passive:true});
-        btn.addEventListener('pointerdown', ()=> btn.style.transform='scale(.99)');
-        btn.addEventListener('pointerup', ()=> btn.style.transform='');
         optsEl.appendChild(btn);
       });
     }
@@ -296,15 +673,22 @@
       if(v === ans){
         locked = true;
         btn.classList.add('correct');
-        score += 10 + Math.min(20, streak*2);
+        const pointsEarned = 10 + Math.min(20, streak*2);
+        score += pointsEarned;
         streak += 1;
         updateHUD();
-        hintEl.innerHTML = `Correct! <span style="color:${getComputedStyle(document.documentElement).getPropertyValue('--success')}">+${10 + Math.min(20, (streak-1)*2)}</span>`;
+        hintEl.innerHTML = `Correct! <span style="color:${getComputedStyle(document.documentElement).getPropertyValue('--success')}">+${pointsEarned}</span>`;
         live.textContent = 'Correct';
         vibe(30);
         SFX.correct();
         launchConfetti(24 + Math.min(20, streak*2));
-        countdown(()=> newExpr());
+        if (score >= level * 100) {
+          level++;
+          updateHUD();
+          showLevelUp();
+        } else {
+          countdown(()=> newExpr());
+        }
       }else{
         btn.classList.add('wrong','shake');
         setTimeout(()=> btn.classList.remove('shake'), 400);
@@ -320,6 +704,19 @@
     function updateHUD(){
       scoreEl.textContent = String(score);
       streakEl.textContent = String(streak);
+      levelEl.textContent = String(level);
+    }
+
+    function showLevelUp() {
+      overlay.style.display = 'flex';
+      numEl.innerHTML = `Level<br>${level}`;
+      numEl.style.fontSize = '48px';
+      SFX.correct();
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        numEl.style.fontSize = '88px';
+        countdown(newExpr);
+      }, 1500);
     }
 
     function countdown(cb){

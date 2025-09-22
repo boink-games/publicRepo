@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>Neon Street Racer+</title>
+<title>Car Racing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
 <style>
 :root{
   --primary:#00e5ff;
@@ -33,9 +36,10 @@ body{display:flex;align-items:center;justify-content:center;padding:env(safe-are
   position:fixed;top:10px;left:0;right:0;display:flex;justify-content:center;pointer-events:none;z-index:5
 }
 .header h1{
-  font-size:clamp(1.2rem,3.8vw,2rem);
+  font-family: 'Bungee', cursive;
+  font-size:clamp(1.8rem, 5vw, 2.5rem);
   letter-spacing:.04em;
-  font-weight:900;
+  font-weight: 400;
   background:linear-gradient(90deg,var(--primary),var(--secondary));
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   text-shadow:0 8px 30px rgba(0,229,255,.18)
@@ -45,6 +49,24 @@ body{display:flex;align-items:center;justify-content:center;padding:env(safe-are
   position:relative;width:min(480px,94vw);aspect-ratio:4/7;border-radius:18px;box-shadow:0 30px 80px var(--shadow);
   background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
   backdrop-filter:blur(10px);overflow:hidden
+}
+.close-btn{
+  position:fixed;
+  top:20px;
+  right:20px;
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:50%;
+  background:rgba(0,0,0,.3);
+  color:white;
+  font-size:20px;
+  font-weight:bold;
+  cursor:pointer;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 /* touch visual steer zones */
 .game-container::before,
@@ -121,9 +143,9 @@ canvas{display:block;width:100%;height:100%;border-radius:18px;filter:drop-shado
   position:absolute;left:10px;right:10px;bottom:32px;display:flex;gap:10px;pointer-events:auto
 }
 .control-btn{
-  flex:1;min-height:64px;border:none;border-radius:14px;
+  flex:1;min-height:48px;border:none;border-radius:14px;
   background:linear-gradient(135deg, rgba(0,229,255,.15), rgba(10,103,255,.15));
-  color:var(--text);font-size:1.05rem;font-weight:900;letter-spacing:.06em;
+  color:var(--text);font-size:.9rem;font-weight:900;letter-spacing:.06em;
   box-shadow:var(--glow);transition:transform .06s ease, box-shadow .2s ease
 }
 .control-btn:active{transform:translateY(2px)}
@@ -146,7 +168,7 @@ canvas{display:block;width:100%;height:100%;border-radius:18px;filter:drop-shado
   border:1px solid rgba(255,255,255,.1);box-shadow:0 30px 80px var(--shadow);text-align:center
 }
 .panel h2{
-  font-size:1.5rem;margin-bottom:.4rem;
+  font-size:1.2rem;margin-bottom:.4rem;
   background:linear-gradient(90deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent
 }
 .panel p{opacity:.92;margin:.35rem 0}
@@ -169,7 +191,8 @@ body, .overlay, .game-container{overscroll-behavior:contain}
 </style>
 </head>
 <body>
-<div class="header"><h1>NEON STREET RACER+</h1></div>
+<button class="close-btn" id="closeBtn" aria-label="Close game">&times;</button>
+<div class="header"><h1>Car Racing</h1></div>
 
 <div class="game-container" id="gameContainer" aria-label="Neon Street Racer game area">
   <canvas id="game"></canvas>
@@ -214,8 +237,10 @@ body, .overlay, .game-container{overscroll-behavior:contain}
 
   <div class="controls" aria-label="Touch controls">
     <button class="control-btn primary" id="leftBtn" aria-label="Move Left">⟵ LEFT</button>
+    <button class="control-btn" id="brakeBtn" aria-label="Brake">BRAKE</button>
+    <button class="control-btn" id="stopBtn" aria-label="Stop">STOP</button>
     <button class="control-btn" id="nitroBtn" aria-label="Nitro Boost">NITRO</button>
-    <button class="control-btn primary" id="rightBtn" aria-label="Move Right">RIGHT ⟶</button>
+    <button class="control-btn primary" id="rightBtn" aria-label="Move Right">⟶ RIGHT</button>
   </div>
 </div>
 
@@ -227,6 +252,8 @@ body, .overlay, .game-container{overscroll-behavior:contain}
     <div class="grid">
       <div class="cell"><strong>Move</strong><br>Arrow keys / A-D<br>Tap & hold LEFT/RIGHT side</div>
       <div class="cell"><strong>Nitro</strong><br>Hold Shift/Space<br>Tap center or Nitro button</div>
+      <div class="cell"><strong>Brake</strong><br>Hold Control<br>Tap Brake button</div>
+      <div class="cell"><strong>Stop</strong><br>Hold S<br>Tap Stop button</div>
       <div class="cell"><strong>Extras</strong><br>Shield, Magnet, Fuel</div>
       <div class="cell"><strong>Tips</strong><br>Draft close behind cars<br>Near-miss for Combo</div>
     </div>
@@ -303,6 +330,9 @@ body, .overlay, .game-container{overscroll-behavior:contain}
   const leftBtn = document.getElementById('leftBtn');
   const rightBtn = document.getElementById('rightBtn');
   const nitroBtn = document.getElementById('nitroBtn');
+  const brakeBtn = document.getElementById('brakeBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const closeBtn = document.getElementById('closeBtn');
 
   const W = 400, H = 700;
   let dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -336,7 +366,9 @@ body, .overlay, .game-container{overscroll-behavior:contain}
   let coins = 0;
   let hearts = 3;
   let fuel = 100;
-  let nitro = 40;
+      let nitro = 40;
+    let brakeDown = false;
+  let stopDown = false;
   let combo = 1;
   let comboTimeLeft = 0;
   let best = +(localStorage.getItem('neon_best') || 0);
@@ -398,11 +430,15 @@ body, .overlay, .game-container{overscroll-behavior:contain}
     if ((k === 'arrowleft' || k === 'a')) tryLane(-1);
     if ((k === 'arrowright' || k === 'd')) tryLane(1);
     if (k === ' ' || k === 'shift') nitroDown = true;
+    if (k === 'control') brakeDown = true;
+    if (k === 's') stopDown = true;
   }, {passive:false});
   window.addEventListener('keyup', e => {
     const k = e.key.toLowerCase();
     keys[k] = false;
     if (k === ' ' || k === 'shift') nitroDown = false;
+    if (k === 'control') brakeDown = false;
+    if (k === 's') stopDown = false;
   }, {passive:true});
 
   // Touch buttons + haptic indicator on container
@@ -427,6 +463,14 @@ body, .overlay, .game-container{overscroll-behavior:contain}
   nitroBtn.addEventListener('pointerdown', e=>{e.preventDefault(); nitroDown = true;});
   nitroBtn.addEventListener('pointerup', e=>{e.preventDefault(); nitroDown = false;});
   nitroBtn.addEventListener('pointercancel', e=>{ nitroDown = false; });
+
+  brakeBtn.addEventListener('pointerdown', e=>{e.preventDefault(); brakeDown = true;});
+  brakeBtn.addEventListener('pointerup', e=>{e.preventDefault(); brakeDown = false;});
+  brakeBtn.addEventListener('pointercancel', e=>{ brakeDown = false; });
+
+  stopBtn.addEventListener('pointerdown', e=>{e.preventDefault(); stopDown = true;});
+  stopBtn.addEventListener('pointerup', e=>{e.preventDefault(); stopDown = false;});
+  stopBtn.addEventListener('pointercancel', e=>{ stopDown = false; });
 
   // Canvas swipe + hold zones (full-area steering)
   let touchStartX = null;
@@ -470,8 +514,8 @@ body, .overlay, .game-container{overscroll-behavior:contain}
   gameContainer.addEventListener('contextmenu', e => e.preventDefault());
 
   // UI controls
-  startBtn.onclick = async () => {
-    started = true; hide(startOverlay); initAudio(); await goFullscreen(); startGame();
+  startBtn.onclick = () => {
+    started = true; hide(startOverlay); initAudio(); startGame();
   };
   pauseBtn.onclick = ()=> togglePause(true);
   resumeBtn.onclick = ()=> togglePause(false);
@@ -479,6 +523,7 @@ body, .overlay, .game-container{overscroll-behavior:contain}
   playAgainBtn.onclick = ()=> { hide(gameOverOverlay); restartGame(); };
   backToMenuBtn.onclick = ()=> { hide(gameOverOverlay); show(startOverlay); resetToMenu(); };
   muteBtn.onclick = ()=> { muted = !muted; muteBtn.textContent = `Sound: ${muted?'Off':'On'}`; };
+  closeBtn.onclick = () => { window.history.back(); };
 
   // Auto pause on tab hidden (mobile friendly)
   document.addEventListener('visibilitychange', () => {
@@ -714,11 +759,17 @@ body, .overlay, .game-container{overscroll-behavior:contain}
       }
     }
 
-    // Nitro
-    if (nitroDown && nitro > 0){
+    // Nitro / Brake / Stop
+    if (stopDown) {
+      speedBoost = 0; // Stop completely
+      nitro = Math.min(100, nitro + 20*dt); // Faster nitro recharge when stopped
+    } else if (nitroDown && nitro > 0){
       speedBoost = 1.65;
       nitro = Math.max(0, nitro - 23*dt);
-    }else{
+    } else if (brakeDown) {
+      speedBoost = 0.4; // Reduce speed significantly when braking
+      nitro = Math.min(100, nitro + 10*dt); // Faster nitro recharge when braking
+    } else {
       speedBoost = 1;
       nitro = Math.min(100, nitro + 6.5*dt); // recharge slowly
     }

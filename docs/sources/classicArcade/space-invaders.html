@@ -1,157 +1,1303 @@
-<!-- Inspired by: https://www.codewithrandom.com/2024/02/25/html-game-code/ -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Invaders</title>
-    <style>
-        body {
-            font-family: "Courier New", Courier, monospace;
-            background-color: #000;
-            color: #fff;
-            text-align: center;
-        }
-        canvas {
-            border: 2px solid #fff;
-            background-color: #000;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Space Invaders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #02030a;
+    --bg2: #0a0d2a;
+    --scan: rgba(255,255,255,0.03);
+    --ui: #9efcff;
+    --accent: #51f1d8;
+    --warn: #ff4d6d;
+    --good: #9cff57;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: radial-gradient(1200px 800px at 50% 20%, var(--bg2), var(--bg1));
+    color: white;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    overscroll-behavior: none;
+    touch-action: none;
+  }
+  #game {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+  }
+  /* Subtle CRT scanline effect */
+  #scanlines {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      var(--scan) 3px,
+      transparent 4px
+    );
+    mix-blend-mode: soft-light;
+    opacity: .5;
+  }
+  /* On-screen hint zones (non-interactive, just hints) */
+  .hints {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+  .hints > div {
+    border-left: 1px dashed #fff;
+    border-right: 1px dashed #fff;
+  }
+  .hints span {
+    position: absolute;
+    bottom: 18px;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 0 #000;
+  }
+  .hints .left span { left: 8px; }
+  .hints .right span { right: 8px; }
+  .hints .fire span { left: 50%; transform: translateX(-50%); }
+  @media (min-width: 900px) {
+    .hints { display: none; }
+  }
+</style>
 </head>
 <body>
-    <h1>Space Invaders</h1>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+<canvas id="game"></canvas>
+<div id="scanlines"></div>
 
-        const player = {
-            x: canvas.width / 2 - 25,
-            y: canvas.height - 60,
-            width: 50,
-            height: 50,
-            speed: 5
-        };
+<script>
+(() => {
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  ctx.imageSmoothingEnabled = false;
 
-        const bullets = [];
-        const enemies = [];
-        let score = 0;
+  // Virtual resolution for retro look
+  const VW = 320;
+  const VH = 480;
 
-        function createEnemies() {
-            for (let i = 0; i < 6; i++) {
-                for (let j = 0; j < 3; j++) {
-                    enemies.push({
-                        x: i * 100 + 50,
-                        y: j * 70 + 50,
-                        width: 50,
-                        height: 50,
-                        speed: 2
-                    });
-                }
-            }
+  let DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  let scale = 1, offX = 0, offY = 0;
+
+  function resize() {
+    DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    canvas.width = Math.floor(window.innerWidth * DPR);
+    canvas.height = Math.floor(window.innerHeight * DPR);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    scale = Math.min(window.innerWidth / VW, window.innerHeight / VH);
+    offX = (window.innerWidth - VW * scale) / 2;
+    offY = (window.innerHeight - VH * scale) / 2;
+  }
+  window.addEventListener('resize', resize, { passive: true });
+  resize();
+
+  // Controls
+  const keys = { left: false, right: false, fire: false };
+  let lastFireKey = false;
+  const activePointers = new Map();
+
+  function clientToVirtual(x, y) {
+    return {
+      x: (x - offX) / scale,
+      y: (y - offY) / scale
+    };
+  }
+
+  const menuButtons = [
+    { text: 'Start Game', action: 'start', visibleStates: ['menu'] },
+    { text: 'Pause', action: 'pause', visibleStates: ['playing'] },
+    { text: 'Resume', action: 'resume', visibleStates: ['paused'] },
+    { text: 'Restart', action: 'restart', visibleStates: ['playing', 'paused', 'gameover'] }
+  ];
+  let buttonsLayout = [];
+
+  function handlePointer(e, pressed) {
+    if (e.pointerType === 'mouse' && e.button !== 0 && pressed) return;
+    const id = e.pointerId || 0;
+    const { x, y } = clientToVirtual(e.clientX, e.clientY);
+    const buttonHeight = 80;
+
+    if (pressed) {
+        activePointers.set(id, { x, y, zone: getZone(x, y) });
+        updateKeysFromPointers();
+        if (y > VH - buttonHeight && getZone(x,y) === 'center') {
+            triggerFire();
         }
+    } else {
+        activePointers.delete(id);
+        updateKeysFromPointers();
+    }
+  }
 
-        function drawPlayer() {
-            ctx.fillStyle = 'blue';
-            ctx.fillRect(player.x, player.y, player.width, player.height);
+  function updateKeysFromPointers() {
+      keys.left = false;
+      keys.right = false;
+      for (const pointer of activePointers.values()) {
+          if (pointer.zone === 'left') keys.left = true;
+          if (pointer.zone === 'right') keys.right = true;
+      }
+  }
+
+  function getZone(x, y) {
+      const buttonHeight = 80;
+      if (y < VH - buttonHeight) return 'swipe';
+      if (x < VW / 3) return 'left';
+      if (x > VW * 2 / 3) return 'right';
+      return 'center';
+  }
+
+  canvas.addEventListener('pointerdown', (e) => { e.preventDefault(); handlePointer(e, true); }, { passive: false });
+  window.addEventListener('pointerup', (e) => { e.preventDefault(); handlePointer(e, false); }, { passive: false });
+  window.addEventListener('pointercancel', (e) => { e.preventDefault(); handlePointer(e, false); }, { passive: false });
+  window.addEventListener('pointermove', (e) => {
+    if (!activePointers.has(e.pointerId) || state !== 'playing') return;
+    const { x, y } = clientToVirtual(e.clientX, e.clientY);
+    const pointer = activePointers.get(e.pointerId);
+    if (pointer.zone === 'swipe') {
+        player.x = x - player.size.w / 2;
+    } else {
+        const newZone = getZone(x, y);
+        if (newZone !== pointer.zone) {
+            pointer.zone = newZone;
+            updateKeysFromPointers();
         }
+    }
+  }, { passive: true });
 
-        function drawBullets() {
-            ctx.fillStyle = 'red';
-            for (const bullet of bullets) {
-                ctx.fillRect(bullet.x, bullet.y, 5, 10);
-            }
+  window.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+    if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowUp') keys.fire = true;
+    if (e.code === 'KeyP') {
+        if (state === 'playing') state = 'paused';
+        else if (state === 'paused') state = 'playing';
+    }
+    if (state !== 'playing' && (e.code === 'Space' || e.code === 'Enter')) {
+        if(state === 'menu' || state === 'gameover') startGame();
+    }
+  });
+  window.addEventListener('keyup', (e) => {
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+    if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowUp') keys.fire = false;
+  });
+
+  // Random helper
+  const R = {
+    range(a, b) { return a + Math.random() * (b - a); },
+    int(a, b) { return Math.floor(R.range(a, b + 1)); },
+    choice(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
+    chance(p) { return Math.random() < p; }
+  };
+
+  // Bitmap drawing for retro style
+  function drawBitmap(ctx, bmp, x, y, pixel, color, flipAnim = 0) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.fillStyle = color;
+    const frame = bmp[flipAnim % bmp.length];
+    for (let r = 0; r < frame.length; r++) {
+      const row = frame[r];
+      for (let c = 0; c < row.length; c++) {
+        if (row[c] === 1) {
+          ctx.fillRect(c * pixel, r * pixel, pixel, pixel);
         }
+      }
+    }
+    ctx.restore();
+  }
 
-        function drawEnemies() {
-            ctx.fillStyle = 'green';
-            for (const enemy of enemies) {
-                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-            }
+  // Define bitmaps (two frames each) for aliens and player
+  const ALIEN_PIX = 3; // in virtual pixels per "pixel"
+  const ALIENS = [
+    // Type 0 (top row) - small squid/crab
+    [
+      [
+        [0,1,0,0,0,1,0],
+        [0,0,1,0,1,0,0],
+        [0,1,1,1,1,1,0],
+        [1,1,0,1,0,1,1],
+        [1,1,1,1,1,1,1],
+        [0,1,0,0,0,1,0]
+      ],
+      [
+        [0,0,1,0,1,0,0],
+        [0,1,0,1,0,1,0],
+        [0,1,1,1,1,1,0],
+        [1,1,0,1,0,1,1],
+        [1,1,1,1,1,1,1],
+        [0,1,0,0,0,1,0]
+      ]
+    ],
+    // Type 1 (mid row) - crab
+    [
+      [
+        [0,0,1,0,1,0,0],
+        [0,1,0,1,0,1,0],
+        [1,1,1,1,1,1,1],
+        [1,0,1,1,1,0,1],
+        [1,0,1,1,1,0,1],
+        [0,1,0,0,0,1,0]
+      ],
+      [
+        [0,0,1,0,1,0,0],
+        [1,0,1,1,1,0,1],
+        [1,1,1,1,1,1,1],
+        [0,1,0,1,0,1,0],
+        [0,1,0,1,0,1,0],
+        [1,0,0,0,0,0,1]
+      ]
+    ],
+    // Type 2 (bottom row) - octo
+    [
+      [
+        [0,1,0,0,0,1,0],
+        [1,0,1,0,1,0,1],
+        [1,1,1,1,1,1,1],
+        [0,1,1,1,1,1,0],
+        [0,0,1,1,1,0,0],
+        [0,1,0,0,0,1,0]
+      ],
+      [
+        [0,1,0,0,0,1,0],
+        [1,0,1,0,1,0,1],
+        [1,1,1,1,1,1,1],
+        [0,1,1,1,1,1,0],
+        [0,1,0,1,0,1,0],
+        [1,0,0,0,0,0,1]
+      ]
+    ]
+  ];
+
+  const PLAYER_BMP = [
+    [
+      [0,0,0,1,0,0,0,0],
+      [0,0,1,1,1,0,0,0],
+      [0,1,1,1,1,1,0,0],
+      [1,1,1,1,1,1,1,0],
+      [0,1,0,0,0,1,0,0]
+    ]
+  ];
+  const PLAYER_PIX = 3;
+
+  const alienColorPalettes = [
+    // Level 1 colors (vibrant greens)
+    ['#00FF00', '#33FF33', '#66FF66', '#99FF99', '#CCFFCC'],
+    // Level 2 colors (vibrant blues)
+    ['#0000FF', '#3333FF', '#6666FF', '#9999FF', '#CCCCFF'],
+    // Level 3 colors (vibrant reds)
+    ['#FF0000', '#FF3333', '#FF6666', '#FF9999', '#FFCCCC'],
+    // Level 4 colors (vibrant purples)
+    ['#FF00FF', '#FF33FF', '#FF66FF', '#FF99FF', '#FFCCFF'],
+    // Level 5+ colors (vibrant yellows/oranges)
+    ['#FFFF00', '#FFFF33', '#FFFF66', '#FFFF99', '#FFFFCC']
+  ];
+
+  function bmpSize(frames, pixel) {
+    const f = frames[0];
+    const h = f.length;
+    const w = f[0].length;
+    return { w: w * pixel, h: h * pixel };
+  }
+
+  // Particle system for modern explosions
+  class Particle {
+    constructor(x, y, color) {
+      this.x = x; this.y = y;
+      const a = R.range(0, Math.PI * 2);
+      const s = R.range(30, 140);
+      this.vx = Math.cos(a) * s;
+      this.vy = Math.sin(a) * s - R.range(20, 80);
+      this.life = R.range(0.4, 0.9);
+      this.age = 0;
+      this.size = R.range(1, 2.5);
+      this.color = color;
+    }
+    update(dt) {
+      this.age += dt;
+      this.x += this.vx * dt;
+      this.y += this.vy * dt;
+      this.vy += 160 * dt;
+    }
+    draw(ctx) {
+      const t = Math.max(0, 1 - this.age / this.life);
+      ctx.globalAlpha = t;
+      ctx.fillStyle = this.color;
+      ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+      ctx.globalAlpha = 1;
+    }
+    get dead() { return this.age >= this.life; }
+  }
+  const particles = [];
+
+  // Entities
+  class Bullet {
+    constructor(x, y, vy, owner) {
+      this.x = x;
+      this.y = y;
+      this.w = 2;
+      this.h = 6;
+      this.vy = vy;
+      this.owner = owner; // 'player' or 'alien'
+      this.dead = false;
+      this.color = owner === 'player' ? '#9efcff' : '#ff5ea8';
+    }
+    update(dt) {
+      this.y += this.vy * dt;
+      if (this.y < -20 || this.y > VH + 20) this.dead = true;
+    }
+    draw(ctx) {
+      ctx.fillStyle = this.color;
+      ctx.fillRect(this.x - this.w / 2, this.y - this.h / 2, this.w, this.h);
+      // glow
+      ctx.globalAlpha = 0.35;
+      ctx.fillRect(this.x - this.w, this.y - this.h / 2, this.w * 2, this.h);
+      ctx.globalAlpha = 1;
+    }
+    get AABB() { return { x: this.x - this.w/2, y: this.y - this.h/2, w: this.w, h: this.h }; }
+  }
+
+  class Player {
+    constructor() {
+      this.size = bmpSize(PLAYER_BMP, PLAYER_PIX);
+      this.x = VW/2 - this.size.w/2;
+      this.y = VH - 40;
+      this.speed = 140;
+      this.cooldown = 0;
+      this.invuln = 0;
+      this.alive = true;
+    }
+    update(dt) {
+      const move = (keys.left ? -1 : 0) + (keys.right ? 1 : 0);
+      this.x += move * this.speed * dt;
+      this.x = Math.max(6, Math.min(VW - this.size.w - 6, this.x));
+      this.cooldown = Math.max(0, this.cooldown - dt);
+      this.invuln = Math.max(0, this.invuln - dt);
+      if (state === 'playing') {
+        if (keys.fire && !lastFireKey) triggerFire();
+        lastFireKey = keys.fire;
+      }
+    }
+    draw(ctx) {
+      if (this.invuln > 0 && Math.floor(this.invuln * 20) % 2 === 0) return;
+      drawBitmap(ctx, PLAYER_BMP, this.x, this.y, PLAYER_PIX, '#7af5ff', 0);
+      // engine glow
+      ctx.fillStyle = 'rgba(81,241,216,0.5)';
+      ctx.fillRect(this.x + this.size.w/2 - 2, this.y + this.size.h, 4, 3);
+    }
+    shoot() {
+      if (!this.alive) return;
+      if (this.cooldown <= 0 && bullets.filter(b=>b.owner==='player').length < 1) {
+        const bx = this.x + this.size.w/2;
+        bullets.push(new Bullet(bx, this.y - 2, -240 - level*15, 'player'));
+        this.cooldown = Math.max(0.18, 0.35 - level * 0.02);
+      }
+    }
+    get AABB() { return { x: this.x, y: this.y, w: this.size.w, h: this.size.h }; }
+  }
+
+  class Alien {
+    constructor(x, y, type, color) {
+      this.x = x;
+      this.y = y;
+      this.type = type; // 0,1,2
+      this.alive = true;
+      const sz = bmpSize(ALIENS[type], ALIEN_PIX);
+      this.w = sz.w;
+      this.h = sz.h;
+      this.color = color;
+    }
+    draw(ctx, anim) {
+      drawBitmap(ctx, ALIENS[this.type], this.x, this.y, ALIEN_PIX, this.color, anim);
+    }
+    get AABB() { return { x: this.x, y: this.y, w: this.w, h: this.h }; }
+  }
+
+  class Swarm {
+    constructor(rows, cols, colors) {
+      this.rows = rows;
+      this.cols = cols;
+      this.colors = colors; // Store the colors
+      this.aliens = [];
+      this.dir = 1;
+      this.speed = 12 + level * 4;
+      this.stepDown = 14;
+      this.offsetX = 20;
+      this.offsetY = 90;
+      this.spacingX = 20;
+      this.spacingY = 20;
+      this.animTime = 0;
+      this.fireTimer = 0;
+      this.initAliens();
+    }
+    initAliens() {
+      this.aliens = [];
+      const types = [0,1,1,2,2];
+      // Use this.colors passed in the constructor
+      for (let r = 0; r < this.rows; r++) {
+        for (let c = 0; c < this.cols; c++) {
+          const ax = this.offsetX + c * (this.spacingX + bmpSize(ALIENS[2], ALIEN_PIX).w * 0.1);
+          const ay = this.offsetY + r * this.spacingY;
+          const type = types[Math.min(types.length-1, r)];
+          const color = this.colors[Math.min(this.colors.length-1, r)]; // Use this.colors
+          const alien = new Alien(ax, ay, type, color);
+          // Adjust spacing based on width
+          alien.x = this.offsetX + c * (alien.w + 6);
+          alien.y = this.offsetY + r * (alien.h + 6);
+          this.aliens.push(alien);
         }
-
-        function update() {
-            // Move player
-            if (keys['ArrowLeft'] && player.x > 0) {
-                player.x -= player.speed;
-            }
-            if (keys['ArrowRight'] && player.x < canvas.width - player.width) {
-                player.x += player.speed;
-            }
-
-            // Move bullets
-            for (let i = bullets.length - 1; i >= 0; i--) {
-                bullets[i].y -= 10;
-                if (bullets[i].y < 0) {
-                    bullets.splice(i, 1);
-                }
-            }
-
-            // Move enemies
-            for (const enemy of enemies) {
-                enemy.x += enemy.speed;
-                if (enemy.x < 0 || enemy.x > canvas.width - enemy.width) {
-                    enemy.speed = -enemy.speed;
-                    enemy.y += 20;
-                }
-            }
-
-            // Collision detection
-            for (let i = enemies.length - 1; i >= 0; i--) {
-                for (let j = bullets.length - 1; j >= 0; j--) {
-                    if (bullets[j].x > enemies[i].x && bullets[j].x < enemies[i].x + enemies[i].width &&
-                        bullets[j].y > enemies[i].y && bullets[j].y < enemies[i].y + enemies[i].height) {
-                        enemies.splice(i, 1);
-                        bullets.splice(j, 1);
-                        score += 10;
-                    }
-                }
-            }
-
-            // Game over
-            for (const enemy of enemies) {
-                if (enemy.y + enemy.height > player.y) {
-                    alert('Game Over! Score: ' + score);
-                    document.location.reload();
-                }
-            }
-
-            // Win
-            if (enemies.length === 0) {
-                alert('You Win! Score: ' + score);
-                document.location.reload();
-            }
+      }
+    }
+    bounds() {
+      let minX = Infinity, maxX = -Infinity, maxY = -Infinity, minY = Infinity;
+      for (const a of this.aliens) {
+        if (!a.alive) continue;
+        minX = Math.min(minX, a.x);
+        maxX = Math.max(maxX, a.x + a.w);
+        minY = Math.min(minY, a.y);
+        maxY = Math.max(maxY, a.y + a.h);
+      }
+      if (minX === Infinity) return { minX:0, maxX:0, maxY:0, minY:0 };
+      return { minX, maxX, maxY, minY };
+    }
+    aliveCount() { return this.aliens.filter(a=>a.alive).length; }
+    update(dt) {
+      const alive = this.aliveCount();
+      if (alive === 0) return;
+      const accel = (1 - alive / (this.rows * this.cols)) * (18 + level * 6);
+      const v = this.speed + accel;
+      const moveX = v * this.dir * dt;
+      for (const a of this.aliens) {
+        if (!a.alive) continue;
+        a.x += moveX;
+      }
+      const b = this.bounds();
+      let hitEdge = (b.minX < 8 && this.dir < 0) || (b.maxX > VW - 8 && this.dir > 0);
+      if (hitEdge) {
+        this.dir *= -1;
+        for (const a of this.aliens) {
+          if (!a.alive) continue;
+          a.y += this.stepDown;
         }
+      }
+      // Animation
+      this.animTime += dt;
+      // Firing logic
+      const baseInterval = Math.max(0.7, 1.6 - level * 0.1);
+      this.fireTimer -= dt * (1.0 + (1 - alive / (this.rows * this.cols)));
+      if (this.fireTimer <= 0) {
+        this.fireTimer = R.range(baseInterval * 0.5, baseInterval * 1.25);
+        this.fireFromRandomFront();
+      }
+    }
+    fireFromRandomFront() {
+      const columns = {};
+      for (const a of this.aliens) {
+        if (!a.alive) continue;
+        const col = Math.round((a.x - this.offsetX) / (a.w + 6));
+        if (!columns[col] || columns[col].y < a.y) columns[col] = a;
+      }
+      const fronts = Object.values(columns);
+      if (fronts.length === 0) return;
+      const shooter = R.choice(fronts);
+      bullets.push(new Bullet(shooter.x + shooter.w/2, shooter.y + shooter.h + 2, R.range(60 + level*10, 120 + level*20), 'alien'));
+    }
+    draw(ctx) {
+      const frame = Math.floor(this.animTime * 6) % 2;
+      for (const a of this.aliens) {
+        if (!a.alive) continue;
+        a.draw(ctx, frame);
+      }
+    }
+  }
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawPlayer();
-            drawBullets();
-            drawEnemies();
-            ctx.fillStyle = 'white';
-            ctx.font = '20px Arial';
-            ctx.fillText('Score: ' + score, 10, 20);
+  class Barrier {
+    constructor(x, y, cols=16, rows=8, cell=3) {
+      this.x = x;
+      this.y = y;
+      this.cols = cols;
+      this.rows = rows;
+      this.cell = cell;
+      this.grid = this.makeShape(cols, rows);
+      this.initialGrid = JSON.parse(JSON.stringify(this.grid));
+      this.initialHealth = this.countHealth();
+      this.color = '#6bff5b';
+      this.shadow = 'rgba(107,255,91,0.35)';
+    }
+    countHealth() {
+      let health = 0;
+      for (let r = 0; r < this.rows; r++) {
+        for (let c = 0; c < this.cols; c++) {
+          if (this.grid[r][c]) {
+            health++;
+          }
         }
-
-        const keys = {};
-        window.addEventListener('keydown', (e) => {
-            keys[e.key] = true;
-            if (e.key === ' ') {
-                bullets.push({ x: player.x + player.width / 2 - 2.5, y: player.y });
+      }
+      return health;
+    }
+    getHealth() {
+        return this.countHealth() / this.initialHealth;
+    }
+    makeShape(cols, rows) {
+      const grid = Array.from({length: rows}, () => Array(cols).fill(1));
+      // Carve a notch
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          // edges bevel
+          if ((r === rows-1 && (c < 2 || c > cols-3)) ||
+              (r === rows-2 && (c < 1 || c > cols-2))) grid[r][c] = 0;
+        }
+      }
+      // central arch
+      const holeW = Math.max(4, Math.floor(cols/4));
+      const holeStart = Math.floor((cols - holeW)/2);
+      for (let r = Math.floor(rows/2); r < rows; r++) {
+        for (let c = holeStart; c < holeStart + holeW; c++) {
+          grid[r][c] = 0;
+        }
+      }
+      return grid;
+    }
+    draw(ctx) {
+      ctx.fillStyle = this.shadow;
+      ctx.fillRect(this.x, this.y+1, this.cols*this.cell, this.rows*this.cell);
+      ctx.fillStyle = this.color;
+      for (let r = 0; r < this.rows; r++) {
+        for (let c = 0; c < this.cols; c++) {
+          if (this.grid[r][c]) {
+            ctx.fillRect(this.x + c*this.cell, this.y + r*this.cell, this.cell, this.cell);
+          }
+        }
+      }
+      // Draw health bar
+      const health = this.getHealth();
+      const barWidth = this.cols * this.cell;
+      const barHeight = 2;
+      const barX = this.x;
+      const barY = this.y + this.rows * this.cell + 3;
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(barX, barY, barWidth, barHeight);
+      ctx.fillStyle = '#6bff5b';
+      ctx.fillRect(barX, barY, barWidth * health, barHeight);
+    }
+    damageAt(px, py, rad=2) {
+      // Convert point to grid indices
+      const lx = px - this.x;
+      const ly = py - this.y;
+      if (lx < 0 || ly < 0 || lx > this.cols*this.cell || ly > this.rows*this.cell) return false;
+      const cx = Math.floor(lx / this.cell);
+      const cy = Math.floor(ly / this.cell);
+      let hit = false;
+      for (let r = cy - rad; r <= cy + rad; r++) {
+        for (let c = cx - rad; c <= cx + rad; c++) {
+          if (r < 0 || c < 0 || r >= this.rows || c >= this.cols) continue;
+          const dx = c - cx, dy = r - cy;
+          if (dx*dx + dy*dy <= rad*rad) {
+            if (this.grid[r][c]) {
+              this.grid[r][c] = 0;
+              hit = true;
             }
-        });
-        window.addEventListener('keyup', (e) => {
-            keys[e.key] = false;
-        });
-
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
+          }
         }
+      }
+      return hit;
+    }
+    overlapsAABB(box) {
+      // If any solid cell overlaps the box, report true
+      const minC = Math.floor((box.x - this.x) / this.cell);
+      const maxC = Math.floor((box.x + box.w - this.x) / this.cell);
+      const minR = Math.floor((box.y - this.y) / this.cell);
+      const maxR = Math.floor((box.y + box.h - this.y) / this.cell);
+      for (let r = minR; r <= maxR; r++) {
+        for (let c = minC; c <= maxC; c++) {
+          if (r < 0 || c < 0 || r >= this.rows || c >= this.cols) continue;
+          if (this.grid[r][c]) return true;
+        }
+      }
+      return false;
+    }
+  }
 
-        createEnemies();
-        gameLoop();
-    </script>
+  // Game globals
+  let player, swarm, barriers, bullets, stars;
+  let score = 0, lives = 3, level = 1;
+  let state = 'menu'; // 'menu', 'playing', 'gameover', 'next', 'paused'
+  let stateTimer = 0;
+  let playAgainButtonRect = null;
+
+  buttonsLayout = [];
+
+  function initStars() {
+    stars = [];
+
+    // Far stars (slowest, smallest)
+    const farCount = 100;
+    for (let i = 0; i < farCount; i++) {
+      stars.push({
+        x: R.range(0, VW),
+        y: R.range(0, VH),
+        s: R.range(0.5, 1.0), // Smaller size
+        spd: R.range(5, 15)   // Slower speed
+      });
+    }
+
+    // Mid stars (medium speed, medium size)
+    const midCount = 50;
+    for (let i = 0; i < midCount; i++) {
+      stars.push({
+        x: R.range(0, VW),
+        y: R.range(0, VH),
+        s: R.range(1.0, 1.5), // Medium size
+        spd: R.range(15, 30)  // Medium speed
+      });
+    }
+
+    // Near stars (fastest, largest)
+    const nearCount = 20;
+    for (let i = 0; i < nearCount; i++) {
+      stars.push({
+        x: R.range(0, VW),
+        y: R.range(0, VH),
+        s: R.range(1.5, 2.5), // Larger size
+        spd: R.range(30, 60)  // Faster speed
+      });
+    }
+  }
+
+  function initLevel() {
+    bullets = [];
+    particles.length = 0;
+    player = new Player();
+    const currentPaletteIndex = Math.min(level - 1, alienColorPalettes.length - 1);
+    const colorsForThisLevel = alienColorPalettes[currentPaletteIndex];
+    swarm = new Swarm(5, 8, colorsForThisLevel);
+    barriers = [];
+    const baseY = VH - 100;
+    const numBarriers = 3;
+    const barrierCols = 18;
+    const barrierCell = 3;
+    const barrierWidth = barrierCols * barrierCell;
+    const gap = 20;
+    const totalGroupWidth = (numBarriers * barrierWidth) + ((numBarriers - 1) * gap);
+    const startX = (VW - totalGroupWidth) / 2;
+
+    for (let i=0;i<numBarriers;i++) {
+      const bx = startX + (i * (barrierWidth + gap));
+      barriers.push(new Barrier(bx, baseY, barrierCols, 9, barrierCell));
+    }
+  }
+
+  function startGame() {
+    score = 0;
+    lives = 3;
+    level = 1;
+    initStars();
+    initLevel();
+    state = 'playing';
+    stateTimer = 0;
+  }
+
+  function nextLevel() {
+    level++;
+    initLevel();
+    state = 'playing';
+    stateTimer = 0;
+  }
+
+  function gameOver() {
+    state = 'gameover';
+    stateTimer = 0;
+  }
+
+  function rectsOverlap(a, b) {
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  }
+
+  function triggerFire() {
+    if (state === 'menu' || state === 'gameover') {
+      // In menu, fire is handled by menu buttons
+      return;
+    }
+    if (state !== 'playing') return;
+    player.shoot();
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+    if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowUp') keys.fire = true;
+    if (e.code === 'KeyP') {
+        if (state === 'playing') state = 'paused';
+        else if (state === 'paused') state = 'playing';
+    }
+    if (state !== 'playing' && (e.code === 'Space' || e.code === 'Enter')) {
+        if(state === 'menu' || state === 'gameover') startGame();
+    }
+  });
+
+  canvas.addEventListener('click', (e) => {
+    const { x, y } = clientToVirtual(e.clientX, e.clientY);
+    for (const btn of buttonsLayout) {
+        if (x >= btn.x && x <= btn.x + btn.w && y >= btn.y && y <= btn.y + btn.h) {
+            handleMenuAction(btn.action);
+            return;
+        }
+    }
+
+    // Handle "Play Again" button
+    if (state === 'gameover' && playAgainButtonRect) {
+        if (x >= playAgainButtonRect.x && x <= playAgainButtonRect.x + playAgainButtonRect.w && y >= playAgainButtonRect.y && y <= playAgainButtonRect.y + playAgainButtonRect.h) {
+            startGame();
+            return;
+        }
+    }
+  });
+
+  function handleMenuAction(action) {
+      switch (action) {
+          case 'start':
+              startGame();
+              break;
+          case 'pause':
+              state = 'paused';
+              break;
+          case 'resume':
+              state = 'playing';
+              break;
+          case 'restart':
+              startGame();
+              break;
+      }
+  }
+
+  function killAlien(a) {
+    a.alive = false;
+    score += a.type === 0 ? 30 : a.type === 1 ? 20 : 10;
+    spawnExplosion(a.x + a.w/2, a.y + a.h/2, [a.color, '#fff', '#ffff8d']);
+  }
+
+  function hitPlayer() {
+    if (player.invuln > 0) return;
+    lives--;
+    spawnExplosion(player.x + player.size.w/2, player.y + player.size.h/2, ['#fff','#90e0ef','#48cae4','#00b4d8', '#ff4d6d']);
+    player.invuln = 2.2;
+    if (lives < 0) {
+      gameOver();
+    }
+  }
+
+  function spawnExplosion(x, y, palette) {
+    const count = 30;
+    for (let i=0;i<count;i++) {
+      particles.push(new Particle(x, y, R.choice(palette)));
+    }
+  }
+
+  // Main loop
+  let last = 0;
+  function loop(ts) {
+    requestAnimationFrame(loop);
+    if (!last) last = ts;
+    let dt = (ts - last) / 1000;
+    last = ts;
+    dt = Math.min(0.033, dt);
+
+    update(dt);
+    draw();
+  }
+  requestAnimationFrame(loop);
+
+  function update(dt) {
+    // Update stars
+    if (!stars) initStars();
+    for (const s of stars) {
+      s.y += s.spd * dt;
+      if (s.y > VH) { s.y = -2; s.x = R.range(0, VW); }
+    }
+
+    if (state === 'menu' || state === 'gameover' || state === 'paused') {
+      stateTimer += dt;
+      return;
+    }
+
+    if (state === 'playing') {
+      player.update(dt);
+      swarm.update(dt);
+
+      // Update bullets
+      for (const b of bullets) b.update(dt);
+      bullets = bullets.filter(b => !b.dead);
+
+      // Collisions: bullets vs aliens
+      for (const b of bullets) {
+        if (b.owner !== 'player') continue;
+        for (const a of swarm.aliens) {
+          if (!a.alive) continue;
+          if (rectsOverlap(b.AABB, a.AABB)) {
+            b.dead = true;
+            killAlien(a);
+            break;
+          }
+        }
+      }
+
+      // Bullets vs barriers
+      for (const b of bullets) {
+        for (const bar of barriers) {
+          if (bar.damageAt(b.x, b.y, b.owner === 'alien' ? 2 : 1)) {
+            b.dead = true;
+            break;
+          }
+        }
+      }
+
+      // Bullets vs player
+      for (const b of bullets) {
+        if (b.owner !== 'alien') continue;
+        if (rectsOverlap(b.AABB, player.AABB)) {
+          b.dead = true;
+          hitPlayer();
+        }
+      }
+
+      // Aliens reach barriers or player
+      const bounds = swarm.bounds();
+      if (bounds.maxY >= barriers[0].y - 2 || bounds.maxY >= player.y - 2) {
+        // degrade overlapping barrier cells to emulate invasion
+        for (const a of swarm.aliens) {
+          if (!a.alive) continue;
+          const box = a.AABB;
+          for (const bar of barriers) {
+            if (bar.overlapsAABB(box)) {
+              // chew through
+              bar.damageAt(a.x + a.w/2, a.y + a.h, 3);
+            }
+          }
+        }
+        if (bounds.maxY >= player.y - 10) {
+          lives = -1;
+          gameOver();
+        }
+      }
+
+      // Clear dead bullets
+      bullets = bullets.filter(b => !b.dead);
+
+      // Win condition
+      if (swarm.aliveCount() === 0) {
+        state = 'next';
+        stateTimer = 0;
+      }
+
+      // Update particles
+      for (const p of particles) p.update(dt);
+      for (let i=particles.length-1;i>=0;i--) if (particles[i].dead) particles.splice(i,1);
+    } else if (state === 'next') {
+      stateTimer += dt;
+      for (const p of particles) p.update(dt);
+      if (stateTimer > 1.2) nextLevel();
+    }
+  }
+
+  function draw() {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.clearRect(0, 0, canvas.width / DPR, canvas.height / DPR);
+
+    // Letterbox and scale
+    ctx.translate(offX, offY);
+    ctx.scale(scale, scale);
+
+    // Background
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, VW, VH);
+
+    // Stars
+    for (const s of stars) {
+      ctx.fillStyle = s.s > 1.2 ? '#aaffff' : '#9ea7ff';
+      ctx.globalAlpha = 0.6 + (s.s / 2);
+      ctx.fillRect(Math.floor(s.x), Math.floor(s.y), s.s, s.s);
+      ctx.globalAlpha = 1;
+    }
+
+    // UI top
+    drawUI();
+
+    if (state === 'menu') {
+      drawHowToPlay(); // Call the new function here
+    } else if (state === 'playing' || state === 'paused' || state === 'gameover' || state === 'next') {
+        // Barriers
+        for (const b of barriers) b.draw(ctx);
+
+        // Player
+        if (lives >= 0) player.draw(ctx);
+
+        // Swarm
+        swarm.draw(ctx);
+
+        // Bullets
+        for (const b of bullets) b.draw(ctx);
+
+        // Particles
+        for (const p of particles) p.draw(ctx);
+
+        if (state === 'next') {
+          drawBanner(`Wave ${level} Cleared!`, 'Get ready...');
+        }
+        if (state === 'gameover') {
+          const width = VW * 0.8;
+          const height = 100; // Reduced height
+          const x = (VW - width) / 2;
+          const y = VH / 2 - height / 2;
+          const cornerRadius = 10;
+
+          // Modal background
+          ctx.fillStyle = 'rgba(10, 13, 42, 0.9)';
+          ctx.strokeStyle = '#ff4d6d';
+          ctx.lineWidth = 1;
+          
+          ctx.beginPath();
+          ctx.moveTo(x + cornerRadius, y);
+          ctx.lineTo(x + width - cornerRadius, y);
+          ctx.quadraticCurveTo(x + width, y, x + width, y + cornerRadius);
+          ctx.lineTo(x + width, y + height - cornerRadius);
+          ctx.quadraticCurveTo(x + width, y + height, x + width - cornerRadius, y + height);
+          ctx.lineTo(x + cornerRadius, y + height);
+          ctx.quadraticCurveTo(x, y + height, x, y + height - cornerRadius);
+          ctx.lineTo(x, y + cornerRadius);
+          ctx.quadraticCurveTo(x, y, x + cornerRadius, y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Header Title
+          drawText('GAME OVER', VW / 2 - measureText('GAME OVER', 20, 700) / 2, y + 15, '#ff4d6d', 20, 700);
+
+          // Draw "Play Again" button
+          const buttonText = 'Play Again';
+          const buttonWidth = measureText(buttonText, 16, 700) + 40;
+          const buttonHeight = 30;
+          const buttonX = VW / 2 - buttonWidth / 2;
+          const buttonY = y + height - buttonHeight - 15;
+          playAgainButtonRect = { x: buttonX, y: buttonY, w: buttonWidth, h: buttonHeight };
+
+          ctx.fillStyle = 'rgba(81, 241, 216, 0.2)';
+          ctx.fillRect(playAgainButtonRect.x, playAgainButtonRect.y, playAgainButtonRect.w, playAgainButtonRect.h);
+          ctx.strokeStyle = '#51f1d8';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(playAgainButtonRect.x, playAgainButtonRect.y, playAgainButtonRect.w, playAgainButtonRect.h);
+          drawText(buttonText, buttonX + (buttonWidth - measureText(buttonText, 16, 700)) / 2, buttonY + (buttonHeight - 12) / 2, '#51f1d8', 16, 700);
+        }
+        if (state === 'paused') {
+            drawBanner('PAUSED', ' ');
+        }
+    }
+
+    drawMenu();
+
+    // On-screen control guide (subtle)
+    drawZonesHint();
+  }
+
+  function drawUI() {
+    const pad = 6;
+
+    // Title
+    const title = 'SPACE INVADERS';
+    const subtitle = 'RETRO EDITION';
+    drawText(title, VW/2 - measureText(title, 28, 700)/2, 0, '#9efcff', 28, 700);
+    drawText(subtitle, VW/2 - measureText(subtitle, 12)/2, 26, '#51f1d8', 12);
+
+    // Score and Lives (only when not in menu)
+    if (state !== 'menu') {
+        const scoreY = 70; // Moved down
+        drawText('SCORE: ' + score.toString().padStart(5, '0'), pad, scoreY, '#9efcff');
+        let text = 'LIVES: ' + Math.max(0, lives + 1);
+        drawText(text, VW - pad - measureText(text), scoreY, '#9efcff');
+    }
+
+    // Wave info (only when playing)
+    if (state === 'playing' || state === 'next') {
+        const levelText = 'WAVE ' + level;
+        const waveY = 45; // Moved up
+        drawText(levelText, VW/2 - measureText(levelText)/2, waveY, '#51f1d8');
+
+        // Wave progress bar
+        if (swarm) {
+            const progress = swarm.aliveCount() / (swarm.rows * swarm.cols);
+            const barWidth = VW - 40;
+            const barHeight = 3;
+            const barX = 20;
+            const barY = waveY + 15; // y = 60
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.fillRect(barX, barY, barWidth, barHeight);
+            ctx.fillStyle = '#51f1d8';
+            ctx.fillRect(barX, barY, barWidth * progress, barHeight);
+        }
+    }
+
+    // subtle line
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.fillRect(0, 85, VW, 1);
+  }
+
+  function drawMenu() {
+      buttonsLayout = [];
+      const visibleButtons = menuButtons.filter(b => b.visibleStates.includes(state));
+      
+      if (state === 'playing' || state === 'paused' || state === 'gameover') {
+          const y = 35;
+          const buttonHeight = 15;
+
+          // Pause/Resume button
+          const pauseButton = visibleButtons.find(b => b.action === 'pause' || b.action === 'resume');
+          if (pauseButton) {
+              const width = measureText(pauseButton.text, 10) + 10;
+              const x = 10;
+              buttonsLayout.push({ ...pauseButton, x, y, w: width, h: buttonHeight });
+              ctx.strokeStyle = '#51f1d8';
+              ctx.strokeRect(x, y, width, buttonHeight);
+              drawText(pauseButton.text, x + 5, y + 3, '#51f1d8', 10);
+          }
+
+          // Restart button
+          const restartButton = visibleButtons.find(b => b.action === 'restart');
+          if (restartButton) {
+            const width = measureText(restartButton.text, 10) + 10;
+            const restartX = VW - width - 10;
+            buttonsLayout.push({ ...restartButton, x: restartX, y, w: width, h: buttonHeight });
+            ctx.strokeStyle = '#51f1d8';
+            ctx.strokeRect(restartX, y, width, buttonHeight);
+            drawText(restartButton.text, restartX + 5, y + 3, '#51f1d8', 10);
+          }
+      } else if (state === 'menu') {
+          const y = VH - 80; // Adjusted Y position for the larger button
+          const startButton = visibleButtons.find(b => b.action === 'start');
+          if (startButton) {
+              const pulse = Math.sin(stateTimer * 5) * 0.05 + 0.95; // Pulsing effect
+              const width = (measureText(startButton.text, 16, 700) + 40) * pulse;
+              const height = 30 * pulse;
+              const x = (VW - width) / 2;
+              buttonsLayout.push({ ...startButton, x, y, w: width, h: height });
+              
+              // Draw button background and border
+              ctx.fillStyle = 'rgba(81, 241, 216, 0.2)';
+              ctx.fillRect(x, y, width, height);
+              ctx.strokeStyle = '#51f1d8';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(x, y, width, height);
+              
+              // Draw button text
+              drawText(startButton.text, x + (width - measureText(startButton.text, 16, 700)) / 2, y + (height - 12) / 2, '#51f1d8', 16, 700);
+          }
+      }
+  }
+
+  function drawZonesHint() {
+    if (state !== 'playing') return;
+    const buttonHeight = 40;
+    const buttonWidth = 60;
+    const y = VH - buttonHeight - 10;
+
+    // Left Button
+    const leftX = 10;
+    ctx.globalAlpha = keys.left ? 0.4 : 0.2;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(leftX, y, buttonWidth, buttonHeight);
+    drawText('LEFT', leftX + (buttonWidth - measureText('LEFT').width) / 2, y + (buttonHeight/2), '#000000');
+    drawArrow(leftX + buttonWidth / 2, y + (buttonHeight/2) + 6, -1);
+
+    // Fire Button
+    const fireX = (VW - buttonWidth) / 2;
+    ctx.globalAlpha = keys.fire ? 0.4 : 0.2;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(fireX, y, buttonWidth, buttonHeight);
+    drawText('FIRE', fireX + (buttonWidth - measureText('FIRE').width) / 2, y + (buttonHeight/2), '#000000');
+
+    // Right Button
+    const rightX = VW - buttonWidth - 10;
+    ctx.globalAlpha = keys.right ? 0.4 : 0.2;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(rightX, y, buttonWidth, buttonHeight);
+    drawText('RIGHT', rightX + (buttonWidth - measureText('RIGHT').width) / 2, y + (buttonHeight/2), '#000000');
+    drawArrow(rightX + buttonWidth / 2, y + (buttonHeight/2) + 6, 1);
+
+    ctx.globalAlpha = 1;
+  }
+
+  function drawArrow(x, y, dir) { // dir = -1 for left, 1 for right
+      ctx.save();
+      ctx.strokeStyle = '#c7f9ff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      if (dir === -1) { // Left arrow
+          ctx.moveTo(x + 10, y - 10);
+          ctx.lineTo(x - 10, y);
+          ctx.lineTo(x + 10, y + 10);
+      } else { // Right arrow
+          ctx.moveTo(x - 10, y - 10);
+          ctx.lineTo(x + 10, y);
+          ctx.lineTo(x - 10, y + 10);
+      }
+      ctx.stroke();
+      ctx.restore();
+  }
+
+  
+
+  function drawHowToPlay() {
+    const width = VW * 0.8;
+    const height = 150;
+    const x = (VW - width) / 2;
+    const y = VH / 2 - 100;
+    const cornerRadius = 10;
+
+    // Modal background
+    ctx.fillStyle = 'rgba(10, 13, 42, 0.85)';
+    ctx.strokeStyle = '#9efcff';
+    ctx.lineWidth = 1;
+    
+    ctx.beginPath();
+    ctx.moveTo(x + cornerRadius, y);
+    ctx.lineTo(x + width - cornerRadius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + cornerRadius);
+    ctx.lineTo(x + width, y + height - cornerRadius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - cornerRadius, y + height);
+    ctx.lineTo(x + cornerRadius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - cornerRadius);
+    ctx.lineTo(x, y + cornerRadius);
+    ctx.quadraticCurveTo(x, y, x + cornerRadius, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Title
+    drawText('HOW TO PLAY', VW / 2 - measureText('HOW TO PLAY', 16, 700) / 2, y + 15, '#9efcff', 16, 700);
+
+    // Instructions
+    const lineHeight = 22;
+    let currentY = y + 50;
+    
+    drawText('Move:', x + 20, currentY, '#ffffff');
+    drawKeyWithArrow(x + 80, currentY, -1);
+    drawKeyWithArrow(x + 108, currentY, 1);
+    
+    currentY += lineHeight + 5;
+    drawText('Fire:', x + 20, currentY, '#ffffff');
+    drawKey(x + 80, currentY, 'SPACE');
+
+    currentY += lineHeight + 5;
+    drawText('Pause:', x + 20, currentY, '#ffffff');
+    drawKey(x + 80, currentY, 'P');
+  }
+
+  function drawKeyWithArrow(x, y, dir) {
+      const width = 22;
+      const height = 18;
+      // Draw key box
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.fillRect(x, y, width, height);
+      ctx.strokeStyle = '#ffffff';
+      ctx.strokeRect(x, y, width, height);
+
+      // Draw arrow inside
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      const padding = 6;
+      if (dir === -1) { // Left arrow
+          ctx.moveTo(x + width - padding, y + padding);
+          ctx.lineTo(x + padding, y + height / 2);
+          ctx.lineTo(x + width - padding, y + height - padding);
+      } else { // Right arrow
+          ctx.moveTo(x + padding, y + padding);
+          ctx.lineTo(x + width - padding, y + height / 2);
+          ctx.lineTo(x + padding, y + height - padding);
+      }
+      ctx.closePath();
+      ctx.fill();
+  }
+
+  function drawKey(x, y, text) {
+      const width = measureText(text, 10) + 10;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.fillRect(x, y, width, 18);
+      ctx.strokeStyle = '#ffffff';
+      ctx.strokeRect(x, y, width, 18);
+      drawText(text, x + 5, y + 4, '#ffffff', 10);
+  }
+
+  function drawBanner(title, subtitle) {
+    ctx.save();
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(20, VH/2 - 40, VW - 40, 80);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = '#51f1d8';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(20.5, VH/2 - 39.5, VW - 41, 79);
+    drawBigText(title, VW/2, VH/2 - 10, '#9efcff', 0.9, 700);
+    drawText(subtitle, VW/2 - measureText(subtitle)/2, VH/2 + 16, '#ffffff');
+    ctx.restore();
+  }
+
+  function drawBigText(text, cx, y, color, scale=1, weight = 700) {
+    ctx.save();
+    ctx.font = `${weight} ${20*scale}px "Pixelify Sans"`;
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = color;
+    const w = ctx.measureText(text).width;
+    // glow
+    ctx.globalAlpha = 0.12;
+    ctx.fillText(text, cx - w/2 + 1, y + 1);
+    ctx.globalAlpha = 1;
+    ctx.fillText(text, cx - w/2, y);
+    ctx.restore();
+  }
+
+  function drawText(text, x, y, color, size = 12, weight = 400) {
+    ctx.save();
+    ctx.font = `${weight} ${size}px "Pixelify Sans"`;
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = color;
+    // shadow
+    ctx.globalAlpha = 0.22;
+    ctx.fillText(text, Math.floor(x)+1, Math.floor(y)+1);
+    ctx.globalAlpha = 1;
+    ctx.fillText(text, Math.floor(x), Math.floor(y));
+    ctx.restore();
+  }
+  function measureText(text, size = 12, weight = 400) {
+    ctx.save();
+    ctx.font = `${weight} ${size}px "Pixelify Sans"`;
+    const w = ctx.measureText(text).width;
+    ctx.restore();
+    return w;
+  }
+
+  function perfNow() { return performance.now(); }
+
+  // Start at menu
+  initStars();
+
+  // Prevent context menu on long-press
+  window.addEventListener('contextmenu', e => e.preventDefault());
+})();
+</script>
 </body>
 </html>

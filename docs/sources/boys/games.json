@@ -3,6 +3,7 @@
     "id": "microgame:boys:archery-game",
     "type": "microgame",
     "title": "Archery Game",
+    "logo": "🏹",
     "source": "/sources/boys/archery-game.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
     "feedName": "Boink.Games #boys",
@@ -18,6 +19,7 @@
     "id": "microgame:boys:car-racing",
     "type": "microgame",
     "title": "Car Racing",
+    "logo": "🏎️",
     "source": "/sources/boys/car-racing.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
     "feedName": "Boink.Games #boys",
@@ -32,7 +34,8 @@
   {
     "id": "microgame:boys:create-a-simple-basketball",
     "type": "microgame",
-    "title": "Create A Simple Basketball",
+    "title": "Basket Bounce",
+    "logo": "🏀",
     "source": "/sources/boys/create-a-simple-basketball.html",
     "generatedAt": "2025-09-02T14:27:40.048Z",
     "feedName": "Boink.Games #boys",
@@ -47,7 +50,8 @@
   {
     "id": "microgame:boys:create-a-simple-golf",
     "type": "microgame",
-    "title": "Create A Simple Golf",
+    "title": "Pocket Golf",
+    "logo": "⛳",
     "source": "/sources/boys/create-a-simple-golf.html",
     "generatedAt": "2025-09-02T14:27:40.049Z",
     "feedName": "Boink.Games #boys",
@@ -63,27 +67,13 @@
     "id": "microgame:boys:goal-kick",
     "type": "microgame",
     "title": "Goal Kick",
+    "logo": "⚽",
     "source": "/sources/boys/goal-kick.html",
     "generatedAt": "2025-09-01T00:00:00.000Z",
     "feedName": "Boink.Games #boys",
     "author": "Boink.Games",
     "category": "Game",
     "essence": "Score goals by kicking the soccer ball into the net. Aim carefully and beat the goalkeeper!",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
-  {
-    "id": "microgame:boys:rocket-dodge",
-    "type": "microgame",
-    "title": "Rocket Dodge",
-    "source": "/sources/boys/rocket-dodge.html",
-    "generatedAt": "2025-09-01T00:00:00.000Z",
-    "feedName": "Boink.Games #boys",
-    "author": "Boink.Games",
-    "category": "MicroGame",
-    "essence": "Tap to thrust and avoid obstacles. Score a point for each gate passed",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"

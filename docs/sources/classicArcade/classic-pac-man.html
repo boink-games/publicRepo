@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-<title>Pixel Pac Maze</title>
+<title>Classic Pac Man</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0a0f1e;
@@ -22,19 +25,34 @@
     grid-template-rows: auto 1fr auto;
     height: 100%;
   }
-  header, footer {
+  header {
     padding: 10px 12px;
     background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.1));
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 14px;
-    justify-content: space-between;
+    gap: 10px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
-  footer { border-top: 1px solid rgba(255,255,255,0.08); border-bottom: none; font-size: 12px; color: #a9b7d0; }
-  .title { font-weight: 800; letter-spacing: 0.08em; font-size: 14px; text-transform: uppercase; color: #cfe6ff; }
-  .hud { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .hud .item { display: flex; align-items: center; gap: 8px; }
+  .top-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .title {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 32px;
+    letter-spacing: 1.5px;
+    background: linear-gradient(180deg, #ffe14c, #ffb42b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+  }
+  .hud { display: flex; align-items: center; gap: 16px; flex-wrap: nowrap; width: 100%; justify-content: space-between; }
+  .hud .item { display: flex; align-items: center; gap: 8px; color: var(--power); font-weight: 700; text-transform: uppercase; font-size: 13px; }
   .badge { padding: 4px 8px; border-radius: 8px; background: rgba(255,255,255,0.06); font-weight: 700; color: #e9f1ff; }
   .btn {
     background: linear-gradient(180deg, #1b2a62, #0f1a46);
@@ -48,6 +66,20 @@
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.35);
   }
   .btn:active { transform: translateY(1px) scale(0.98); }
+  .icon-btn {
+    padding: 0;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+  }
+  .icon-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+  }
   .board {
     position: relative;
     display: grid;
@@ -64,13 +96,13 @@
     background: radial-gradient(900px 600px at 50% -20%, rgba(58,197,255,0.12), rgba(0,0,0,0) 60%), #000814;
   }
   .overlay {
-    position: absolute;
+    position: fixed;
     inset: 0;
     display: grid;
     place-items: center;
-    background: linear-gradient(180deg, rgba(3,7,15,0.78), rgba(5,9,18,0.88));
+    background: linear-gradient(180deg, rgba(3,7,15,0.85), rgba(5,9,18,0.92));
     padding: 20px;
-    z-index: 5;
+    z-index: 10;
   }
   .card {
     max-width: 900px;
@@ -79,38 +111,79 @@
     border: 1px solid rgba(255,255,255,0.18);
     box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
     border-radius: 16px;
-    padding: 18px;
+    padding: 16px;
     backdrop-filter: blur(6px);
   }
   .card h1 {
-    margin: 4px 0 8px;
-    font-size: clamp(20px, 3.8vw, 28px);
+    margin: 0 0 8px;
+    font-size: clamp(22px, 4vw, 30px);
     letter-spacing: 0.06em;
     color: #eafbff;
     text-shadow: 0 2px 12px rgba(58,197,255,0.25);
+    text-align: center;
   }
   .grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
     font-size: 14px;
     color: #d6e8ff;
   }
-  .grid .line { display: flex; align-items: center; gap: 10px; }
+  .grid .line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.15);
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+  .grid .line .icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+  .grid .line p {
+    margin: 0;
+    flex: 1;
+  }
+  .controls-info {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    padding: 10px;
+    margin-top: 12px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    text-align: center;
+    flex-wrap: wrap;
+  }
+  .control-group { font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .control-group strong { font-size: 14px; color: #eafbff; margin-bottom: 4px; }
+  .key-groups { display: flex; align-items: center; gap: 15px; }
+  .key-set { display: flex; flex-direction: column; align-items: center; }
+  .key-row { display: flex; gap: 4px; }
+  .or-divider { font-weight: 700; color: rgba(255,255,255,0.6); }
   .kbd {
     background: rgba(255,255,255,0.1);
     border-radius: 6px;
-    padding: 2px 6px;
+    padding: 4px 8px;
     font-weight: 800;
     letter-spacing: 0.06em;
+    margin: 2px;
+    min-width: 26px;
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.15);
   }
   .startbar {
-    margin-top: 12px;
+    margin-top: 16px;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+  }
+  .startbar .btn {
+    padding: 10px 20px;
+    font-size: 16px;
   }
   .muted { opacity: 0.85; font-size: 12px; }
   .life {
@@ -127,13 +200,11 @@
     font-size: 12px; opacity: 0.9; color: #bcd9ff;
   }
   .mobileArrows {
-    position: absolute;
-    z-index: 4;
-    bottom: 12px;
-    left: 12px;
-    width: 140px; height: 140px;
-    opacity: 0.65;
+    position: relative;
+    width: 120px; height: 120px;
+    opacity: 0.85;
     display: none;
+    margin: 10px auto;
   }
   .mobileArrows button {
     position: absolute;
@@ -141,29 +212,33 @@
     color: #e7f6ff;
     border: 1px solid rgba(255,255,255,0.22);
     box-shadow: inset 0 0 10px rgba(58,197,255,0.15);
-    width: 56px; height: 56px;
-    border-radius: 14px;
+    width: 48px; height: 48px;
+    border-radius: 12px;
     backdrop-filter: blur(2px);
   }
   .mobileArrows button:active { transform: translateY(1px) scale(0.98); background: rgba(255,255,255,0.16); }
-  .mobileArrows .up { left: 42px; top: 0; }
-  .mobileArrows .down { left: 42px; bottom: 0; }
-  .mobileArrows .left { left: 0; top: 42px; }
-  .mobileArrows .right { right: 0; top: 42px; }
+  .mobileArrows .up { left: 36px; top: 0; }
+  .mobileArrows .down { left: 36px; bottom: 0; }
+  .mobileArrows .left { left: 0; top: 36px; }
+  .mobileArrows .right { right: 0; top: 36px; }
   .notif {
     position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none;
-    font-weight: 800; color: #fff; text-shadow: 0 2px 16px rgba(0,0,0,0.6), 0 0 20px rgba(58,197,255,0.6);
+    font-weight: 800; color: #fff;
     z-index: 3;
   }
   .notif .msg {
-    background: rgba(0,0,0,0.35);
-    border: 1px solid rgba(255,255,255,0.2);
+    font-size: 20px;
+    letter-spacing: 0.5px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.3);
     border-radius: 12px;
-    padding: 8px 12px;
+    padding: 10px 20px;
     display: inline-block;
     opacity: 0;
-    transform: translateY(10px) scale(0.98);
-    transition: opacity .25s ease, transform .25s ease;
+    transform: translateY(10px) scale(0.95);
+    transition: opacity .2s ease, transform .2s ease;
+    text-shadow: 0 2px 15px rgba(0,0,0,0.7), 0 0 20px rgba(58,197,255,0.6);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
   }
   .notif.show .msg { opacity: 1; transform: translateY(0) scale(1); }
   .topRightControls { display: flex; align-items: center; gap: 8px; }
@@ -171,23 +246,31 @@
   @media (max-width: 900px) {
     .mobileArrows { display: block; }
     header { gap: 8px; }
-    .hud { gap: 10px; }
+    .hud { gap: 8px; justify-content: space-between; }
+    .hud .item { font-size: 12px; gap: 5px; }
+    .badge { padding: 3px 6px; }
+    .topRightControls { gap: 5px; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="title">Pixel Pac Maze</div>
+    <div class="top-row">
+      <div class="title">Classic Pac Man</div>
+    </div>
     <div class="hud">
       <div class="item">Score <span id="score" class="badge">0</span></div>
       <div class="item">Level <span id="level" class="badge">1</span></div>
       <div class="item">Lives <span id="lives" class="badge">3</span></div>
-    </div>
-    <div class="topRightControls">
-      <label class="toggle"><input id="soundToggle" type="checkbox" disabled> Sound</label>
-      <button id="helpBtn" class="btn">Help</button>
-      <button id="pauseBtn" class="btn">Pause</button>
+      <div class="topRightControls">
+        <button id="helpBtn" class="btn icon-btn" aria-label="Help">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </button>
+        <button id="pauseBtn" class="btn icon-btn" aria-label="Pause">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+        </button>
+      </div>
     </div>
   </header>
   <div class="board" id="board">
@@ -197,38 +280,63 @@
         <div class="corner"></div>
         <h1>How to Play</h1>
         <div class="grid">
-          <div class="line">- Eat all dots to clear the level. Power Pellets in the corners let you eat ghosts for a short time.</div>
-          <div class="line">- Avoid ghosts unless you're powered up.</div>
-          <div class="line">- Desktop: Use Arrow Keys or WASD to move. Press P to pause.</div>
-          <div class="line">- Mobile: Swipe in any direction to move. You can also tap the on-screen arrows.</div>
+          <div class="line">
+            <span class="icon">🟡</span>
+            <p><strong>Your Mission:</strong> Clear the maze of all dots to advance!</p>
+          </div>
+          <div class="line">
+            <span class="icon">🔵</span>
+            <p><strong>Power Up:</strong> Grab Power Pellets to eat the ghosts!</p>
+          </div>
+          <div class="line">
+            <span class="icon">👻</span>
+            <p><strong>Watch Out:</strong> Avoid ghosts when they aren't blue!</p>
+          </div>
+        </div>
+        <div class="controls-info">
+          <div class="control-group">
+            <strong>Desktop</strong>
+            <div class="key-groups">
+              <div class="key-set">
+                <span class="kbd">W</span>
+                <div class="key-row">
+                  <span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span>
+                </div>
+              </div>
+              <span class="or-divider">or</span>
+              <div class="key-set">
+                <span class="kbd">↑</span>
+                <div class="key-row">
+                  <span class="kbd">←</span><span class="kbd">↓</span><span class="kbd">→</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="control-group">
+            <strong>Mobile</strong>
+            <p style="margin:0; font-size: 14px;">Swipe anywhere!</p>
+          </div>
         </div>
         <div class="startbar">
-          <div class="touchHint">Tip: Smooth, pixelated look with responsive scaling. Good luck!</div>
-          <div>
-            <button id="startBtn" class="btn">Play</button>
-          </div>
+          <button id="startBtn" class="btn">Let's Go!</button>
         </div>
       </div>
     </div>
-    <div class="mobileArrows" id="arrows">
-      <button class="up">▲</button>
-      <button class="down">▼</button>
-      <button class="left">◀</button>
-      <button class="right">▶</button>
-    </div>
     <div class="notif" id="notif"><div class="msg" id="notifMsg"></div></div>
   </div>
-  <footer>
-    <div>Swipe or use keys. Eat dots. Avoid ghosts. Grab power pellets!</div>
-    <div>Made for mobile + desktop • Retro pixel look • Single-file HTML5</div>
-  </footer>
+  <div class="mobileArrows" id="arrows">
+    <button class="up">▲</button>
+    <button class="down">▼</button>
+    <button class="left">◀</button>
+    <button class="right">▶</button>
+  </div>
 </div>
 <script>
 (() => {
   const TILE = 16;       // Low-res pixel tile size (rendered and scaled)
-  const COLS = 19;
-  const ROWS = 21;
-  const WARP_ROW = 10;   // Tunnel row for side wrap
+  const COLS = 15;
+  const ROWS = 17;
+  const WARP_ROW = Math.floor(ROWS / 2);   // Tunnel row for side wrap
   const WALL = 1, DOT = 2, POWER = 3, DOOR = 4, EMPTY = 0;
 
   const canvas = document.getElementById('game');
@@ -331,55 +439,43 @@
     map[ROWS-2][1] = POWER;
     map[ROWS-2][COLS-2] = POWER;
 
-    // Clear dots around power pellets slightly
-    map[1][2] = DOT; map[1][COLS-3] = DOT;
-    map[2][1] = DOT; map[ROWS-3][1] = DOT;
-    map[ROWS-2][2] = DOT; map[ROWS-2][COLS-3] = DOT;
+    // --- Procedural inner walls ---
+    const midC = Math.floor(COLS/2);
+    const midR = Math.floor(ROWS/2);
 
-    // Interior walls: vertical bars
-    for (let r=2; r<ROWS-2; r++) {
-      if (r !== WARP_ROW) map[r][3] = WALL;
-      if (r !== WARP_ROW) map[r][COLS-4] = WALL;
-    }
-    // Middle vertical wall segments
-    for (let r=2; r<=8; r++) map[r][Math.floor(COLS/2)] = WALL;
-    for (let r=12; r<ROWS-2; r++) map[r][Math.floor(COLS/2)] = WALL;
+    // Middle T-shape
+    for (let c=midC-2; c<=midC+2; c++) map[midR-2][c] = WALL;
+    for (let r=midR-2; r<=midR+2; r++) map[r][midC] = WALL;
 
-    // Horizontal walls rows
-    for (let c=2; c<COLS-2; c++) {
-      if (c !== Math.floor(COLS/2)) map[5][c] = WALL;
-      if (c !== Math.floor(COLS/2)) map[15][c] = WALL;
-    }
+    // Lower T-shape
+    for (let c=midC-2; c<=midC+2; c++) map[midR+4][c] = WALL;
+    for (let r=midR+2; r<=midR+4; r++) map[r][midC-4] = WALL;
+    for (let r=midR+2; r<=midR+4; r++) map[r][midC+4] = WALL;
 
-    // Short top/bottom segments
-    for (let c=2; c<=6; c++) map[2][c] = WALL;
-    for (let c=COLS-7; c<=COLS-3; c++) map[2][c] = WALL;
-    for (let c=2; c<=6; c++) map[ROWS-3][c] = WALL;
-    for (let c=COLS-7; c<=COLS-3; c++) map[ROWS-3][c] = WALL;
+    // Side walls
+    for (let r=2; r<midR-2; r++) { map[r][3] = WALL; map[r][COLS-4] = WALL; }
+    for (let r=midR+4; r<ROWS-2; r++) { map[r][3] = WALL; map[r][COLS-4] = WALL; }
 
     // Center box (ghost house)
-    // walls rectangle from (7,10) to (11,12)
-    const top = 10, bottom = 12, left = 7, right = 11, doorC = Math.floor((left+right)/2);
-    for (let c=left; c<=right; c++) map[top][c] = WALL;
-    for (let c=left; c<=right; c++) map[bottom][c] = WALL;
+    const top = midR, bottom = midR+2, left = midC-2, right = midC+2;
+    const doorC = midC;
+    for (let c=left; c<=right; c++) { map[top][c] = WALL; map[bottom][c] = WALL; }
     for (let r=top; r<=bottom; r++) { map[r][left] = WALL; map[r][right] = WALL; }
-    // Door
     map[top][doorC] = DOOR;
-    // Clear inside
     for (let r=top+1; r<bottom; r++) for (let c=left+1; c<right; c++) map[r][c] = EMPTY;
 
-    // Carve entrance path to the door
+    // Path to door
     map[top-1][doorC] = DOT;
     map[top-2][doorC] = DOT;
 
-    // Add small nubs for interest
-    map[7][2] = WALL; map[7][COLS-3] = WALL;
-    map[13][2] = WALL; map[13][COLS-3] = WALL;
-
-    // Remove dots from walls and empty cells on borders tunnels
+    // Clear dots from walls
     let count=0;
     for (let r=0; r<ROWS; r++) for (let c=0; c<COLS; c++) {
-      if (map[r][c] === DOT || map[r][c] === POWER) count++;
+      if (map[r][c] === WALL || map[r][c] === DOOR || map[r][c] === EMPTY) {
+        // do nothing
+      } else {
+        count++;
+      }
     }
     dotsTotal = count;
   }
@@ -405,8 +501,7 @@
     if (code === WALL) return false;
     if (code === DOOR) {
       if (forGhost) {
-        // Only allow if not frightened or eyes? Allow always for eyes and also allow leaving house
-        return (ghostMode === 'eyes') || true; // allow ghosts to pass
+        return (ghostMode === 'eyes') || true;
       } else {
         return false;
       }
@@ -415,8 +510,11 @@
   }
 
   function resetEntities() {
+    const midC = Math.floor(COLS/2);
+    const midR = Math.floor(ROWS/2);
+
     // Pac spawn
-    const pacSpawnTile = {c: Math.floor(COLS/2), r: 15};
+    const pacSpawnTile = {c: midC, r: midR + 4};
     const pacSpawn = centerOf(pacSpawnTile.c, pacSpawnTile.r);
     pac.x = pacSpawn.x; pac.y = pacSpawn.y;
     pac.spawn = {x: pac.x, y: pac.y};
@@ -424,11 +522,11 @@
 
     // Ghost spawns
     ghosts.length = 0;
-    const houseCenter = {c: Math.floor(COLS/2), r: 11};
-    const blinkyPos = centerOf(houseCenter.c, 9);
-    const pinkyPos = centerOf(houseCenter.c, 11);
-    const inkyPos = centerOf(houseCenter.c-1, 11);
-    const clydePos = centerOf(houseCenter.c+1, 11);
+    const houseCenter = {c: midC, r: midR + 1};
+    const blinkyPos = centerOf(houseCenter.c, midR - 2);
+    const pinkyPos = centerOf(houseCenter.c, houseCenter.r);
+    const inkyPos = centerOf(houseCenter.c-1, houseCenter.r);
+    const clydePos = centerOf(houseCenter.c+1, houseCenter.r);
 
     ghosts.push(makeGhost('Blinky', COLORS.ghost[0], blinkyPos, {
       type:'blinky', scatter: {c: COLS-2, r:1}, inHouse: false
@@ -745,20 +843,38 @@
   // Buttons
   ui.pauseBtn.addEventListener('click', togglePause);
   ui.helpBtn.addEventListener('click', () => {
-    if (game.state === 'playing') togglePause(true);
+    if (game.state === 'playing') {
+      togglePause(true); // Force pause
+    }
     showOverlay();
   });
   ui.startBtn.addEventListener('click', () => {
-    hideOverlay(); startGame();
+    hideOverlay();
+    if (game.state === 'paused') {
+      togglePause(); // This will unpause the game
+    } else if (game.state === 'menu') {
+      startGame();
+    }
   });
+
+  const PAUSE_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`;
+  const PLAY_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
 
   function togglePause(forceOn) {
     if (game.state === 'menu' || game.state === 'gameover') return;
-    if (forceOn || game.state === 'playing') {
+
+    // This condition checks if we should ENTER a paused state.
+    // It pauses if either `forceOn` is true OR if the game is currently playing.
+    if (forceOn === true || game.state === 'playing') {
       game.state = 'paused';
+      ui.pauseBtn.innerHTML = PLAY_ICON_SVG;
       showBanner('Paused');
-    } else if (game.state === 'paused') {
+    }
+    // Otherwise, if the game is already paused, we should RESUME it.
+    else if (game.state === 'paused') {
       game.state = 'playing';
+      ui.pauseBtn.innerHTML = PAUSE_ICON_SVG;
+      justUnpaused = true; // This flag correctly resets the timer in the game loop.
       showBanner('Go!');
     }
   }
@@ -766,8 +882,15 @@
   // Game update
   let lastT = 0;
   let readyLock = 0;
+  let justUnpaused = false;
   function loop(t) {
     requestAnimationFrame(loop);
+
+    if (justUnpaused) {
+      lastT = t;
+      justUnpaused = false;
+    }
+
     if (!lastT) lastT = t;
     let dt = (t - lastT) / 1000;
     if (dt > 0.05) dt = 0.05;

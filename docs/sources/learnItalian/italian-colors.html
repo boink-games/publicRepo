@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Italian Colors</title>
+  <title>Italian Colors - Basic</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
     
@@ -230,6 +230,11 @@
       transform: translateY(-1px) scale(1);
     }
     
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
     .btn.correct {
       animation: correctPulse 0.6s ease;
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
@@ -292,7 +297,7 @@
   <div class="wrap">
     <div class="card">
       <div class="title-container">
-        <div class="title">Italian Colors Game</div>
+        <div class="title">Italian Colors Game - Basic</div>
         <div class="big" id="q">Ascolta e scegli il significato 🎨</div>
       </div>
       <div class="bar"><div class="fill" id="f"></div></div>
@@ -300,114 +305,130 @@
     </div>
   </div>
   <script>
-    function speak(t) {
-      try {
-        if (!('speechSynthesis' in window)) return;
-        const u = new SpeechSynthesisUtterance(String(t));
-        u.lang = 'it-IT';
-        u.rate = 0.9;
-        u.pitch = 1.1;
-        speechSynthesis.cancel();
-        speechSynthesis.speak(u);
-      } catch (_) {}
-    }
+    const game = {
+      speak(t) {
+        try {
+          if (!('speechSynthesis' in window)) return;
+          const u = new SpeechSynthesisUtterance(String(t));
+          u.lang = 'it-IT';
+          u.rate = 0.9;
+          u.pitch = 1.1;
+          speechSynthesis.cancel();
+          speechSynthesis.speak(u);
+        } catch (_) {}
+      },
+      PAIRS: [
+        ["rosso", "red", "🔴"],
+        ["giallo", "yellow", "🟡"],
+        ["verde", "green", "🟢"],
+        ["blu", "blue", "🔵"],
+        ["nero", "black", "⚫"],
+        ["bianco", "white", "⚪"],
+        ["arancione", "orange", "🟠"],
+        ["rosa", "pink", "🩷"],
+        ["viola", "purple", "🟣"],
+        ["grigio", "gray", "🩶"]
+      ],
+      idx: 0,
+      score: 0,
+      streak: 0,
+      opts: document.getElementById('opts'),
+      fill: document.getElementById('f'),
+      qElement: document.getElementById('q'),
     
-    const PAIRS = [
-      ["rosso", "red", "🔴"],
-      ["giallo", "yellow", "🟡"],
-      ["verde", "green", "🟢"],
-      ["blu", "blue", "🔵"],
-      ["nero", "black", "⚫"],
-      ["bianco", "white", "⚪"],
-      ["arancione", "orange", "🟠"],
-      ["rosa", "pink", "🚀"],
-      ["viola", "purple", "🟣"],
-      ["grigio", "gray", "🧡"]
-    ];
-    
-    let idx = 0;
-    let score = 0;
-    let streak = 0;
-    const opts = document.getElementById('opts');
-    const fill = document.getElementById('f');
-    const qElement = document.getElementById('q');
-    
-    function next() {
-      const p = PAIRS[idx % PAIRS.length];
-      const it = p[0], en = p[1], emoji = p[2];
-      const choices = [en];
-      
-      while (choices.length < 4) {
-        const pick = PAIRS[Math.random() * PAIRS.length | 0][1];
-        if (!choices.includes(pick)) choices.push(pick);
-      }
-      
-      choices.sort(() => Math.random() - 0.5);
-      opts.innerHTML = '';
-      
-      choices.forEach((ch, i) => {
-        const b = document.createElement('button');
-        b.className = 'btn';
-        b.innerHTML = `<span>${ch}</span>`;
-        b.style.animationDelay = `${i * 0.1}s`;
-        b.onclick = () => pick(ch, en, b);
-        opts.appendChild(b);
-      });
-      
-      qElement.innerHTML = `${emoji} Ascolta: "<strong>${it}</strong>" <span class="speaker-icon" onclick="speak('${it}')">🔊</span>`;
-      setTimeout(() => speak(it), 500);
-    }
-    
-    function pick(sel, ans, button) {
-      const allButtons = opts.querySelectorAll('.btn');
-      allButtons.forEach(btn => btn.disabled = true);
-      
-      if (sel === ans) {
-        button.classList.add('correct');
-        idx++;
-        score++;
-        streak++;
+    next() {
+        const p = this.PAIRS[this.idx % this.PAIRS.length];
+        const it = p[0], en = p[1], emoji = p[2];
+        const choices = [en];
         
-        fill.style.width = Math.min(100, idx / PAIRS.length * 100) + '%';
+        while (choices.length < 4) {
+          const pick = this.PAIRS[Math.random() * this.PAIRS.length | 0][1];
+          if (!choices.includes(pick)) choices.push(pick);
+        }
         
-        const messages = ["Eccellente! ✨", "Bravissimo! 🌟", "Perfetto! 🎯", "Fantastico! 🎉", "Magnifico! 🏆"];
-        qElement.innerHTML = `<span style="color: #11998e;">${messages[Math.floor(Math.random() * messages.length)]}</span>`;
+        choices.sort(() => Math.random() - 0.5);
+        this.opts.innerHTML = '';
         
-        if (idx % PAIRS.length === 0) {
-          setTimeout(() => {
-            qElement.innerHTML = `🎊 Complimenti! Hai completato il ciclo! Score: ${score}/${idx} 🎊`;
-            setTimeout(next, 2000);
-          }, 1000);
+        choices.forEach((ch, i) => {
+          const b = document.createElement('button');
+          b.className = 'btn';
+          b.innerHTML = `<span>${ch}</span>`;
+          b.style.animationDelay = `${i * 0.1}s`;
+          b.onclick = () => this.pick(ch, en, b);
+          this.opts.appendChild(b);
+        });
+        
+        this.qElement.innerHTML = `${emoji} Ascolta: "<strong>${it}</strong>" <button class="speaker-icon" onclick="game.speak('${it}')" aria-label="Ascolta la pronuncia di ${it}">🔊</button>`;
+        setTimeout(() => this.speak(it), 500);
+      },
+    
+    pick(sel, ans, button) {
+        const allButtons = this.opts.querySelectorAll('.btn');
+        allButtons.forEach(btn => btn.disabled = true);
+        
+        if (sel === ans) {
+          button.classList.add('correct');
+          this.idx++;
+          this.score++;
+          this.streak++;
+          
+          this.fill.style.width = Math.min(100, this.idx / this.PAIRS.length * 100) + '%';
+          
+          const messages = ["Eccellente! ✨", "Bravissimo! 🌟", "Perfetto! 🎯", "Fantastico! 🎉", "Magnifico! 🏆"];
+          this.qElement.innerHTML = `<span style="color: #11998e;">${messages[Math.floor(Math.random() * messages.length)]}</span>`;
+          
+          if (this.idx % this.PAIRS.length === 0) {
+            setTimeout(() => this.showSummaryAndRestart(), 1000);
+          } else {
+            setTimeout(() => this.next(), 1500);
+          }
         } else {
-          setTimeout(next, 1500);
+          button.classList.add('incorrect');
+          this.streak = 0;
+          
+          const correctButton = Array.from(allButtons).find(btn => 
+            btn.querySelector('span').textContent === ans
+          );
+          if (correctButton) {
+            setTimeout(() => correctButton.classList.add('correct'), 300);
+          }
+          
+          this.qElement.innerHTML = `<span style="color: #ee0979;">Ops! La risposta era "${ans}" 🔄</span>`;
+          setTimeout(() => {
+            allButtons.forEach(btn => {
+              btn.classList.remove('correct', 'incorrect');
+              btn.disabled = false;
+            });
+            this.next();
+          }, 2500);
         }
-      } else {
-        button.classList.add('incorrect');
-        streak = 0;
-        
-        const correctButton = Array.from(allButtons).find(btn => 
-          btn.querySelector('span').textContent === ans
-        );
-        if (correctButton) {
-          setTimeout(() => correctButton.classList.add('correct'), 300);
-        }
-        
-        qElement.innerHTML = `<span style="color: #ee0979;">Ops! La risposta era "${ans}" 🔄</span>`;
-        setTimeout(() => {
-          allButtons.forEach(btn => {
-            btn.classList.remove('correct', 'incorrect');
-            btn.disabled = false;
-          });
-          next();
-        }, 2500);
+      },
+
+    showSummaryAndRestart() {
+        this.opts.innerHTML = ''; // Clear options
+        this.qElement.innerHTML = `
+          <div style="text-align: center;">
+            <p class="big">Game Over! 🎉</p>
+            <p style="font-size: 24px; margin-top: 15px;">Your final score: ${this.score} / ${this.PAIRS.length}</p>
+            <button class="btn" style="margin-top: 30px;" onclick="game.restartGame()">Play Again</button>
+          </div>
+        `;
+        this.fill.style.width = '0%'; // Reset progress bar
+      },
+
+    restartGame() {
+        this.idx = 0;
+        this.score = 0;
+        this.streak = 0;
+        this.next();
       }
-    }
+    }; // Close the game object
     
     // Add keyboard support
     document.addEventListener('keydown', (e) => {
       if (e.key >= '1' && e.key <= '4') {
         const buttonIndex = parseInt(e.key) - 1;
-        const buttons = opts.querySelectorAll('.btn:not([disabled])');
+        const buttons = game.opts.querySelectorAll('.btn:not([disabled])');
         if (buttons[buttonIndex]) {
           buttons[buttonIndex].click();
         }
@@ -415,7 +436,7 @@
     });
     
     // Initialize
-    next();
+    game.next();
   </script>
 </body>
 </html>

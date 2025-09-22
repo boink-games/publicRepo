@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Luckiest+Guy&display=swap" rel="stylesheet">
 <title>Comida en Español - Juego de Vocabulario</title>
 <style>
   :root{
@@ -40,14 +43,23 @@
   }
   header{
     display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
   .title{
     display:flex;
     align-items:center;
+    justify-content: center;
     gap:10px;
+  }
+  .title-emoji {
+    font-size: clamp(32px, 5vw, 44px);
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
   }
   .logo{
     width:40px;height:40px;border-radius:12px;
@@ -56,8 +68,12 @@
   }
   h1{
     margin:0;
-    font-size: clamp(20px, 2.6vw, 28px);
-    letter-spacing:.2px;
+    font-family: 'Luckiest Guy', cursive;
+    font-size: clamp(28px, 5vw, 42px);
+    letter-spacing: 1.5px;
+    color: var(--primary);
+    text-shadow: 0 3px 5px rgba(0,0,0,0.15);
+    white-space: nowrap;
   }
   .scoreboard{
     display:flex;
@@ -87,15 +103,20 @@
     backdrop-filter: blur(4px);
     border-radius:var(--radius);
     padding:14px 16px;
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    display:flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap:12px;
     box-shadow: var(--shadow);
   }
   .prompt .text{
     font-size: clamp(16px, 2.2vw, 20px);
     line-height:1.25;
+    text-align: left;
   }
   .controls{
-    display:flex;gap:10px;flex-wrap:wrap;
+    display:flex;gap:10px;flex-wrap:nowrap;
+    justify-content: space-between;
   }
   button{
     appearance:none;border:0;cursor:pointer;
@@ -160,26 +181,75 @@
   }
   .footer{
     color:var(--muted);
-    font-size:13px;text-align:center;margin-top:8px;
+    font-size:14px;
+    font-weight: 500;
+    text-align:center;
+    margin-top:8px;
   }
   .overlay{
-    position:fixed;inset:0;background: linear-gradient(180deg,#fff, #f3f7ff);
-    display:flex;align-items:center;justify-content:center;z-index:50;
+    position:fixed;inset:0;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px);
+    display:flex; align-items:center; justify-content:center;
     padding:24px;
+    z-index:50;
+    animation: fadeIn .3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
   .panel{
-    width:min(680px,100%);
-    background:#fff;border-radius:28px;padding:24px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.15);
-    text-align:center;display:flex;flex-direction:column;gap:16px;
+    width:min(420px, 92vw);
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+    padding: clamp(24px, 5vw, 40px);
+    text-align:center;
+    border: 1px solid rgba(0,0,0,0.05);
+    transform: scale(0.95) translateY(10px);
+    animation: popIn .3s ease forwards;
   }
-  .panel h2{margin:0;font-size: clamp(22px, 4vw, 34px)}
-  .panel p{margin:0;color:#4a5568}
-  .howto{
-    background:#f6f9ff;border-radius:16px;padding:16px;text-align:left;display:grid;gap:8px;
-    font-size:15px;color:#334155
+  @keyframes popIn {
+    to { transform: scale(1) translateY(0); }
   }
-  .howto b{color:#0f172a}
+  .panel h2{
+    margin:0 0 12px 0;
+    font-size: clamp(26px, 5.5vw, 38px);
+    color: #333;
+    font-family: 'Baloo 2', cursive;
+  }
+  .panel p{
+    margin:0 0 24px;
+    color: #555;
+    font-size: clamp(16px, 2.8vw, 19px);
+    line-height:1.6;
+  }
+  .badgeRow{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px 0;
+    padding: 16px;
+    background: #f7f7f7;
+    border-radius: 16px;
+  }
+  .mini{
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius:12px;
+    padding:10px 16px;
+    box-shadow: 0 3px 6px rgba(0,0,0,.05);
+    display:flex; align-items:center; gap:10px;
+    font-weight:700;
+    color:#444;
+    font-size: clamp(13px, 2vw, 15px);
+    transition: transform .2s ease;
+  }
+  .mini:hover{
+    transform: translateY(-2px);
+  }
   .hidden{display:none}
   .celebrate{
     font-size:42px;line-height:1
@@ -194,16 +264,14 @@
     <div class="panel">
       <div class="celebrate">🥑🍎🥖🥛</div>
       <h2>Comida en Español</h2>
-      <p>Escucha la palabra en español y toca el alimento correcto.</p>
-      <div class="howto">
-        <div>• Pulsa <b>Empezar</b> para activar el sonido.</div>
-        <div>• Botón <b>Repetir</b> para oír de nuevo.</div>
-        <div>• Teclado: <b>1-4</b> para elegir, <b>R</b> o <b>Espacio</b> para repetir.</div>
+      <p>Escucha la palabra y elige la imagen correcta para ganar puntos.</p>
+      <div class="badgeRow">
+        <div class="mini">👆 Toca para elegir</div>
+        <div class="mini">⌨️ Usa 1-4</div>
+        <div class="mini">🔊 Espacio repite</div>
       </div>
-      <div class="muted-note">Consejo: Asegúrate de que el volumen del dispositivo esté activado. Usamos una voz en español del navegador.</div>
-      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap">
-        <button class="btn-success" id="btnStart">Empezar ▶</button>
-        <button class="btn-ghost" id="btnMuteToggleStart">🔊 Voz: Activada</button>
+      <div style="display: flex; justify-content: center; margin-top: 28px;">
+        <button id="btnStart" class="btn-success" style="font-size: clamp(18px, 3.5vw, 24px); padding: 16px 28px; box-shadow: 0 8px 20px rgba(46,203,112,.4);">¡Vamos!</button>
       </div>
     </div>
   </div>
@@ -211,7 +279,7 @@
   <div class="container" aria-live="polite">
     <header>
       <div class="title">
-        <div class="logo" aria-hidden="true"></div>
+        <div class="title-emoji" aria-hidden="true">🥑</div>
         <h1>Comida en Español</h1>
       </div>
       <div class="scoreboard">
@@ -225,8 +293,8 @@
         Escucha y elige: <b id="targetText">—</b>
       </div>
       <div class="controls">
-        <button id="btnRepeat" class="btn-warning">🔊 Repetir</button>
         <button id="btnMute" class="btn-ghost">🔊 Voz: Activada</button>
+        <button id="btnRepeat" class="btn-warning">🔊 Repetir</button>
       </div>
     </div>
 

@@ -6,14 +6,13 @@
   <title>Whack-a-Mole - Friendly Tap Game</title>
   <style>
     :root{
-      --bg-sky1:#cfeffd;
-      --bg-sky2:#a8ddff;
-      --ground1:#95d587;
-      --ground2:#74c46d;
+      --sky-top: #87CEEB;
+      --sky-bottom: #d1f1ff;
+      --hill-back: #8bc34a;
+      --hill-front: #4caf50;
       --text:#1b2a2f;
       --accent:#ffb703;
-      --accent2:#ff7b7b;
-      --panel:#ffffffcc;
+      --panel:#ffffffd9;
       --shadow:0 8px 20px rgba(0,0,0,.15);
       --hole: clamp(80px, 24vw, 140px);
       --mole: calc(var(--hole) * .7);
@@ -26,7 +25,7 @@
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       color:var(--text);
-      background: linear-gradient(180deg,var(--bg-sky1),var(--bg-sky2));
+      background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
       overflow:hidden;
       display:flex;
       align-items:center;
@@ -34,39 +33,77 @@
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
-    /* Soft clouds */
-    .clouds{
-      position:fixed; inset:0; pointer-events:none; overflow:hidden;
-    }
-    .cloud{
-      position:absolute; width: 40vmin; height: 18vmin; background: #fff;
-      border-radius: 50vmin; filter: drop-shadow(0 6px 10px rgba(0,0,0,.08));
-      opacity:.75;
-      animation: float linear infinite;
-    }
-    .cloud::before,.cloud::after{
-      content:""; position:absolute; background:#fff; border-radius:50%;
-    }
-    .cloud::before{ width: 50%; height: 70%; left:-12%; top:10%;}
-    .cloud::after{ width: 60%; height: 90%; right:-15%; top:0;}
-    .cloud.c1{ top:8vmin; left:-30vmin; animation-duration: 65s;}
-    .cloud.c2{ top:18vmin; left:-50vmin; width: 36vmin; height:16vmin; opacity:.7; animation-duration: 80s;}
-    .cloud.c3{ top:6vmin; left:-70vmin; width:44vmin; height:20vmin; opacity:.6; animation-duration: 95s;}
-    @keyframes float{
-      from{ transform: translateX(0) }
-      to{ transform: translateX(120vmin) }
-    }
-    @media (prefers-reduced-motion: reduce){
-      .cloud{animation:none}
+    
+    .farm-background{
+      position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index: -1;
     }
 
-    /* Ground strip */
-    .ground{
-      position:fixed; left:0; right:0; bottom:0; height: 35vmin; max-height: 40%;
-      background: linear-gradient(180deg, var(--ground1), var(--ground2));
-      box-shadow: inset 0 12px 30px rgba(0,0,0,.08);
-      border-top-left-radius: 24vmin;
-      border-top-right-radius: 24vmin;
+    .earth{
+      position: absolute;
+      bottom: 0; left:0; right:0;
+      height: 50px;
+      background: #8b5a2b;
+    }
+    .grass{
+      position: absolute;
+      bottom: 45px; left:0; right:0;
+      height: 25px;
+      background: #66bb6a;
+    }
+
+    .flower {
+      position: absolute;
+      bottom: 55px;
+      left: var(--x-pos);
+      font-size: var(--size);
+      transform-origin: bottom center;
+      animation: sway 4s ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+    @keyframes sway {
+      0%, 100% { transform: rotate(5deg); }
+      50% { transform: rotate(-10deg); }
+    }
+
+    .butterfly {
+      position: absolute;
+      top: var(--y-start);
+      left: -50px;
+      font-size: var(--size);
+      animation: fly-across linear infinite;
+      animation-duration: var(--duration);
+      animation-delay: var(--delay);
+    }
+    @keyframes fly-across {
+      0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+      }
+      25% {
+        transform: translateX(30vw) translateY(-60px) rotate(5deg);
+      }
+      50% {
+        transform: translateX(60vw) translateY(0px) rotate(-5deg);
+      }
+      75% {
+        transform: translateX(90vw) translateY(-40px) rotate(10deg);
+      }
+      100% {
+        transform: translateX(120vw) translateY(20px) rotate(0deg);
+      }
+    }
+
+    .bird {
+      position: absolute;
+      top: var(--y-start);
+      left: -50px;
+      font-size: var(--size);
+      animation: fly-bird linear infinite;
+      animation-duration: var(--duration);
+      animation-delay: var(--delay);
+    }
+    @keyframes fly-bird {
+      from { transform: translateX(-50px); }
+      to { transform: translateX(110vw); }
     }
 
     .wrap{
@@ -74,16 +111,33 @@
       width:min(92vw, 560px);
       margin:auto;
       z-index:2;
+      padding-top: 90px; /* Space for fixed header */
     }
 
-    .topbar{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      background: var(--panel);
-      padding: clamp(10px, 3vw, 16px);
+    .header{
+      position:fixed;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      width: min(92vw, 560px);
+      margin: 0 auto;
+      background: linear-gradient(180deg, rgba(220, 240, 255, 0.7), rgba(200, 230, 255, 0.6)); /* Light sky-blue gradient */
+      padding: 10px;
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Softer shadow */
+      border: 1px solid rgba(255, 255, 255, 0.8); /* Light border */
+      backdrop-filter: blur(8px); /* Slightly more blur */
+      z-index: 10;
+    }
+    .header-row1{
+      display:flex;
+      justify-content:center;
+      margin-bottom: 8px;
+    }
+    .header-row2{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
     }
     .title{
       display:flex; align-items:center; gap:10px;
@@ -249,25 +303,30 @@
   </style>
 </head>
 <body>
-  <div class="clouds" aria-hidden="true">
-    <div class="cloud c1"></div>
-    <div class="cloud c2"></div>
-    <div class="cloud c3"></div>
+  <div class="farm-background" aria-hidden="true">
+    <div class="earth"></div>
+    <div class="grass"></div>
+    <div id="flowers-container"></div>
+    <div id="butterflies-container"></div>
+    <div id="birds-container"></div>
   </div>
-  <div class="ground" aria-hidden="true"></div>
 
   <div class="wrap">
-    <div class="topbar">
-      <div class="title" aria-live="polite">
-        <span class="emoji" role="img" aria-label="Mole">🐹</span>
-        <span>Tap the Mole!</span>
-      </div>
-      <div class="scoreboard">
-        <div class="pill" id="scorePill" aria-label="Score">
-          ⭐ Score: <span id="score">0</span>
+    <div class="header">
+      <div class="header-row1">
+        <div class="title" aria-live="polite">
+          <span class="emoji" role="img" aria-label="Mole">🐹</span>
+          <span>Tap the Mole!</span>
         </div>
-        <div class="pill" id="bestPill" aria-label="Best">
-          🏆 Best: <span id="best">0</span>
+      </div>
+      <div class="header-row2">
+        <div class="scoreboard">
+          <div class="pill" id="scorePill" aria-label="Score">
+            ⭐ Score: <span id="score">0</span>
+          </div>
+          <div class="pill" id="bestPill" aria-label="Best">
+            🏆 Best: <span id="best">0</span>
+          </div>
         </div>
         <div class="controls">
           <button id="playBtn" class="btn" aria-pressed="false" title="Play or Pause">
@@ -452,7 +511,7 @@
       mole.querySelector('.face').textContent = FACES[rand(0, FACES.length-1)];
       mole.classList.add('up');
 
-      // Time the mole stays up, a bit generous for small kids
+      // Time the mole stays up, a bit generous for small
       const upTime = rand(900, 1300);
       clearTimeout(hideTO);
       hideTO = setTimeout(hideMole, upTime);
@@ -529,7 +588,7 @@
       scoreEl.textContent = '0';
     });
 
-    // Pause when tab hidden, resume when visible (gentle for kids)
+    // Pause when tab hidden, resume when visible (gentle)
     document.addEventListener('visibilitychange', ()=>{
       if (document.hidden) {
         if (running) pause();
@@ -545,6 +604,53 @@
     });
 
     // Start paused with overlay visible; user can also press play button
+
+    // Generate decorative elements
+    function createDecorations(){
+      const flowersContainer = document.getElementById('flowers-container');
+      const butterfliesContainer = document.getElementById('butterflies-container');
+      const birdsContainer = document.getElementById('birds-container');
+      if (!flowersContainer || !butterfliesContainer || !birdsContainer) return;
+
+      // Flowers
+      const flowerEmojis = ['🌸', '🌼', '🌷', '🌻', '🌹'];
+      for(let i=0; i<10; i++){
+        const f = document.createElement('div');
+        f.className = 'flower';
+        f.textContent = flowerEmojis[i % flowerEmojis.length];
+        f.style.setProperty('--size', (20 + Math.random() * 15) + 'px');
+        f.style.setProperty('--x-pos', (5 + Math.random() * 90) + 'vw');
+        f.style.setProperty('--delay', (Math.random() * 4) + 's');
+        flowersContainer.appendChild(f);
+      }
+
+      // Butterflies
+      const butterflyEmojis = ['🦋', '🐛', '🐞'];
+      for(let i=0; i<5; i++){
+        const b = document.createElement('div');
+        b.className = 'butterfly';
+        b.textContent = butterflyEmojis[i % butterflyEmojis.length];
+        b.style.setProperty('--size', (20 + Math.random() * 10) + 'px');
+        b.style.setProperty('--y-start', (10 + Math.random() * 40) + 'vh');
+        b.style.setProperty('--duration', (8 + Math.random() * 8) + 's');
+        b.style.setProperty('--delay', (Math.random() * 10) + 's');
+        butterfliesContainer.appendChild(b);
+      }
+
+      // Birds
+      const birdEmojis = ['🐦', '🕊️'];
+      for(let i=0; i<3; i++){
+        const bird = document.createElement('div');
+        bird.className = 'bird';
+        bird.textContent = birdEmojis[i % birdEmojis.length];
+        bird.style.setProperty('--size', (25 + Math.random() * 15) + 'px');
+        bird.style.setProperty('--y-start', (5 + Math.random() * 20) + 'vh');
+        bird.style.setProperty('--duration', (10 + Math.random() * 10) + 's');
+        bird.style.setProperty('--delay', (Math.random() * 12) + 's');
+        birdsContainer.appendChild(bird);
+      }
+    }
+    createDecorations();
   </script>
 </body>
 </html>

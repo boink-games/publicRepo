@@ -14,21 +14,7 @@
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
-  {
-    "id": "microgame:microStrategy:civilization-style-game",
-    "type": "microgame",
-    "title": "Civilization Style Game",
-    "source": "/sources/microStrategy/civilization-style-game.html",
-    "generatedAt": "2025-09-02T14:45:56.075Z",
-    "feedName": "Boink.Games #microStrategy",
-    "author": "Boink.Games Agent",
-    "category": "Game",
-    "essence": "A new game, automatically added",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
+
   {
     "id": "microgame:microStrategy:deck-building-card-game",
     "type": "microgame",
@@ -44,21 +30,7 @@
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
-  {
-    "id": "microgame:microStrategy:lights-out",
-    "type": "microgame",
-    "title": "Lights Out (3×3)",
-    "source": "/sources/microStrategy/lights-out.html",
-    "generatedAt": "2025-09-01T00:00:00.000Z",
-    "feedName": "Boink.Games #microStrategy",
-    "author": "Boink.Games",
-    "category": "MicroGame",
-    "essence": "Toggle tiles to turn off all lights. Each tap flips neighbors — solve the 3×3 board in as few taps as possible",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
+
   {
     "id": "microgame:microStrategy:sudoku",
     "type": "microgame",
@@ -75,24 +47,9 @@
     ]
   },
   {
-    "id": "microgame:microStrategy:tic-tac-toe",
-    "type": "microgame",
-    "title": "Tic-Tac-Toe (vs Random)",
-    "source": "/sources/microStrategy/tic-tac-toe.html",
-    "generatedAt": "2025-09-01T00:00:00.000Z",
-    "feedName": "Boink.Games #microStrategy",
-    "author": "Boink.Games",
-    "category": "MicroGame",
-    "essence": "Play X vs a simple random AI. Win, lose, or draw — each game takes seconds",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
-  {
     "id": "microgame:microStrategy:tower-defense-game",
     "type": "microgame",
-    "title": "Tower Defense Game",
+    "title": "Tower Defense",
     "source": "/sources/microStrategy/tower-defense-game.html",
     "generatedAt": "2025-09-02T14:46:28.544Z",
     "feedName": "Boink.Games #microStrategy",

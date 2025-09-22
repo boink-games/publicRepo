@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
-  <title>Neon Pong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+  <title>Ping pong</title>
   <style>
     :root{
       --bar-height: 56px;
@@ -31,27 +34,51 @@
       top: env(safe-area-inset-top, 0);
       left: 0;
       right: 0;
-      height: var(--bar-height);
+      height: auto;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 0 16px;
+      flex-direction: column;
+      padding: 6px 16px 8px;
       z-index: 2;
-      background: linear-gradient(180deg, rgba(10,12,20,0.7), rgba(5,6,12,0.3));
-      backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: var(--bg-3);
+      border-bottom: 2px solid #ff79d6;
+      box-shadow: 0 2px 15px rgba(255, 121, 214, 0.2);
       user-select: none;
-      pointer-events: none;
     }
     header#topBar .title {
+      font-family: 'Audiowide', cursive;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       font-weight: 700;
-      font-size: 14px;
+      font-size: clamp(28px, 5vw, 36px);
       color: #b1d9ff;
       text-shadow:
         0 0 10px rgba(0,234,255,0.3),
         0 0 20px rgba(0,234,255,0.18);
+    }
+    .header-controls {
+      display: flex;
+      gap: 24px;
+      margin-top: 4px;
+    }
+    .key-hint {
+      font-size: 12px;
+      color: #b1d9ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 0 0 8px rgba(0, 234, 255, 0.3);
+      cursor: pointer;
+    }
+    kbd {
+      background-color: rgba(11, 15, 22, 0.7);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: #e0e8ff;
     }
     canvas#game {
       position: absolute;
@@ -106,6 +133,25 @@
       transition: opacity 400ms ease;
     }
     .hint.hidden { opacity: 0; }
+    .point-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      font-family: 'Audiowide', cursive;
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+      z-index: 10;
+    }
+    .point-message.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
     @media (min-width: 768px) {
       header#topBar .title { font-size: 15px; }
       .hint { font-size: 13px; }
@@ -113,10 +159,18 @@
   </style>
 </head>
 <body>
-  <header id="topBar"><div class="title">Neon Pong</div></header>
+  <header id="topBar">
+    <div class="title">Ping pong</div>
+    <div class="header-controls">
+        <div class="key-hint" id="pauseBtn">⏸️ Pause</div>
+        <div class="key-hint" id="restartBtn">🔄 Restart</div>
+        <div class="key-hint" id="volumeBtn"><span id="volumeIcon">🔊</span> Volum</div>
+    </div>
+  </header>
   <div class="bg-overlay"></div>
   <canvas id="game"></canvas>
 
+  <div id="pointMessage" class="point-message"></div>
   <div id="touchHint" class="hint">Drag to move • Tap to start/pause</div>
 
   <script>
@@ -125,6 +179,11 @@
       const ctx = canvas.getContext('2d', { alpha: false });
       const topBar = document.getElementById('topBar');
       const hint = document.getElementById('touchHint');
+      const pauseBtn = document.getElementById('pauseBtn');
+      const restartBtn = document.getElementById('restartBtn');
+      const volumeBtn = document.getElementById('volumeBtn');
+      const volumeIcon = document.getElementById('volumeIcon');
+      const pointMessage = document.getElementById('pointMessage');
 
       const COLORS = {
         left: '#00eaff',
@@ -172,6 +231,103 @@
         y: null,
         keyDir: 0 // -1 up, 1 down
       };
+
+      let audioCtx;
+      const particles = [];
+      let isMuted = false;
+
+      // --- Audio Engine ---
+      function initAudio() {
+        if (audioCtx) return;
+        try {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+          console.warn("Web Audio API is not supported in this browser");
+        }
+      }
+
+      function toggleMute() {
+        isMuted = !isMuted;
+        volumeIcon.textContent = isMuted ? '🔇' : '🔊';
+      }
+
+      function playSound(type) {
+        if (!audioCtx || isMuted) return;
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+
+        if (type === 'hit') {
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+          oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1);
+        } else if (type === 'score') {
+          oscillator.type = 'triangle';
+          oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+          setTimeout(() => {
+            const osc2 = audioCtx.createOscillator();
+            const gain2 = audioCtx.createGain();
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            gain2.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
+            gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc2.start(audioCtx.currentTime);
+            osc2.stop(audioCtx.currentTime + 0.4);
+          }, 100);
+        }
+
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.3);
+      }
+
+      // --- Particle Engine ---
+      function createParticles(x, y, color) {
+        const count = 10 + Math.floor(Math.random() * 10);
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 50 + Math.random() * 150;
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 0.4 + Math.random() * 0.4,
+            maxLife: 0.8,
+            size: 1 + Math.random() * 2,
+            color: color
+          });
+        }
+      }
+
+      function updateAndDrawParticles(dt) {
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.life -= dt;
+          if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.vx *= 0.98; // friction
+          p.vy *= 0.98;
+
+          const alpha = p.life / p.maxLife;
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
 
       function resizeCanvas() {
         const dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -232,6 +388,7 @@
           STATE.scores = [0, 0];
           STATE.winner = null;
         }
+        initAudio(); // Initialize audio on first interaction
         STATE.running = true;
         hideHint();
       }
@@ -295,6 +452,14 @@
         input.active = false;
       });
 
+      function resetGame() {
+        STATE.showingWin = false;
+        STATE.scores = [0, 0];
+        resetBall(Math.random() < 0.5 ? -1 : 1);
+        STATE.running = false;
+        showHint("Tap to start • Drag to move");
+      }
+
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
           e.preventDefault();
@@ -303,11 +468,7 @@
         }
         if (e.key === 'r' || e.key === 'R') {
           e.preventDefault();
-          STATE.showingWin = false;
-          STATE.scores = [0, 0];
-          resetBall(Math.random() < 0.5 ? -1 : 1);
-          STATE.running = false;
-          showHint("Tap to start • Drag to move");
+          resetGame();
           return;
         }
         if (e.code === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
@@ -397,21 +558,25 @@
         // Scoring
         if (BALL.x + BALL.r < 0) {
           STATE.scores[1] += 1;
+          showPointMessage(false);
           if (STATE.scores[1] >= STATE.winScore) {
             STATE.showingWin = true;
             STATE.winner = 'Right';
             STATE.running = false;
             showHint("Right Player Won • Tap to play again");
+            playSound('score');
           } else {
             resetBall(1);
           }
         } else if (BALL.x - BALL.r > STATE.w) {
           STATE.scores[0] += 1;
+          showPointMessage(true);
           if (STATE.scores[0] >= STATE.winScore) {
             STATE.showingWin = true;
             STATE.winner = 'Left';
             STATE.running = false;
             showHint("Left Player Won • Tap to play again");
+            playSound('score');
           } else {
             resetBall(-1);
           }
@@ -451,21 +616,42 @@
 
         // Small extra kick if hit near paddle edge
         if (Math.abs(relative) > 0.75) BALL.vy *= 1.05;
+
+        // Effects
+        playSound('hit');
+        createParticles(BALL.x, BALL.y, isLeft ? COLORS.left : COLORS.right);
+      }
+
+      function showPointMessage(playerScored) {
+        const messages = playerScored 
+          ? ["Well done!", "Great!", "Nice one!", "Awesome!"]
+          : ["Try again!", "So close!", "You can do it!", "Keep trying!"];
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        
+        pointMessage.textContent = message;
+        pointMessage.style.color = playerScored ? COLORS.left : COLORS.right;
+        pointMessage.classList.add('show');
+
+        setTimeout(() => {
+          pointMessage.classList.remove('show');
+        }, 1200);
       }
 
       // Render
-      function draw() {
+      function draw(dt) {
         drawBackground();
 
         if (STATE.showingWin) {
           drawArena();
           drawUI();
           drawWinOverlay();
+          updateAndDrawParticles(dt); // Pass dt here as well
           return;
         }
 
         drawArena();
         drawUI();
+        updateAndDrawParticles(dt);
       }
 
       function drawBackground() {
@@ -613,36 +799,77 @@
         // Scores
         ctx.save();
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
+        ctx.textBaseline = 'middle';
         const fontSize = Math.max(24, s * 0.06);
-        ctx.font = `700 ${fontSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-        // Left score
+        const iconSize = fontSize * 0.9;
+        const scoreXOffset = iconSize * 0.7;
+        const iconShadowBlur = s * 0.03;
+        const yPos = h * 0.08 + fontSize / 2;
+
+        // Player Icon (Left)
         ctx.shadowColor = COLORS.left;
-        ctx.shadowBlur = s * 0.03;
+        ctx.shadowBlur = iconShadowBlur;
         ctx.fillStyle = '#e6fbff';
-        ctx.fillText(STATE.scores[0], w * 0.25, h * 0.05);
-        // Right score
+        ctx.font = `${iconSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+        ctx.fillText('😊', w * 0.25 - scoreXOffset, yPos);
+
+        // Left score
+        ctx.font = `700 ${fontSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+        ctx.shadowColor = COLORS.left;
+        ctx.shadowBlur = iconShadowBlur;
+        ctx.fillStyle = '#e6fbff';
+        ctx.fillText(STATE.scores[0], w * 0.25 + scoreXOffset, yPos);
+
+        // AI Icon (Right)
         ctx.shadowColor = COLORS.right;
-        ctx.fillText(STATE.scores[1], w * 0.75, h * 0.05);
+        ctx.shadowBlur = iconShadowBlur;
+        ctx.fillStyle = '#e6fbff';
+        ctx.font = `${iconSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+        ctx.fillText('🤖', w * 0.75 - scoreXOffset, yPos);
+
+        // Right score
+        ctx.font = `700 ${fontSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+        ctx.shadowColor = COLORS.right;
+        ctx.shadowBlur = iconShadowBlur;
+        ctx.fillText(STATE.scores[1], w * 0.75 + scoreXOffset, yPos);
         ctx.restore();
 
         // Instructions overlay when not running
         if (!STATE.running && !STATE.showingWin) {
           ctx.save();
+          const s = Math.min(w, h);
+          const btnW = Math.max(150, s * 0.4);
+          const btnH = Math.max(50, s * 0.15);
+          const btnX = w / 2 - btnW / 2;
+          const btnY = h / 2 - btnH / 2;
+          const r = btnH * 0.3;
+
+          // Button Shadow
+          ctx.shadowColor = 'rgba(0, 234, 255, 0.5)';
+          ctx.shadowBlur = s * 0.05;
+
+          // Button Gradient
+          const grad = ctx.createLinearGradient(btnX, btnY, btnX, btnY + btnH);
+          grad.addColorStop(0, '#00eaff');
+          grad.addColorStop(1, '#00a2ff');
+          ctx.fillStyle = grad;
+          
+          // Draw button
+          roundRect(ctx, btnX, btnY, btnW, btnH, r);
+          ctx.fill();
+          
+          // Reset shadow for text
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+          ctx.shadowBlur = 5;
+
+          // Button Text
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          const titleSize = Math.max(20, s * 0.038);
-          const subSize = Math.max(12, s * 0.02);
-          ctx.font = `700 ${titleSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-          ctx.fillStyle = '#bfeaff';
-          ctx.shadowColor = 'rgba(0,234,255,0.8)';
-          ctx.shadowBlur = s * 0.02;
-          ctx.fillText('Tap to Start • Drag to Move', w/2, h*0.5 - titleSize);
-
-          ctx.font = `500 ${subSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-          ctx.shadowBlur = s * 0.015;
-          ctx.fillStyle = 'rgba(200,230,255,0.9)';
-          ctx.fillText('Space to pause • R to reset', w/2, h*0.5 + subSize * 1.2);
+          const fontSize = Math.max(24, btnH * 0.4);
+          ctx.font = `800 ${fontSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+          ctx.fillStyle = '#ffffff';
+          ctx.fillText('START', w / 2, h / 2);
+          
           ctx.restore();
         }
 
@@ -673,19 +900,22 @@
 
         const titleSize = Math.max(28, s * 0.065);
         const subSize = Math.max(14, s * 0.028);
+        const scoreSize = Math.max(18, s * 0.04);
 
         ctx.font = `800 ${titleSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
         ctx.fillText(`${STATE.winner} Player Won!`, w/2, h*0.42);
 
-        ctx.font = `600 ${subSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-        ctx.fillStyle = '#cfe9ff';
-        ctx.shadowBlur = s * 0.02;
-        ctx.fillText(`Final Score ${STATE.scores[0]} - ${STATE.scores[1]}`, w/2, h*0.52);
+        ctx.font = `700 ${scoreSize}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+        ctx.fillStyle = STATE.winner === 'Left' ? COLORS.left : COLORS.right;
+        ctx.shadowColor = STATE.winner === 'Left' ? COLORS.left : COLORS.right;
+        ctx.shadowBlur = s * 0.025;
+        ctx.fillText(`Final Score: ${STATE.scores[0]} - ${STATE.scores[1]}`, w/2, h*0.55);
 
         ctx.font = `600 ${subSize * 0.9}px UI-Sans, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-        ctx.fillStyle = '#b3d8ff';
-        ctx.shadowBlur = s * 0.015;
-        ctx.fillText('Tap to play again', w/2, h*0.62);
+        ctx.fillStyle = '#b1d9ff';
+        ctx.shadowColor = 'rgba(0,234,255,0.3)';
+        ctx.shadowBlur = s * 0.02;
+        ctx.fillText('Tap to play again', w/2, h*0.68);
         ctx.restore();
       }
 
@@ -699,12 +929,16 @@
           update(dt);
         }
 
-        draw();
+        draw(dt);
         requestAnimationFrame(loop);
       }
 
       // Init
       function init() {
+        pauseBtn.addEventListener('click', togglePause);
+        restartBtn.addEventListener('click', resetGame);
+        volumeBtn.addEventListener('click', toggleMute);
+
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
