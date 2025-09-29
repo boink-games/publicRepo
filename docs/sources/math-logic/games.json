@@ -1,0 +1,133 @@
+[
+  {
+    "id": "microgame:math-logic:2048-game",
+    "type": "microgame",
+    "title": "2048 Game",
+    "source": "/sources/math-logic/2048-game.html",
+    "feedName": "Boink.Games #math-logic",
+    "author": "CodeWithRandom",
+    "category": "Game",
+    "essence": "Slide tiles to merge matching numbers and create the 2048 tile. A simple but addictive puzzle game",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:math-logic:addition-sprint",
+    "type": "microgame",
+    "title": "Addition Sprint",
+    "logo": "🦄",
+    "source": "/sources/math-logic/addition-sprint.html",
+    "feedName": "Boink.Games #math-logic",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Tap the correct answer for small addition problems. After a correct answer, a short countdown starts the next one automatically",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:math-logic:deck-building-card-game",
+    "type": "microgame",
+    "title": "Deck Building Card Game",
+    "source": "/sources/math-logic/deck-building-card-game.html",
+    "feedName": "Boink.Games #math-logic",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:math-logic:division-sprint",
+    "type": "microgame",
+    "title": "Division Sprint",
+    "logo": "➗",
+    "source": "/sources/math-logic/division-sprint.html",
+    "feedName": "Boink.Games #math-logic",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Integer divisions from small times-table pairs. TTS reads each problem; auto-advance after correct answers",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:math-logic:math-quiz",
+    "type": "microgame",
+    "title": "Math Sprint",
+    "logo": "✨",
+    "source": "/sources/math-logic/math-quiz.html",
+    "feedName": "Boink.Games #math-logic",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Mixed math operations quiz. Test your skills with addition, subtraction, multiplication, and division",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:math-logic:multiplication-sprint",
+    "type": "microgame",
+    "title": "Multiply Magic",
+    "logo": "🪄",
+    "source": "/sources/math-logic/multiplication-sprint.html",
+    "feedName": "Boink.Games #math-logic",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Times tables practice (2–9). Listen to the problem and tap the answer. Auto-advance after a short countdown",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:math-logic:subtraction-sprint",
+    "type": "microgame",
+    "title": "Subtraction Sprint",
+    "logo": "➖",
+    "source": "/sources/math-logic/subtraction-sprint.html",
+    "feedName": "Boink.Games #math-logic",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Practice small non-negative subtractions. TTS announces problems; after a correct answer a countdown moves on",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:math-logic:sudoku",
+    "type": "microgame",
+    "title": "Sudoku",
+    "source": "/sources/math-logic/sudoku.html",
+    "feedName": "Boink.Games #math-logic",
+    "author": "CodeWithRandom",
+    "category": "Game",
+    "essence": "The classic logic puzzle. Fill the 9x9 grid so that each column, each row, and each of the nine 3x3 subgrids contain all of the digits from 1 to 9",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:math-logic:tower-defense-game",
+    "type": "microgame",
+    "title": "Tower Defense",
+    "source": "/sources/math-logic/tower-defense-game.html",
+    "feedName": "Boink.Games #math-logic",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  }
+]

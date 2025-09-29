@@ -1,0 +1,107 @@
+[
+  {
+    "id": "microgame:arcade-fun:classic-breakout",
+    "type": "microgame",
+    "title": "Classic Breakout",
+    "logo": "🧱",
+    "source": "/sources/arcade-fun/classic-breakout.html",
+    "feedName": "Boink.Games #arcade-fun",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:arcade-fun:classic-pong",
+    "type": "microgame",
+    "title": "Classic Pong",
+    "logo": "🏓",
+    "source": "/sources/arcade-fun/classic-pong.html",
+    "feedName": "Boink.Games #arcade-fun",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:arcade-fun:ping-pong",
+    "type": "microgame",
+    "title": "Ping pong",
+    "logo": "🏓",
+    "source": "/sources/arcade-fun/ping-pong.html",
+    "feedName": "Boink.Games #arcade-fun",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:arcade-fun:reaction-time",
+    "type": "microgame",
+    "title": "ReactShape",
+    "logo": "⚡",
+    "source": "/sources/arcade-fun/reaction-time.html",
+    "feedName": "Boink.Games #arcade-fun",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:arcade-fun:snake-game",
+    "type": "microgame",
+    "title": "Snake Game",
+    "logo": "🐍",
+    "source": "/sources/arcade-fun/snake-game.html",
+    "feedName": "Boink.Games #arcade-fun",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:arcade-fun:space-invaders",
+    "type": "microgame",
+    "title": "Space Invaders",
+    "logo": "👾",
+    "source": "/sources/arcade-fun/space-invaders.html",
+    "feedName": "Boink.Games #arcade-fun",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:arcade-fun:tetris",
+    "type": "microgame",
+    "title": "Tetris",
+    "logo": "🧩",
+    "source": "/sources/arcade-fun/tetris.html",
+    "feedName": "Boink.Games #arcade-fun",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  }
+]

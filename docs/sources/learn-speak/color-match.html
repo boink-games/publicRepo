@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Colors</title>
+<link rel="stylesheet" href="./common.css" />
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+  }
+  h1 {
+    margin: 0;
+    font-size: 2em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 16px;
+    width: 100%;
+    text-align: center;
+  }
+  header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .close-button {
+    background: none;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 8px 12px;
+  }
+  .game-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .second-row-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  .game {
+    margin-top: 20px; /* Adjust as needed to push content down from the header */
+    min-height: auto; /* Remove min-height to allow content to dictate height */
+  }
+  .board {
+    min-width: min(92vw, 800px); /* Increased width */
+    max-width: 800px; /* Added max-width */
+    padding: 30px; /* Increased padding */
+  }
+</style>
+<body>
+  <h1>Match the Colors</h1>
+  <header>
+    <div class="game-controls">
+      <button class="speak" id="speak">🔊 Say color</button>
+      <div class="second-row-buttons">
+        <button class="speak" id="volume">🔊 Volume</button>
+        <button class="speak" id="reset">🔄 Reset</button>
+      </div>
+    </div>
+    <button class="close-button">X</button>
+  </header>
+<div class="game">
+  <div class="board">
+    <div class="feedback" id="fb"></div>
+    <div class="choices" id="choices"></div>
+  </div>
+</div>
+<script src="./_tts.js"></script>
+<script src="./_audio.js"></script>
+<script>
+const COLORS = [
+  {name:'red', css:'#ff4d4d'},
+  {name:'blue', css:'#4b8bff'},
+  {name:'green', css:'#2ecc71'},
+  {name:'yellow', css:'#ffd166'},
+  {name:'purple', css:'#a56dff'},
+  {name:'orange', css:'#ff9f43'}
+];
+let answer = null;
+function pick(n, arr){
+  const copy=[...arr];
+  const out=[]; while(out.length<n && copy.length){ out.push(copy.splice(Math.random()*copy.length|0,1)[0]); }
+  return out;
+}
+function newRound(){
+  const opts = pick(3, COLORS);
+  answer = opts[Math.random()*opts.length|0];
+  renderChoices(opts);
+  setTimeout(()=>window.LE_TTS.speak(answer.name), 200);
+  fb('');
+}
+function fb(t, ok){
+  const el = document.getElementById('fb');
+  el.textContent = t;
+  el.className = 'feedback ' + (ok===true? 'ok':'') + (ok===false? ' bad':'');
+}
+function renderChoices(opts){
+  const wrap = document.getElementById('choices');
+  wrap.innerHTML='';
+  for(const c of opts){
+    const btn = document.createElement('button');
+    btn.className='card';
+    btn.style.background = c.css;
+    btn.setAttribute('aria-label', c.name);
+    btn.onclick = ()=>{
+      const correct = c.name===answer.name;
+      if(correct){
+        window.LE_AUDIO?.playDing?.();
+        window.LE_TTS.speak('pop!');
+        setTimeout(()=>window.LE_TTS.speak('Yes, '+c.name+'!'), 300);
+      } else {
+        window.LE_AUDIO?.playBuzz?.();
+        window.LE_TTS.speak('Try again');
+      }
+      fb(correct? '✔': '✖', correct);
+      if(correct) setTimeout(newRound, 900);
+    };
+    wrap.appendChild(btn);
+  }
+}
+document.getElementById('speak').onclick = ()=>{ if(answer) window.LE_TTS.speak(answer.name); };
+document.getElementById('volume').onclick = ()=>{ alert('Volume toggle not implemented yet!'); };
+document.getElementById('reset').onclick = ()=>{ newRound(); };
+newRound();
+</script>
+</body>
+</html>

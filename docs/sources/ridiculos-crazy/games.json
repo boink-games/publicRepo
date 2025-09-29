@@ -1,0 +1,255 @@
+[
+  {
+    "id": "microgame:ridiculos-crazy:archery-game",
+    "type": "microgame",
+    "title": "Archery Game",
+    "logo": "🏹",
+    "source": "/sources/ridiculos-crazy/archery-game.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "CodeWithRandom",
+    "category": "Game",
+    "essence": "Hit the moving target with your arrow. Time your shots to score points",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:create-a-simple-basketball",
+    "type": "microgame",
+    "title": "Basket Bounce",
+    "logo": "🏀",
+    "source": "/sources/ridiculos-crazy/create-a-simple-basketball.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:car-racing",
+    "type": "microgame",
+    "title": "Car Racing",
+    "logo": "🏎️",
+    "source": "/sources/ridiculos-crazy/car-racing.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "CodeWithRandom",
+    "category": "Game",
+    "essence": "Dodge the obstacles and see how long you can survive. The longer you last, the higher your score",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:classic-pac-man",
+    "type": "microgame",
+    "title": "Classic Pac Man",
+    "logo": "🟡",
+    "source": "/sources/ridiculos-crazy/classic-pac-man.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:flower-tap",
+    "type": "microgame",
+    "title": "Flower Tap",
+    "source": "/sources/ridiculos-crazy/flower-tap.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Tap the flowers as they bloom to collect points. Beautiful and relaxing gameplay",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:dress-color",
+    "type": "microgame",
+    "title": "Girls game",
+    "source": "/sources/ridiculos-crazy/dress-color.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Choose colors for dress and shoes, then tap Check Match. Learn simple color pairing with friendly feedback",
+    "icon": "👗",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:goal-kick",
+    "type": "microgame",
+    "title": "Goal Kick",
+    "logo": "⚽",
+    "source": "/sources/ridiculos-crazy/goal-kick.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Score goals by kicking the soccer ball into the net. Aim carefully and beat the goalkeeper!",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:color-tap",
+    "type": "microgame",
+    "title": "Match the Colors",
+    "logo": "🎨",
+    "source": "/sources/ridiculos-crazy/color-tap.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "MicroGames",
+    "category": "MicroGame",
+    "essence": "A color name appears; tap the circle that matches it. Each choice updates your progress and starts a new, simple round with three big options for easy touch",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:matching-card-game",
+    "type": "microgame",
+    "title": "Matching Card",
+    "source": "/sources/ridiculos-crazy/matching-card-game.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "CodeWithRandom",
+    "category": "Game",
+    "essence": "Flip the cards and find all the matching pairs. A classic memory game",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:maze-runner",
+    "type": "microgame",
+    "title": "Maze Runner",
+    "logo": "🗺️",
+    "source": "/sources/ridiculos-crazy/maze-runner.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:object-speak",
+    "type": "microgame",
+    "title": "Name the Object",
+    "logo": "🧸",
+    "source": "/sources/ridiculos-crazy/object-speak.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Games will say their names. A gentle game for first words on mobile",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:create-a-simple-golf",
+    "type": "microgame",
+    "title": "Pocket Golf",
+    "logo": "⛳",
+    "source": "/sources/ridiculos-crazy/create-a-simple-golf.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games Agent",
+    "category": "Game",
+    "essence": "A new game, automatically added",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:tap-balloons",
+    "type": "microgame",
+    "title": "Pop the Balloons",
+    "logo": "🎈",
+    "source": "/sources/ridiculos-crazy/tap-balloons.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "MicroGames",
+    "category": "MicroGame",
+    "essence": "Balloons float up the screen — tap them to pop and score! Missed balloons reduce your score. Bright colors and gentle motion, perfect for first touch interactions on mobile",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:rock-paper-scissors",
+    "type": "microgame",
+    "title": "Rock Paper Scissors",
+    "logo": "✊",
+    "source": "/sources/ridiculos-crazy/rock-paper-scissors.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "CodeWithRandom",
+    "category": "Game",
+    "essence": "The classic hand game. Choose rock, paper, or scissors and see if you can beat the computer",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:tic-tac-toe-simple",
+    "type": "microgame",
+    "title": "Tic‑Tac‑Toe",
+    "logo": "⭕",
+    "source": "/sources/ridiculos-crazy/tic-tac-toe-simple.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Classic 3×3 tic‑tac‑toe with a friendly opponent. Simple visuals",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:tic-tac-toe-advanced",
+    "type": "microgame",
+    "title": "Tic‑Tac‑Toe Advanced",
+    "logo": "👾",
+    "source": "/sources/ridiculos-crazy/tic-tac-toe-advanced.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "Boink.Games",
+    "category": "Game",
+    "essence": "Play against a strong AI. Try to force a draw or win if the AI slips",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  },
+  {
+    "id": "microgame:ridiculos-crazy:whack-a-mole",
+    "type": "microgame",
+    "title": "Whack-a-Mole",
+    "logo": "🐹",
+    "source": "/sources/ridiculos-crazy/whack-a-mole.html",
+    "feedName": "Boink.Games #ridiculos-crazy",
+    "author": "CodeWithRandom",
+    "category": "Game",
+    "essence": "Whack the moles as they pop up from their holes. A fun game to test your reflexes",
+    "reactions": [
+      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
+      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
+    ]
+  }
+]

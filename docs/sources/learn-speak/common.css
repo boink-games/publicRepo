@@ -1,0 +1,126 @@
+
+/* Modern CSS for Learn & Speak Games */
+
+:root {
+    --bg-color: #f0f4f8;
+    --card-bg: #ffffff;
+    --primary-color: #4a90e2;
+    --text-color: #333333;
+    --light-gray: #e0e0e0;
+    --success-color: #2ecc71;
+    --error-color: #e74c3c;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-family);
+    background-color: var(--bg-color); /* Ensure light background */
+    color: var(--text-color);
+}
+
+.game {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+    background-color: var(--bg-color); /* Explicitly set game background */
+}
+
+.board {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.prompt {
+    text-align: center;
+    margin-bottom: 16px; /* Add margin to separate from cards */
+}
+
+.speak {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.speak:hover {
+    background-color: #357abd;
+}
+
+.speak:active {
+    transform: scale(0.98);
+}
+
+.feedback {
+    margin-top: 16px;
+    font-size: 24px;
+    font-weight: bold;
+    height: 30px;
+}
+
+.feedback.ok {
+    color: var(--success-color);
+}
+
+.feedback.bad {
+    color: var(--error-color);
+}
+
+.choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 16px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: 2px solid var(--light-gray);
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px; /* Increased min-height */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Style for cards with large emoji content */
+.card.big {
+    font-size: 64px;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary-color);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 360px) {
+    .choices {
+        grid-template-columns: 1fr 1fr; /* Force 2 columns on very small screens */
+        gap: 12px;
+    }
+
+    .card {
+        min-height: 100px;
+    }
+}
