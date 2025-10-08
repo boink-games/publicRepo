@@ -3,12 +3,6 @@ export class NewsFeedPage {
         this.element = element;
         this.invalidate = invalidate;
         this.storyCards = [];
-        // Virtualization state
-        this.storyCardsMap = new Map(); // index -> presenter
-        this.cardEls = new Map(); // index -> <story-card>
-        this.windowBefore = 2;
-        this.windowAfter = 2;
-        this.currentStoryIndex = 0;
         this.posts = [];
         this.boundNextStory = this.nextStory.bind(this);
         this.touchStartY = 0;
@@ -246,9 +240,7 @@ export class NewsFeedPage {
         this._postsLoaded = true;
     }
 
-    afterRender() {
-        if (window.__LOGS_ENABLED) console.time('NF: afterRender total');
-        try { window.logTS('NF: afterRender start', { posts: this.posts?.length || 0 }); } catch (_) {}
+    async afterRender() {
         const container = this.element.querySelector('.news-feed-container');
         if (!container) {
             console.error("Fatal error: .news-feed-container not found.");
@@ -259,293 +251,23 @@ export class NewsFeedPage {
         const placeholder = container.querySelector('.story-card-placeholder');
         if (placeholder) {
             placeholder.remove();
-            try { window.logTS('NF: placeholder removed'); } catch (_) {}
-            try { if (window.__LOGS_ENABLED) console.timeEnd('NF: waiting UI'); } catch (_) {}
-        } else {
-            // End the timer anyway to avoid dangling console timers
-            try { if (window.__LOGS_ENABLED) console.timeEnd('NF: waiting UI'); } catch (_) {}
         }
 
         container.innerHTML = '';
-        // Add a top spacer (invisible) to allow the first card to center when scrolled
-        const topSpacer = document.createElement('div');
-        topSpacer.className = 'top-spacer';
-        container.appendChild(topSpacer);
-        this.storyCards = [];
-        this.storyCardsMap.clear();
-        this.cardEls.clear();
 
-        // Add bottom spacer to allow last post to center
-        const spacer = document.createElement('div');
-        spacer.className = 'bottom-spacer';
-        container.appendChild(spacer);
-
-        // WebSkel presenters: resolve asynchronously; do not block on all of them
-        customElements.whenDefined('story-card').then(async () => {
-            // Do not auto-advance to next post on story-finished
-            this.element.removeEventListener('story-finished', this.boundNextStory);
-
-            this.setupScrollDetection();
-            this.setupTouchNavigation();
-
-            // Pornește pe cardul de selecție (index 0) fără a sări automat la prima știre
-            this.currentStoryIndex = 0;
-
-            // Build initial virtualization window
-            this.ensureVirtualWindow(this.currentStoryIndex);
-
-            // Ensure the active presenter is ready before starting its carousel
-            if (window.__LOGS_ENABLED) console.time('NF: active presenter ready');
-            try {
-                const el = this.cardEls.get(this.currentStoryIndex);
-                await el?.presenterReadyPromise;
-                const presenter = el?.webSkelPresenter;
-                if (presenter) this.storyCardsMap.set(this.currentStoryIndex, presenter);
-            } catch (_) { }
-            if (window.__LOGS_ENABLED) console.timeEnd('NF: active presenter ready');
-
-            // Kick off initial active logic
-            this.checkActiveStory();
+        await customElements.whenDefined('story-card');
+        this.posts.forEach((post, idx) => {
+            const el = document.createElement('story-card');
+            el.setAttribute('data-presenter', 'story-card');
+            el.post = post;
+            el.game = post;
+            el.storyIndex = idx;
+            el.totalStories = this.posts.length;
+            container.appendChild(el);
         });
     }
 
-    createCardAt(index) {
-        if (this.cardEls.has(index)) return;
-        const container = this.element.querySelector('.news-feed-container');
-        if (!container) return;
-        const storyCardElement = document.createElement('story-card');
-        storyCardElement.setAttribute('data-presenter', 'story-card');
-        storyCardElement.setAttribute('data-index', String(index));
-        storyCardElement.post = this.posts[index];
-        storyCardElement.game = this.posts[index];
-        storyCardElement.storyIndex = index;
-        storyCardElement.totalStories = this.posts.length;
-        // Mark first real post (after selection) to bypass 30% offset correction
-        try {
-            const post = this.posts[index];
-            if (index === 1 && post && !post.isSelectionCard) {
-                storyCardElement.classList.add('first-post');
-            }
-        } catch (_) {}
-        // Insert before bottom spacer
-        const bottomSpacer = container.querySelector('.bottom-spacer');
-        // Find correct position among existing cards by data-index
-        const siblings = Array.from(container.querySelectorAll('story-card'));
-        let inserted = false;
-        for (const sib of siblings) {
-            const si = parseInt(sib.getAttribute('data-index'), 10);
-            if (Number.isFinite(si) && si > index) {
-                container.insertBefore(storyCardElement, sib);
-                inserted = true;
-                break;
-            }
-        }
-        if (!inserted) container.insertBefore(storyCardElement, bottomSpacer || null);
 
-        // Hook readiness
-        const idx = index;
-        storyCardElement.presenterReadyPromise
-            .then(() => {
-                const presenter = storyCardElement.webSkelPresenter;
-                if (presenter) this.storyCardsMap.set(idx, presenter);
-                if (idx < 3) try { window.logTS('NF: presenter ready', { index: idx }); } catch (_) {}
-            })
-            .catch(() => {});
-
-        this.cardEls.set(index, storyCardElement);
-    }
-
-    removeCardAt(index) {
-        const el = this.cardEls.get(index);
-        if (!el) return;
-        try {
-            const presenter = this.storyCardsMap.get(index);
-            if (presenter && presenter.cleanup) presenter.cleanup();
-        } catch (_) {}
-        if (el.parentNode) el.parentNode.removeChild(el);
-        this.cardEls.delete(index);
-        this.storyCardsMap.delete(index);
-    }
-
-    ensureVirtualWindow(centerIndex) {
-        const before = this.windowBefore;
-        const after = this.windowAfter;
-        const start = Math.max(0, centerIndex - before);
-        const end = Math.min(this.posts.length - 1, centerIndex + after);
-        // Create needed
-        for (let i = start; i <= end; i++) {
-            this.createCardAt(i);
-        }
-        // Do not remove cards above the current window to avoid scroll position jumps.
-        // Optionally prune only far-below cards to keep DOM light.
-        const pruneThreshold = end + 4; // keep a small tail below
-        for (const idx of Array.from(this.cardEls.keys())) {
-            if (idx > pruneThreshold) this.removeCardAt(idx);
-        }
-    }
-
-    setupScrollDetection() {
-        const container = this.element.querySelector('.news-feed-container');
-        if (!container) return;
-        // Use fully native scrolling; no scroll-snap tweaks
-
-        let isScrolling = false;
-        let scrollTimeout;
-
-        container.addEventListener('scroll', () => {
-            if (!isScrolling) {
-                isScrolling = true;
-            }
-
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                isScrolling = false;
-                this.checkActiveStory();
-            }, 120);
-        });
-
-        // Initial activation on first render (no auto-scroll on selection card)
-        // Add a small delay to ensure selection card is properly sized
-        setTimeout(async () => {
-            this.checkActiveStory();
-            const cards = container.querySelectorAll('story-card');
-            const activeEl = this.cardEls.get(this.currentStoryIndex) || cards[0];
-            if (activeEl) {
-                activeEl.classList.add('active-card');
-                // Ensure starting position is the selection card on all viewports
-                // Always align to start for first two cards as well
-                activeEl.scrollIntoView({ behavior: 'auto', block: 'start' });
-                this.storyCardsMap.get(this.currentStoryIndex)?.startCarousel();
-                // Ensure initial active is recorded as centered
-                await this.markAsCentered(this.currentStoryIndex);
-                try { window.logTS('NF: active card centered and started', { index: this.currentStoryIndex }); } catch (_) {}
-            }
-                // Asigură-te că flag-ul de salt este mereu inactiv
-                try { await window.LocalStorage.set('jumpToFirstNews', false); } catch (_) {}
-            if (window.__LOGS_ENABLED) console.timeEnd('NF: afterRender total');
-            if (window.__LOGS_ENABLED) console.timeEnd('NF: full load');
-        }, 100); // Small delay to ensure DOM is ready
-    }
-
-    setupTouchNavigation() {
-        const container = this.element.querySelector('.news-feed-container');
-        if (!container) return;
-        // Remove any previous vertical swipe listeners to allow native scrolling
-        if (this._onTouchStart) container.removeEventListener('touchstart', this._onTouchStart);
-        if (this._onTouchEnd) container.removeEventListener('touchend', this._onTouchEnd);
-        this._onTouchStart = null;
-        this._onTouchEnd = null;
-
-        // Keep horizontal-driven next-post event from story-card
-        const onNextReq = (e) => {
-            if (this._navLock) return;
-            this._navLock = true;
-            setTimeout(() => { this._navLock = false; }, 350);
-            this.nextStory();
-        };
-        if (this._onUserNextReq) container.removeEventListener('user-request-next-post', this._onUserNextReq);
-        this._onUserNextReq = onNextReq;
-        container.addEventListener('user-request-next-post', this._onUserNextReq);
-    }
-
-    async markAsCentered(index) {
-        try {
-            // Do not record the selection card as a viewed post
-            if (index === 0) return;
-            if (!this.posts[index]) return;
-            const post = this.posts[index];
-            const postId = post.id;
-            const src = (post.source || post.url || '').trim().toLowerCase();
-            const date = (post.publishedAt || post.generatedAt || post.pubDate || post.date || post.createdAt || '').trim();
-            const sKey = src ? `${src}|${date}` : postId;
-            const centeredMap = await window.LocalStorage.get('postCenteredHistory') || {};
-            let changed = false;
-            if (!centeredMap[postId]?.centered) {
-                centeredMap[postId] = { centered: true, firstCenteredAt: new Date().toISOString() };
-                changed = true;
-            }
-            if (!centeredMap[sKey]?.centered) {
-                centeredMap[sKey] = { centered: true, firstCenteredAt: new Date().toISOString() };
-                changed = true;
-            }
-            if (changed) await window.LocalStorage.set('postCenteredHistory', centeredMap);
-        } catch (_) { /* ignore */ }
-    }
-
-    async checkActiveStory() {
-        const container = this.element.querySelector('.news-feed-container');
-        const cards = container.querySelectorAll('story-card');
-        const containerRect = container.getBoundingClientRect();
-
-        // Determine active card using robust geometry:
-        // 1) Prefer the first card fully inside the container (top>=top+1, bottom<=bottom-1)
-        // 2) If none fully inside, choose the card whose center is closest to the container center
-        let newActive = this.currentStoryIndex;
-        const nearTop = (container.scrollTop || 0) <= 24;
-        if (nearTop && this.cardEls.has(0)) {
-            newActive = 0;
-        } else {
-            const centerY = containerRect.top + containerRect.height / 2;
-            let bestByCenter = { dist: Infinity, idx: null };
-            let fullyFound = null;
-            for (const card of cards) {
-                const rect = card.getBoundingClientRect();
-                const absIndex = parseInt(card.getAttribute('data-index'), 10);
-                if (!Number.isFinite(absIndex)) continue;
-                const fully = (rect.top >= containerRect.top + 1) && (rect.bottom <= containerRect.bottom - 1);
-                if (fully && fullyFound === null) {
-                    fullyFound = absIndex;
-                    break;
-                }
-                const cardCenter = rect.top + rect.height / 2;
-                const dist = Math.abs(cardCenter - centerY);
-                if (dist < bestByCenter.dist) bestByCenter = { dist, idx: absIndex };
-            }
-            if (fullyFound !== null) {
-                newActive = fullyFound;
-            } else if (bestByCenter.idx !== null) {
-                newActive = bestByCenter.idx;
-            }
-        }
-
-        if (newActive !== this.currentStoryIndex) {
-            try {
-                const prev = this.currentStoryIndex;
-                const nextPost = this.posts?.[newActive];
-                window.logTS('NF: active change', { from: prev, to: newActive, id: nextPost?.id });
-            } catch (_) {}
-            // Stop autoplay on known presenters and clear classes
-            this.storyCardsMap.forEach((presenter, pIdx) => {
-                if (!presenter) return;
-                presenter.stopAutoPlay();
-                presenter.enableAutoPlay = false;
-            });
-            cards.forEach(el => el.classList.remove('active-card', 'prev-card', 'next-card'));
-
-            // Set new active and start
-            this.currentStoryIndex = newActive;
-                // Keep native scrolling (no scroll-snap)
-            // Ensure window includes neighbors
-            this.ensureVirtualWindow(this.currentStoryIndex);
-            const activePresenter = this.storyCardsMap.get(newActive);
-            const activeEl = this.cardEls.get(newActive);
-            if (activeEl) activeEl.classList.add('active-card');
-            if (activePresenter) activePresenter.startCarousel();
-            
-            // Mark this post as having been centered
-            await this.markAsCentered(newActive);
-
-            // Do not force any scroll alignment here; let user control scrolling
-        } else {
-            // Maintain active class on current
-            const activeEl = this.cardEls.get(this.currentStoryIndex);
-            cards.forEach(el => el.classList.remove('active-card', 'prev-card', 'next-card'));
-            if (activeEl) activeEl.classList.add('active-card');
-            // Ensure current active is registered as centered
-            await this.markAsCentered(this.currentStoryIndex);
-            // Keep native scrolling (no scroll-snap)
-        }
-    }
 
     async loadMoreStories() {
         // Prevent multiple loads
