@@ -30,20 +30,6 @@
     ]
   },
   {
-    "id": "microgame:learn-speak:animale-romanesti",
-    "type": "microgame",
-    "title": "Animale Romanesti",
-    "source": "/sources/learn-speak/animale-romanesti.html",
-    "feedName": "Boink.Games #learn-speak",
-    "author": "Boink.Games Agent",
-    "category": "Game",
-    "essence": "Learn Romanian animals through interactive gameplay. Features pronunciation, sounds, and visual cards for animal vocabulary",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
-  {
     "id": "microgame:learn-speak:animal-match",
     "type": "microgame",
     "title": "Animals 🐾",
@@ -104,34 +90,6 @@
     ]
   },
   {
-    "id": "microgame:learn-speak:corp-uman",
-    "type": "microgame",
-    "title": "Corp Uman",
-    "source": "/sources/learn-speak/corp-uman.html",
-    "feedName": "Boink.Games #learn-speak",
-    "author": "Boink.Games Agent",
-    "category": "Game",
-    "essence": "Interactive human body parts learning game. Master Romanian anatomy vocabulary with visual diagrams and pronunciation",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
-  {
-    "id": "microgame:learn-speak:culori-romanesti",
-    "type": "microgame",
-    "title": "Culori Romanesti",
-    "source": "/sources/learn-speak/culori-romanesti.html",
-    "feedName": "Boink.Games #learn-speak",
-    "author": "Boink.Games Agent",
-    "category": "Game",
-    "essence": "Learn Romanian colors with visual color blocks and matching exercises. Practice color vocabulary with native pronunciation",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
-  {
     "id": "microgame:learn-speak:formas-y-colores",
     "type": "microgame",
     "title": "Formas y Colores",
@@ -141,20 +99,6 @@
     "author": "Boink.Games Agent",
     "category": "Game",
     "essence": "Learn shapes and colors in Spanish by tapping the correct combination",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
-  {
-    "id": "microgame:learn-speak:fructe-romanesti",
-    "type": "microgame",
-    "title": "Fructe Romanesti",
-    "source": "/sources/learn-speak/fructe-romanesti.html",
-    "feedName": "Boink.Games #learn-speak",
-    "author": "Boink.Games Agent",
-    "category": "Game",
-    "essence": "Master Romanian fruit names through interactive gameplay. Features visual fruit cards with pronunciation practice",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"

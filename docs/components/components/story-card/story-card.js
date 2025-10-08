@@ -57,7 +57,6 @@ export class StoryCard {
                 const playBtn = this.element.querySelector('.play-inline-btn');
                 if (playBtn) {
                     playBtn.style.display = 'inline-flex';
-                    playBtn.onclick = () => this.openGameModal();
                 }
             } catch (_) {}
         }
@@ -79,6 +78,7 @@ export class StoryCard {
         // Recompute height on resize when active
         this._onResize = () => { this.computeAndSetMaxHeight(); };
         window.addEventListener('resize', this._onResize);
+
         // Precompute stable height for all non-selection cards to prevent flicker
         if (!this.post?.isSelectionCard) { this.computeAndSetMaxHeight(); }
 
@@ -577,6 +577,10 @@ export class StoryCard {
         } catch (e) { console.error('Failed to open game modal', e); }
     }
 
+    playGame() {
+        this.openGameModal();
+    }
+
     setupSwipeGestures() {
         const container = this.element.querySelector('.card-container');
         if (!container) return;
@@ -957,7 +961,7 @@ export class StoryCard {
                 }
             }
 
-            const finalH = Math.min(maxTotal, maxHViewport);
+            const finalH = maxTotal;
             // Fix both host and inner root heights and disable host aspect ratio
             const hostEl = this.element;
             if (hostEl && hostEl.style) {
@@ -970,8 +974,7 @@ export class StoryCard {
             const capApplied = maxTotal > maxHViewport;
             const bodies = this.element.querySelectorAll('.card-body');
             bodies.forEach(b => {
-                // Allow body to scroll only when needed; padding is handled via CSS uniformly
-                b.style.overflowY = capApplied ? 'auto' : 'hidden';
+                b.style.overflowY = 'auto';
                 b.style.minHeight = '0';
             });
         } catch (_) { /* ignore */ }

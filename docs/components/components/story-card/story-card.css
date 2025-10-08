@@ -382,8 +382,8 @@ story-card.prev-card .favorite-btn, story-card.next-card .favorite-btn { visibil
     padding-right: 0;
     /* Ensure consistent bottom space across all slides to prevent jumps */
     padding-bottom: 32px;
-    max-height: calc(100vh - 220px); /* softer cap */
-    min-height: 200px; /* smaller minimum */
+    max-height: none; /* softer cap */
+    min-height: auto; /* smaller minimum */
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
 }

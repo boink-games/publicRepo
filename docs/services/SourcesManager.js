@@ -29,16 +29,10 @@ class SourcesManager {
             } catch (error) {
                 console.warn('Default sources config unavailable, using minimal fallback:', error);
                 defaultSources = [
-                    { id: 'smallChildren', type: 'category', url: '/sources/smallChildren/games.json', tag: 'smallChildren', removable: false, visible: true },
-                    { id: 'schoolChildren', type: 'category', url: '/sources/schoolChildren/games.json', tag: 'schoolChildren', removable: false, visible: true },
-                    { id: 'classicArcade', type: 'category', url: '/sources/classicArcade/games.json', tag: 'classicArcade', removable: false, visible: true },
-                    { id: 'girls', type: 'category', url: '/sources/girls/games.json', tag: 'girls', removable: false, visible: true },
-                    { id: 'boys', type: 'category', url: '/sources/boys/games.json', tag: 'boys', removable: false, visible: true },
-                    { id: 'microStrategy', type: 'category', url: '/sources/microStrategy/games.json', tag: 'microStrategy', removable: false, visible: true },
-                    { id: 'learnItalian', type: 'category', url: '/sources/learnItalian/games.json', tag: 'learnItalian', removable: false, visible: true },
-                    { id: 'learnSpanish', type: 'category', url: '/sources/learnSpanish/games.json', tag: 'learnSpanish', removable: false, visible: true },
-                    { id: 'learnEnglish', type: 'category', url: '/sources/learnEnglish/games.json', tag: 'learnEnglish', removable: false, visible: true },
-                    { id: 'addGame', type: 'special', url: '/sources/addGame/games.json', tag: 'addGame', removable: false, visible: true }
+                    { "id": "arcade-fun", "type": "category", "url": "/sources/arcade-fun/games.json", "tag": "arcade-fun", "removable": false, "visible": true },
+                    { "id": "learn-speak", "type": "category", "url": "/sources/learn-speak/games.json", "tag": "learn-speak", "removable": false, "visible": true },
+                    { "id": "math-logic", "type": "math-logic", "url": "/sources/math-logic/games.json", "tag": "math-logic", "removable": false, "visible": true },
+                    { "id": "ridiculos-crazy", "type": "category", "url": "/sources/ridiculos-crazy/games.json", "tag": "ridiculos-crazy", "removable": false, "visible": true }
                 ];
             }
             if (savedSources && Array.isArray(savedSources) && savedSources.length > 0) {
