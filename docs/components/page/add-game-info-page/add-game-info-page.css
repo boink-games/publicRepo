@@ -1,0 +1,541 @@
+.add-game-info {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 24px;
+    color: var(--text, #f9fafb);
+}
+
+.info-card {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 28px 32px 26px 56px;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+    color: var(--text, #111827);
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 4px;
+    border-radius: 16px 0 0 16px;
+    background: linear-gradient(180deg, var(--primary, #4338ca), var(--accent-2, #0be4b6));
+}
+
+.info-card h2 {
+    margin: 12px 0 18px;
+    font-size: 22px;
+    color: #555555;
+}
+
+.info-card p {
+    margin: 0 0 10px;
+    color: var(--text, #111827);
+    opacity: 0.88;
+    line-height: 1.6;
+}
+
+.info-card ul {
+    margin: 0 0 8px;
+    padding-left: 20px;
+    display: grid;
+    gap: 10px;
+    list-style: disc;
+    color: var(--text, #111827);
+    opacity: 0.85;
+    line-height: 1.6;
+}
+
+:root[data-theme="dark"] .metadata-card {
+    background: rgba(20, 24, 32, 0.72);
+}
+
+.metadata-card .code-example {
+    background: rgba(15, 23, 42, 0.08);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    font-family: 'Source Code Pro', 'SFMono-Regular', Menlo, monospace;
+    font-size: 13px;
+    color: #1f2933;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+:root[data-theme="dark"] .metadata-card .code-example {
+    background: rgba(15, 18, 28, 0.9);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.metadata-card .code-example pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.metadata-card .code-example code {
+    display: block;
+    white-space: pre-wrap;
+}
+
+.metadata-card .guidance {
+    margin-top: 20px;
+}
+
+.metadata-card .guidance h3 {
+    margin: 0 0 12px;
+    font-size: 18px;
+    color: var(--primary, #0a66c2);
+}
+
+.metadata-card .guidance ul {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 12px;
+    color: var(--text, #111827);
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+:root[data-theme="dark"] .metadata-card .guidance ul {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+:root[data-theme="dark"] .metadata-card .guidance h3 {
+    color: var(--accent, #c7d2fe);
+}
+
+.info-card.guidelines-card ul {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 22px;
+    color: var(--text, #111827);
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.info-card.guidelines-card {
+    width: 100%;
+}
+
+:root[data-theme="dark"] .info-card.guidelines-card ul {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.info-card.guidelines-card h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.guidelines-icon {
+    font-size: 22px;
+    color: #fbbf24;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.submission-card {
+    width: calc(100% - 40px);
+    pointer-events: auto;
+}
+
+.submission-card .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.submission-card label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333333 !important;
+}
+
+.submission-card input,
+.submission-card textarea {
+    width: calc(100% - 40px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: #0a0c10;
+    color: #f9fbff;
+    padding: 10px 12px;
+    font-size: 15px;
+    resize: vertical;
+    pointer-events: auto;
+}
+
+.submission-card input::placeholder,
+.submission-card textarea::placeholder {
+    color: rgba(230, 235, 255, 0.7);
+}
+
+.submission-card textarea {
+    min-height: 160px;
+}
+
+.submission-card input:focus,
+.submission-card textarea:focus {
+    outline: none;
+    border-color: var(--primary, #0a66c2);
+    box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.15);
+}
+
+.submission-checkboxes {
+    display: grid;
+    gap: 12px;
+    margin-top: 0;
+}
+
+.submission-checkboxes .checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 15px;
+    color: #333333;
+    font-weight: 600;
+}
+
+.submission-checkboxes .checkbox-item input {
+    margin-top: 3px;
+}
+
+:root[data-theme="dark"] .submission-checkboxes .checkbox-item {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.submission-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.primary-btn,
+.secondary-btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.primary-btn {
+    background: var(--primary, #4CAF50);
+    color: #ffffff;
+}
+
+.primary-btn:hover {
+    background: var(--primary-hover, #45a049);
+}
+
+.secondary-btn {
+    background: var(--secondary, #666666);
+    color: #ffffff;
+    border: none;
+    box-shadow: none;
+}
+
+.secondary-btn:hover {
+    background: var(--secondary-hover, #555555);
+}
+
+:root[data-theme="dark"] .secondary-btn {
+    background: rgba(255, 255, 255, 0.18);
+    color: #0a0c10;
+    box-shadow: none;
+}
+
+:root[data-theme="dark"] .secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+:root[data-theme="dark"] .submission-card label {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+:root[data-theme="dark"] .submission-card input,
+:root[data-theme="dark"] .submission-card textarea {
+    background: rgba(15, 18, 28, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.95);
+}
+
+:root[data-theme="dark"] .submission-card input::placeholder,
+:root[data-theme="dark"] .submission-card textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+:root[data-theme="dark"] .info-card {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+}
+
+:root[data-theme="dark"] .info-card h2 {
+    color: var(--accent, #c7d2fe);
+}
+
+:root[data-theme="dark"] .info-card p,
+:root[data-theme="dark"] .info-card ul {
+    color: rgba(255, 255, 255, 0.9);
+    opacity: 1;
+}
+
+.hero-title {
+    display: none;
+}
+
+.info-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.info-header-title {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    text-align: center;
+    justify-self: center;
+    position: relative;
+    padding-bottom: 0;
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.info-header-title h1 {
+    margin: 0;
+    font-size: 32px;
+    color: var(--primary, #0a66c2);
+}
+
+.info-header-title h1::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 3px;
+    margin: 20px 0 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--primary, #0a66c2), var(--accent-2, #0be4b6));
+}
+
+.info-header-title p {
+    margin: 0;
+    font-size: 17px;
+    color: rgba(51, 51, 51, 0.85);
+    max-width: 560px;
+    text-align: center;
+    align-self: center;
+}
+
+
+:root[data-theme="dark"] .info-header-title h1 {
+    color: var(--accent, #c7d2fe);
+}
+
+:root[data-theme="dark"] .info-header-title p {
+    color: rgba(221, 230, 255, 0.85);
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+    font-size: 18px;
+    cursor: pointer;
+    justify-self: start;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.info-section h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: var(--accent, #c7d2fe);
+}
+
+.info-section p,
+.info-section ul,
+.info-section ol {
+    margin: 0;
+    color: var(--muted, rgba(255, 255, 255, 0.85));
+}
+
+.info-section ul,
+.info-section ol {
+    padding-left: 20px;
+    display: grid;
+    gap: 6px;
+}
+
+.guidelines {
+    list-style: disc;
+}
+
+.submission-form {
+    background: rgba(15, 17, 21, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.form-field label {
+    font-weight: 600;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.form-field input,
+.form-field textarea {
+    width: calc(100% - 40px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(10, 12, 16, 0.85);
+    color: inherit;
+    padding: 10px 12px;
+    font-size: 15px;
+    resize: vertical;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+    outline: none;
+    border-color: var(--accent, #c7d2fe);
+    box-shadow: 0 0 0 3px rgba(199, 210, 254, 0.2);
+}
+
+.form-checkboxes {
+    display: grid;
+    gap: 10px;
+    margin: 12px 0 18px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.checkbox-item input {
+    margin-top: 2px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.submit-btn {
+    background: var(--accent, #c7d2fe);
+    color: #0f1115;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background: #dee0ff;
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    cursor: pointer;
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.submission-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%) translateY(20px);
+    padding: 12px 20px;
+    background: rgba(15, 200, 125, 0.95);
+    color: #041415;
+    border-radius: 999px;
+    font-weight: 600;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 5000;
+}
+
+.submission-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 480px) {
+    .add-game-info {
+        padding: 16px;
+    }
+
+    .info-card {
+        max-width: calc(100% - 40px);
+        padding: 22px 16px 20px 40px;
+    }
+
+    .info-card::before {
+        top: 6px;
+        bottom: 6px;
+    }
+
+    .info-header-title h1 {
+        font-size: 26px;
+    }
+
+    .header-subtitle {
+        font-size: 15px;
+        margin: 20px auto 24px;
+    }
+    .header-subtitle p {
+        font-size: 15px;
+    }
+    .back-button {
+        font-size: 16px;
+    }
+}

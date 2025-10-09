@@ -1,0 +1,100 @@
+<div class="add-game-info">
+  <header class="info-header">
+    <button type="button" class="back-button" data-local-action="goBack">
+      <span aria-hidden="true">←</span>
+      
+    </button>
+    <div class="info-header-title">
+      <h1>Share your Game with Boink.Games</h1>
+      <p>Submit your educational game to be included in our public suite.</p>
+    </div>
+  </header>
+
+  <section class="info-section intro">
+    <p>We love showcasing community-made experiences! Follow the steps below to share your browser game with the Boink.Games team.</p>
+  </section>
+
+  <section class="info-card">
+    <h2>How to Submit your Game</h2>
+    <p>Create your game as a single HTML file that includes all necessary CSS and JavaScript. Your game should be:</p>
+    <ul>
+      <li>Educational and suitable for children.</li>
+      <li>Self-contained in a single HTML file.</li>
+      <li>Free of external dependencies or attachments.</li>
+      <li>Ready to run in any modern browser.</li>
+    </ul>
+  </section>
+
+  <section class="info-card metadata-card">
+    <h2>Adding Game Metadata</h2>
+    <p>Include a metadata block as an HTML comment at the very top of your file. Keep it plain text, one key per line.</p>
+    <div class="code-example" aria-label="Metadata code example">
+      <pre><code>&lt;!--
+title: My Amazing Game
+author: Your Name
+category: Learning
+feedName: Boink.Games #learning
+essence: One short sentence describing the goal of the game.
+reactions:
+  - A concise perspective about what the learner experiences (12–25 words).
+  - A second, distinct perspective with a concrete detail; avoid clichés and emojis.
+  - A third perspective focusing on skills practiced or outcomes observed.
+--&gt;</code></pre>
+    </div>
+    <div class="guidance">
+      <h3>Guidance for reactions</h3>
+      <ul>
+        <li><strong>Purpose:</strong> Provide 3–5 short sentences that appear as slides after the main card.</li>
+        <li><strong>Content:</strong> Keep each reaction between 12–25 words, using specific language without emojis or links.</li>
+        <li><strong>Diversity:</strong> Ensure every sentence introduces a new idea (experience, skill, or observed outcome).</li>
+        <li><strong>Style:</strong> Write independent sentences in the third person with clear, educational language.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="info-card guidelines-card">
+    <h2><span class="guidelines-icon" aria-hidden="true">⚠️</span> Attention</h2>
+    <ul>
+      <li>Submit ONLY the HTML code in the message body below.</li>
+      <li>Submit ONLY the HTML code in the message body below.</li>
+      <li>Do NOT add supplementary text or explanations.</li>
+      <li>Your game code should be complete and ready to run.</li>
+      <li>Your game code should be complete and ready to run.</li>
+    </ul>
+  </section>
+
+  <section class="info-card submission-card">
+    <h2>Share Your Details</h2>
+    <div class="form-field">
+      <label for="submitter-name">Your name</label>
+      <input id="submitter-name" type="text" placeholder="Enter your name or pseudonym">
+    </div>
+    <div class="form-field">
+      <label for="submitter-email">Your email</label>
+      <input id="submitter-email" type="email" placeholder="your.email@example.com">
+    </div>
+    <div class="form-field">
+      <label for="game-html">Game HTML code</label>
+      <textarea id="game-html" rows="8" placeholder="Paste your complete HTML game code here..."></textarea>
+    </div>
+  </section>
+
+  <section class="info-card checkbox-card">
+    <div class="submission-checkboxes">
+      <label class="checkbox-item">
+        <input type="checkbox" id="license-agree">
+        <span>I agree to automatically license this game under the public domain. This game will be a gift to the community and can be freely copied, modified, and distributed by anyone.</span>
+      </label>
+      <label class="checkbox-item">
+        <input type="checkbox" id="content-confirm">
+        <span>I confirm that my game is appropriate for children, contains no harmful content, and follows the submission guidelines above.</span>
+      </label>
+    </div>
+    <div class="submission-actions">
+      <button type="button" class="primary-btn">Submit Game</button>
+      <button type="button" class="secondary-btn">Cancel</button>
+    </div>
+  </section>
+</div>
+</body>
+</html>
