@@ -13,6 +13,14 @@ export class StoryCard {
         this.invalidate();
     }
 
+    // Define category icons
+    categoryIcons = {
+        "arcade-fun": "🕹️",
+        "learn-speak": "🦜",
+        "math-logic": "🧠",
+        "ridiculos-crazy": "🃏"
+    };
+
     beforeRender() {
         // Support new 'game' prop, with fallback to legacy 'post'
         this.post = this.element.game || this.element.post;
@@ -1041,7 +1049,6 @@ export class StoryCard {
                 refreshButton.click();
             }
         };
-
         // Check if there are any visible sources
         if (visibleSourcesOnly.length === 0) {
             sourcesList.innerHTML = '<div class="no-sources-message">No sources available. Click "Manage Sources" to add some.</div>';
@@ -1085,6 +1092,14 @@ export class StoryCard {
                 source.subCategories.forEach(subCat => {
                     const subSourceItem = document.createElement('div');
                     subSourceItem.className = 'source-item';
+                    if (selectedSet.has(subCat.id)) {
+                        subSourceItem.classList.add('selected');
+                    }
+
+                    const icon = document.createElement('span');
+                    icon.className = 'source-icon';
+                    icon.textContent = this.categoryIcons[subCat.id] || '🎮'; // Fallback icon
+                    subSourceItem.appendChild(icon);
 
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
@@ -1108,9 +1123,13 @@ export class StoryCard {
                         if (e.target !== checkbox) {
                             checkbox.checked = !checkbox.checked;
                             onChange(subCat, checkbox.checked);
+                            subSourceItem.classList.toggle('selected', checkbox.checked);
                         }
                     });
-                    checkbox.addEventListener('change', (e)=>onChange(subCat, e.target.checked));
+                    checkbox.addEventListener('change', (e)=> {
+                        onChange(subCat, e.target.checked);
+                        subSourceItem.classList.toggle('selected', e.target.checked);
+                    });
                 });
                 sourcesList.appendChild(sourceItem);
 
@@ -1120,6 +1139,15 @@ export class StoryCard {
                 if (source.removable) {
                     sourceItem.classList.add('removable');
                 }
+                if (source.type === 'external' ? selectedSet.has(source.url) : selectedSet.has(source.id)) {
+                    sourceItem.classList.add('selected');
+                }
+
+                // Add icon
+                const icon = document.createElement('span');
+                icon.className = 'source-icon';
+                icon.textContent = this.categoryIcons[source.id] || '🎮'; // Fallback icon
+                sourceItem.appendChild(icon);
 
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
@@ -1200,9 +1228,13 @@ export class StoryCard {
                     if (e.target !== checkbox && !e.target.classList.contains('delete-source-btn')) {
                         checkbox.checked = !checkbox.checked;
                         onChange(source, checkbox.checked);
+                        sourceItem.classList.toggle('selected', checkbox.checked);
                     }
                 });
-                checkbox.addEventListener('change', (e)=>onChange(source, e.target.checked));
+                checkbox.addEventListener('change', (e) => {
+                    onChange(source, e.target.checked);
+                    sourceItem.classList.toggle('selected', e.target.checked);
+                });
             }
         }
 

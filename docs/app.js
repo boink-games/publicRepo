@@ -49,6 +49,17 @@ window.logTS = function(label, payload) {
     }
 };
 
+window.setHeaderTitle = function(title, isGame = false) {
+    const headerTitleElement = document.querySelector('.app-header h1');
+    if (headerTitleElement) {
+        if (isGame) {
+            headerTitleElement.innerHTML = `<span class="game-title">${title}</span>`;
+        } else {
+            headerTitleElement.innerHTML = `<span aria-hidden="true" title="Boink.Games piglet">🐷</span> Boink.Games`;
+        }
+    }
+};
+
 async function start() {
     // Temporarily mute console.log during WebSkel initialisation if logs are disabled
     let restoreLog = null;
@@ -143,6 +154,8 @@ async function start() {
     }, 500);
 
     await webSkel.changeToDynamicPage('news-feed-page', 'app');
+    // Set initial header title
+    window.setHeaderTitle('Boink.Games');
 }
 
 start();

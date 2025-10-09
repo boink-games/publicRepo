@@ -50,7 +50,9 @@ hamburger-menu nav ul {
 }
 
 hamburger-menu nav ul li a {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 14px 12px;
     color: #fff;
     text-decoration: none;
@@ -63,4 +65,30 @@ hamburger-menu nav ul li a {
 hamburger-menu nav ul li a:hover {
     background-color: rgba(255, 255, 255, 0.08);
     color: var(--accent, #c7d2fe);
+}
+
+hamburger-menu nav ul li {
+    position: relative;
+}
+
+hamburger-menu nav ul li::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: -3px;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+hamburger-menu nav ul li:last-child::after {
+    display: none;
+}
+
+.menu-icon {
+    width: 20px;
+    display: inline-flex;
+    justify-content: center;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.85);
 }

@@ -32,6 +32,11 @@
       "presenterClassName": "FavoritesPage"
     },
     {
+      "name": "add-game-info-page",
+      "type": "page",
+      "presenterClassName": "AddGameInfoPage"
+    },
+    {
       "name": "hamburger-menu",
       "type": "components",
       "presenterClassName": "HamburgerMenu"

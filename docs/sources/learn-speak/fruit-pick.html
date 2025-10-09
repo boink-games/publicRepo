@@ -5,10 +5,29 @@
 <title>Fruits</title>
 <link rel="stylesheet" href="./common.css" />
 <body>
+<header class="page-header">
+  <div class="title-wrap">
+    <div class="fruit-icons" aria-hidden="true">
+      <span>🍎</span>
+      <span>🍓</span>
+      <span>🍌</span>
+    </div>
+    <h1 class="game-title">Fruits</h1>
+    <div class="fruit-icons" aria-hidden="true">
+      <span>🍇</span>
+      <span>🍊</span>
+      <span>🍐</span>
+    </div>
+  </div>
+</header>
 <div class="game">
   <div class="board">
     <div class="prompt">
-      <button class="speak" id="speak">🔊 Say fruit</button>
+      <div class="prompt-top">
+        <button class="speak" id="speak">🔊 Listen</button>
+        <div class="scoreboard" aria-live="polite">Score: <span id="score">0</span></div>
+      </div>
+      <p class="prompt-help">Tap to listen to the clue, then pick the matching fruit.</p>
       <div class="feedback" id="fb"></div>
     </div>
     <div class="choices" id="choices"></div>
@@ -23,12 +42,17 @@ const FRUITS = [
   {name:'grapes', emoji:'🍇'},
   {name:'strawberry', emoji:'🍓'},
   {name:'orange', emoji:'🍊'},
-  {name:'pear', emoji:'🍐'}
+  {name:'pear', emoji:'🍐'},
+  {name:'pineapple', emoji:'🍍'},
+  {name:'watermelon', emoji:'🍉'},
+  {name:'kiwi', emoji:'🥝'}
 ];
 let answer=null;
+let score=0;
+const scoreEl = document.getElementById('score');
 function pick(n, arr){ const copy=[...arr]; const out=[]; while(out.length<n && copy.length){ out.push(copy.splice(Math.random()*copy.length|0,1)[0]); } return out; }
 function newRound(){
-  const opts = pick(3, FRUITS); answer = opts[Math.random()*opts.length|0];
+  const opts = pick(6, FRUITS); answer = opts[Math.random()*opts.length|0];
   renderChoices(opts);
   setTimeout(()=>window.LE_TTS.speak(answer.name), 200);
   fb('');
@@ -45,6 +69,8 @@ function renderChoices(opts){
         window.LE_AUDIO?.playDing?.();
         window.LE_TTS.speak('yum!');
         setTimeout(()=>window.LE_TTS.speak('Yes, '+f.name+'!'), 300);
+        score += 1;
+        updateScore();
       } else {
         window.LE_AUDIO?.playBuzz?.();
         window.LE_TTS.speak('Try again');
@@ -56,6 +82,8 @@ function renderChoices(opts){
   }
 }
 document.getElementById('speak').onclick=()=>{ if(answer) window.LE_TTS.speak(answer.name); };
+function updateScore(){ if(scoreEl) scoreEl.textContent = score; }
+updateScore();
 newRound();
 </script>
 </body>

@@ -7,11 +7,11 @@
     position: relative;
     overflow: hidden;
     margin: 0 auto 16px auto;
-    border-radius: 8px;
+    border-radius: 16px; /* Softer rounded corners */
     background: var(--surface);
-    border: 1px solid var(--border);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
-    transition: box-shadow 0.2s ease;
+    border: none; /* Remove default border */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.05); /* Softer, more realistic shadow */
+    transition: all 0.3s ease; /* Smooth transitions for hover effects */
 }
 
 .story-card::before,
@@ -233,45 +233,49 @@ story-card.prev-card .favorite-btn, story-card.next-card .favorite-btn { visibil
     box-sizing: border-box;
 }
 
-/* Selection card compact spacing */
-.story-card.selection-mode { 
+/* Selection card playful styling */
+.story-card.selection-mode {
     position: relative;
-    z-index: 2; /* same visual layer as other cards */
+    z-index: 2;
     background: var(--surface);
-    isolation: isolate; /* create new stacking context */
-    min-height: auto; /* let content determine height */
-    height: auto !important; /* override base 100% height */
-    /* Use default card border/shadow; remove special highlight */
+    isolation: isolate;
+    min-height: auto;
+    height: auto !important;
+    border-radius: 16px; /* More rounded corners */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08); /* Subtle shadow */
+    border: none; /* Remove default border */
 }
-.story-card.selection-mode .card-content { 
-    padding: 12px; 
-    min-height: auto; /* let content determine height */
-    height: auto; 
-    background: var(--surface); /* ensure solid background */
+.story-card.selection-mode .card-content {
+    padding: 20px; /* More generous padding */
+    min-height: auto;
+    height: auto;
+    background: transparent; /* Let card background show */
 }
 .story-card.selection-mode .card-container { height: auto; display: block; }
 .story-card.selection-mode .card-slide { position: relative; transform: none; }
-.story-card.selection-mode .card-header { margin-bottom: 6px; padding-bottom: 6px; }
-.story-card.selection-mode .card-title { font-size: calc(16px * var(--content-scale, 1)); }
-.story-card.selection-mode .apply-sources-btn { margin-top: 6px; padding: 5px 10px; font-size: 12px; border-radius: 12px; }
-.story-card.selection-mode .sources-list { max-height: none !important; gap: 2px 4px; padding: 2px 2px; margin: 0; }
-.story-card.selection-mode .sources-list { background: transparent; border: none; box-shadow: none; }
-.story-card.selection-mode .source-item { padding: 2px 2px; }
-.story-card.selection-mode .source-checkbox { margin-right: 6px; }
-.story-card.selection-mode .card-slide.active {
-    position: relative !important;
-    transform: none !important;
-}
-.story-card.selection-mode .data-sources-selector { 
-    position: relative; 
-    z-index: 101; 
-    background: transparent; /* keep only outer card chrome */
+.story-card.selection-mode .card-header { margin-bottom: 16px; padding-bottom: 0; border-bottom: none; } /* Adjust header spacing */
+.story-card.selection-mode .card-title { font-size: calc(24px * var(--content-scale, 1)); font-weight: 800; color: var(--text); } /* Larger, bolder title */
+.story-card.selection-mode .card-essence { font-size: calc(16px * var(--content-scale, 1)); line-height: 1.5; color: var(--text-secondary); } /* Clearer essence text */
+
+/* Hide elements not needed in selection mode */
+.story-card.selection-mode .progress-bars,
+.story-card.selection-mode .resume-progress,
+.story-card.selection-mode .sponsor-inline,
+.story-card.selection-mode .slide-indicators,
+.story-card.selection-mode .favorite-btn,
+.story-card.selection-mode .card-badge,
+.story-card.selection-mode .card-time { display: none !important; }
+
+/* Data sources selector specific styles */
+.story-card.selection-mode .data-sources-selector {
+    position: relative;
+    z-index: 101;
+    background: transparent;
     border: none;
+    padding: 0; /* Remove padding */
+    margin-top: 20px; /* More space from title */
 }
-.story-card.selection-mode .sources-actions .select-all-btn,
-.story-card.selection-mode .sources-actions .clear-all-btn { display: none; }
-.story-card.selection-mode .sources-actions { justify-content: center; padding: 4px 0; }
-.story-card.selection-mode .manage-sources-btn { margin-left: auto; margin-right: auto; padding: 6px 10px; }
+.story-card.selection-mode .sources-actions { display: none; } /* Hide actions (Manage Sources button was here) */
 
 /* No-carousel compact card (microgame preview) */
 .story-card.no-carousel {
@@ -608,10 +612,9 @@ story-card.prev-card .favorite-btn, story-card.next-card .favorite-btn { visibil
 /* Data Sources Selector - LinkedIn Style */
 .data-sources-selector {
     margin-top: 12px;
-    padding: 16px;
-    background: var(--surface);
-    border-radius: 8px;
-    border: 1px solid var(--border);
+    padding: 0;
+    background: transparent;
+    border: none;
     position: relative;
     z-index: 10;
 }
@@ -631,17 +634,16 @@ story-card.prev-card .favorite-btn, story-card.next-card .favorite-btn { visibil
 
 .sources-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px 12px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 12px;
-    background: var(--background-secondary);
-    border-radius: 8px;
-    margin: 12px 0;
-    min-height: 60px;
-    border: 1px solid var(--border);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
+    gap: 16px; /* Comfortable spacing */
+    padding: 0;
+    margin: 20px 0 0 0; /* Adjust margin */
+    list-style: none;
+    max-height: none; /* Let content define height */
+    overflow-y: visible; /* No scrollbar */
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 /* Custom scrollbar for sources list */
@@ -694,79 +696,95 @@ story-card.prev-card .favorite-btn, story-card.next-card .favorite-btn { visibil
 
 .source-item {
     display: flex;
-    align-items: center;
-    padding: 4px 6px;
-    background: transparent; /* ultra minimal */
-    border: none;
-    border-radius: 6px;
-    transition: background 0.15s ease;
-    cursor: pointer;
-    position: relative;
-}
-
-.source-item.removable {
-    padding-right: 28px;
-}
-
-.delete-source-btn {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    border: none;
-    background: transparent;
-    color: var(--text-tertiary);
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    opacity: 0;
-    transition: all 0.2s ease;
-    border-radius: 50%;
-    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 12px 8px; /* Smaller padding */
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    background-color: var(--background-secondary);
+    text-align: center;
+    position: relative;
+    min-height: 90px; /* Smaller height */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
 }
 
-.source-item:hover .delete-source-btn {
-    opacity: 0.6;
+.source-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 
-.delete-source-btn:hover {
-    opacity: 1 !important;
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+.source-item.selected {
+    border-color: var(--selected-border-color, var(--primary)); /* Dynamic border color */
+    transform: scale(1.05); /* 5% larger */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2), 0 0 0 4px var(--selected-border-color, var(--primary-light)); /* Brighter border glow */
 }
 
+.source-icon {
+    font-size: 2.5em; /* Smaller icon */
+    margin-bottom: 6px; /* Smaller margin */
+    line-height: 1;
+    transition: all 0.2s ease;
+}
 
-
-.source-item:hover { background: rgba(127,127,127,0.08); }
-
-
+.source-item.selected .source-icon {
+    font-weight: bold;
+    transform: scale(1.1);
+}
 
 .source-checkbox {
-    width: 14px;
-    height: 14px;
-    margin-right: 6px;
-    cursor: pointer;
-    accent-color: var(--primary);
+    display: none; /* Hide the actual checkbox */
 }
 
 .source-label {
-    flex: 1;
-    font-size: calc(13px * var(--content-scale, 1));
+    font-family: 'Nunito', sans-serif; /* Playful font */
+    font-size: calc(14px * var(--content-scale, 1)); /* Smaller font */
+    font-weight: 600;
     color: var(--text);
-    cursor: pointer;
-    display: block;
-    font-weight: 500;
+    transition: all 0.2s ease;
+    line-height: 1.2;
+}
+
+.source-item.selected .source-label {
+    font-weight: 800; /* Bolder text when selected */
 }
 
 .source-label.hashtag:before {
     content: '#';
     color: var(--primary);
-    font-weight: 600;
+    font-weight: 700;
+    margin-right: 2px;
+}
+
+/* Pastel colors for source items */
+.sources-list .source-item:nth-child(4n+1) { background-color: #FFD1DC; --selected-border-color: #FF69B4; }
+.sources-list .source-item:nth-child(4n+2) { background-color: #B0E0E6; --selected-border-color: #4682B4; }
+.sources-list .source-item:nth-child(4n+3) { background-color: #FFFACD; --selected-border-color: #FFD700; }
+.sources-list .source-item:nth-child(4n+4) { background-color: #E6E6FA; --selected-border-color: #8A2BE2; }
+
+/* Adjust text color for better contrast on pastel backgrounds */
+.sources-list .source-item:nth-child(4n+1) .source-icon, .sources-list .source-item:nth-child(4n+1) .source-label { color: #C2185B; }
+.sources-list .source-item:nth-child(4n+2) .source-icon, .sources-list .source-item:nth-child(4n+2) .source-label { color: #005F73; }
+.sources-list .source-item:nth-child(4n+3) .source-icon, .sources-list .source-item:nth-child(4n+3) .source-label { color: #DAA520; }
+.sources-list .source-item:nth-child(4n+4) .source-icon, .sources-list .source-item:nth-child(4n+4) .source-label { color: #6A0DAD; }
+
+/* Selected state text/icon color */
+.sources-list .source-item:nth-child(4n+1).selected .source-icon, .sources-list .source-item:nth-child(4n+1).selected .source-label { color: #FF69B4; }
+.sources-list .source-item:nth-child(4n+2).selected .source-icon, .sources-list .source-item:nth-child(4n+2).selected .source-label { color: #4682B4; }
+.sources-list .source-item:nth-child(4n+3).selected .source-icon, .sources-list .source-item:nth-child(4n+3).selected .source-label { color: #FFD700; }
+.sources-list .source-item:nth-child(4n+4).selected .source-icon, .sources-list .source-item:nth-child(4n+4).selected .source-label { color: #8A2BE2; }
+
+/* Hide the container styles */
+.source-item-container {
+    display: contents; /* Hide container but keep children */
+}
+.source-label-container {
+    display: none; /* Hide sub-category labels */
+}
+.sub-sources-list {
+    display: contents; /* Hide sub-category list but keep children */
 }
 
 
