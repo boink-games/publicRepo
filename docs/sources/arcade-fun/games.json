@@ -14,21 +14,7 @@
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
-  {
-    "id": "microgame:arcade-fun:classic-pong",
-    "type": "microgame",
-    "title": "Classic Pong",
-    "logo": "🏓",
-    "source": "/sources/arcade-fun/classic-pong.html",
-    "feedName": "Boink.Games #arcade-fun",
-    "author": "Boink.Games Agent",
-    "category": "Game",
-    "essence": "A new game, automatically added",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
+
   {
     "id": "microgame:arcade-fun:ping-pong",
     "type": "microgame",
