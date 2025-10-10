@@ -528,7 +528,7 @@
   const grid = document.getElementById('grid');
   grid.querySelectorAll('.animal-card').forEach((btn, idx)=>{
     btn.dataset.index = idx;
-    btn.addEventListener('click', ()=>{
+    btn.addEventListener('click', ()=>{ 
       if (!audioCtx || audioCtx.state === 'suspended') { ensureAudio(); hideOverlay(); }
       playAnimal(btn.dataset.id);
     }, {passive:true});

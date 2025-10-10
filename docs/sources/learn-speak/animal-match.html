@@ -5,11 +5,26 @@
 <title>Animals</title>
 <link rel="stylesheet" href="./common.css" />
 <style>
-    /* The close button is now a div with inline styles */
+    .game-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    h1 {
+        margin: 0;
+        font-size: 3em;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+        background-image: linear-gradient(to right, #d00000, #ff8c00, #ffcd3c, #90be6d, #43aa8b, #277da1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
 </style>
 <body>
 <div id="close-btn" style="position:absolute; top:10px; right:10px; font-size:24px; cursor:pointer; z-index:9999;">❌</div>
 <div class="game">
+  <div class="game-header">
+    <h1>🐱 Animals 🐶</h1>
+  </div>
   <div class="board">
     <div class="prompt">
       <button class="speak" id="speak">🔊 Say animal</button>
@@ -23,23 +38,29 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-document.getElementById('close-btn').addEventListener('click', () => {
-    console.log('Close button clicked!');
-    window.location.assign('../../index.html');
-});
+    document.getElementById('close-btn').addEventListener('click', () => {
+        console.log('Close button clicked!');
+        window.location.assign('../../index.html');
+    });
 const ANIMALS = [
   {name:'cat', emoji:'🐱', sfx:'meow'},
   {name:'dog', emoji:'🐶', sfx:'woof'},
   {name:'cow', emoji:'🐮', sfx:'moo'},
   {name:'frog', emoji:'🐸', sfx:'ribbit'},
   {name:'lion', emoji:'🦁', sfx:'roar'},
-  {name:'duck', emoji:'🦆', sfx:'quack'}
+  {name:'duck', emoji:'🦆', sfx:'quack'},
+  {name:'pig', emoji:'🐷', sfx:'oink'},
+  {name:'sheep', emoji:'🐑', sfx:'baa'},
+  {name:'chicken', emoji:'🐔', sfx:'cluck'},
+  {name:'horse', emoji:'🐴', sfx:'neigh'},
+  {name:'monkey', emoji:'🐵', sfx:'chatter'},
+  {name:'elephant', emoji:'🐘', sfx:'trumpet'}
 ];
 const PALE_COLORS = ['#ffadad', '#ffd6a5', '#fdffb6', '#caffbf', '#9bf6ff', '#a0c4ff', '#bdb2ff', '#ffc6ff'];
 let answer = null;
 function pick(n, arr){ const copy=[...arr]; const out=[]; while(out.length<n && copy.length){ out.push(copy.splice(Math.random()*copy.length|0,1)[0]); } return out; }
 function newRound(){
-  const opts = pick(3, ANIMALS);
+  const opts = pick(9, ANIMALS);
   answer = opts[Math.random()*opts.length|0];
   renderChoices(opts);
   setTimeout(()=>{ window.LE_TTS.speak(answer.name); setTimeout(()=>window.LE_TTS.speak(answer.sfx), 350); }, 200);

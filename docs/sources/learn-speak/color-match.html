@@ -3,6 +3,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Colors</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 <link rel="stylesheet" href="./common.css" />
 <style>
   body {
@@ -11,16 +12,26 @@
     align-items: center;
     justify-content: flex-start;
     min-height: 100vh;
+    background-color: #f0f8ff; /* AliceBlue */
+    background-image:
+      radial-gradient(circle at 10% 10%, hsla(340, 80%, 88%, 0.8), transparent 25%),
+      radial-gradient(circle at 80% 15%, hsla(190, 80%, 88%, 0.8), transparent 25%),
+      radial-gradient(circle at 30% 80%, hsla(100, 80%, 88%, 0.8), transparent 25%),
+      radial-gradient(circle at 90% 85%, hsla(40, 80%, 88%, 0.8), transparent 25%),
+      radial-gradient(circle at 50% 50%, hsla(240, 80%, 88%, 0.8), transparent 25%);
+    background-attachment: fixed;
   }
   h1 {
     margin: 0;
-    font-size: 2em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 4em;
     padding: 16px;
     width: 100%;
     text-align: center;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+    background-image: linear-gradient(to right, #d00000, #ff8c00, #ffcd3c, #90be6d, #43aa8b, #277da1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   header {
     width: 100%;
@@ -28,32 +39,17 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px;
-    background: var(--bg);
+    background: transparent;
     color: var(--text);
   }
-  .close-button {
-    background: none;
-    border: 1px solid rgba(255,255,255,.2);
-    border-radius: 8px;
-    color: var(--text);
-    font-size: 1.5em;
-    cursor: pointer;
-    padding: 8px 12px;
-  }
-  .game-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .second-row-buttons {
+  .right-controls {
     display: flex;
     gap: 10px;
   }
   .game {
     margin-top: 20px; /* Adjust as needed to push content down from the header */
     min-height: auto; /* Remove min-height to allow content to dictate height */
+    background: transparent;
   }
   .board {
     min-width: min(92vw, 800px); /* Increased width */
@@ -62,18 +58,15 @@
   }
 </style>
 <body>
-  <h1>Match the Colors</h1>
-  <header>
-    <div class="game-controls">
-      <button class="speak" id="speak">🔊 Say color</button>
-      <div class="second-row-buttons">
-        <button class="speak" id="volume">🔊 Volume</button>
-        <button class="speak" id="reset">🔄 Reset</button>
-      </div>
-    </div>
-    <button class="close-button">X</button>
-  </header>
+  <h1>🎨 Colors 🎨</h1>
 <div class="game">
+  <header>
+    <button class="speak" id="speak">🔊 Say color</button>
+    <div class="right-controls">
+      <button class="speak" id="volume">🔊 Volume</button>
+      <button class="speak" id="reset">🔄 Reset</button>
+    </div>
+  </header>
   <div class="board">
     <div class="feedback" id="fb"></div>
     <div class="choices" id="choices"></div>
@@ -88,7 +81,11 @@ const COLORS = [
   {name:'green', css:'#2ecc71'},
   {name:'yellow', css:'#ffd166'},
   {name:'purple', css:'#a56dff'},
-  {name:'orange', css:'#ff9f43'}
+  {name:'orange', css:'#ff9f43'},
+  {name:'pink', css:'#ff69b4'},
+  {name:'cyan', css:'#00bcd4'},
+  {name:'lime', css:'#cddc39'},
+  {name:'brown', css:'#795548'}
 ];
 let answer = null;
 function pick(n, arr){
@@ -97,7 +94,7 @@ function pick(n, arr){
   return out;
 }
 function newRound(){
-  const opts = pick(3, COLORS);
+  const opts = pick(6, COLORS);
   answer = opts[Math.random()*opts.length|0];
   renderChoices(opts);
   setTimeout(()=>window.LE_TTS.speak(answer.name), 200);
@@ -119,9 +116,9 @@ function renderChoices(opts){
     btn.onclick = ()=>{
       const correct = c.name===answer.name;
       if(correct){
-        window.LE_AUDIO?.playDing?.();
-        window.LE_TTS.speak('pop!');
-        setTimeout(()=>window.LE_TTS.speak('Yes, '+c.name+'!'), 300);
+        window.LE_AUDIO?.playVictory?.();
+        if(window.confetti) window.confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        setTimeout(()=>window.LE_TTS.speak('Yes, '+c.name+'!'), 100);
       } else {
         window.LE_AUDIO?.playBuzz?.();
         window.LE_TTS.speak('Try again');

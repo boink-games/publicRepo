@@ -540,7 +540,7 @@
         <div class="lives-container">
           <div class="lives badge" id="lives" aria-label="Lives"></div>
         </div>
-        <div class="message" id="message" role="status" aria-live="polite">Good luck, word wizard! 🧙‍♂️✨</div>
+        <div class="message" id="message" role="status" aria-live="polite"><span id="mainMessageText">Good luck, word wizard! 🧙‍♂️✨</span> <span id="hintText" style="font-size: 0.8em; opacity: 0.8;"></span></div>
       </div>
 
       <div class="word-area" aria-label="Word">
@@ -578,8 +578,30 @@
   <script>
     // Game Data
     const words = [
-      'apple','banana','orange','grape','strawberry','melon','peach','lemon','mango','pear','cherry','kiwi',
-      'cookie','panda','tiger','zebra','rabbit','happy','sunny','smile','rainbow','balloon','puzzle','rocket'
+      { word: 'apple', hint: 'What fruit keeps the doctor away?' },
+      { word: 'banana', hint: 'A long, yellow fruit that monkeys love.' },
+      { word: 'orange', hint: 'This citrus fruit shares its name with a color.' },
+      { word: 'grape', hint: 'Small, round fruit that grows in bunches, often used to make wine.' },
+      { word: 'strawberry', hint: 'A red, heart-shaped fruit with tiny seeds on the outside.' },
+      { word: 'melon', hint: 'A large, sweet fruit with a hard rind, often eaten in summer.' },
+      { word: 'peach', hint: 'A fuzzy, sweet fruit with a large pit inside.' },
+      { word: 'lemon', hint: 'A sour yellow citrus fruit.' },
+      { word: 'mango', hint: 'A tropical fruit with a large pit and sweet, juicy flesh.' },
+      { word: 'pear', hint: 'A sweet, bell-shaped fruit.' },
+      { word: 'cherry', hint: 'Small, red, and often comes in pairs on a stem.' },
+      { word: 'kiwi', hint: 'A small, fuzzy, green fruit.' },
+      { word: 'cookie', hint: 'A sweet, baked treat, often with chocolate chips.' },
+      { word: 'panda', hint: 'A black and white bear from China.' },
+      { word: 'tiger', hint: 'A large, striped wild cat.' },
+      { word: 'zebra', hint: 'A horse-like animal with black and white stripes.' },
+      { word: 'rabbit', hint: 'A small, furry animal known for hopping.' },
+      { word: 'happy', hint: 'The opposite of sad.' },
+      { word: 'sunny', hint: 'Describes weather with lots of sunshine.' },
+      { word: 'smile', hint: 'What you do when you are happy.' },
+      { word: 'rainbow', hint: 'An arc of colors in the sky after rain.' },
+      { word: 'balloon', hint: 'A colorful, inflatable object that floats.' },
+      { word: 'puzzle', hint: 'A game or problem designed to test ingenuity.' },
+      { word: 'rocket', hint: 'A vehicle that travels into space.' }
     ];
 
     // Preferences & Utilities
@@ -719,6 +741,8 @@
     const wordDisplay = document.getElementById('word-display');
     const keyboard = document.getElementById('keyboard');
     const messageEl = document.getElementById('message');
+    const mainMessageTextEl = document.getElementById('mainMessageText');
+    const hintTextEl = document.getElementById('hintText');
     const livesEl = document.getElementById('lives');
     const newWordBtn = document.getElementById('newWordBtn');
     const replayBtn = document.getElementById('replayBtn');
@@ -746,13 +770,16 @@
     }
 
     function resetState(){
-      currentWord = sampleWord();
+      const selectedWordObject = sampleWord();
+      currentWord = selectedWordObject.word;
       guessed = new Set();
       wrongGuesses = 0;
       maxGuesses = 6;
       lastGuessLetter = '';
       inputLocked = false;
       updateUI(true);
+      setMessage('New word! Ready... set... guess! 🚀');
+      setHint(selectedWordObject.hint);
       focusHiddenInput();
     }
 
@@ -760,8 +787,15 @@
       renderLives();
       renderWord(isNew);
       renderKeyboard(isNew);
-      setMessage(isNew ? 'New word! Ready... set... guess! 🚀' : messageEl.textContent);
       streakEl.textContent = String(streak);
+    }
+
+    function setMessage(text){
+      if(mainMessageTextEl) mainMessageTextEl.textContent = text;
+    }
+
+    function setHint(text){
+      if(hintTextEl) hintTextEl.textContent = text;
     }
 
     function renderLives(){
@@ -825,7 +859,13 @@
 
     function setMessage(text){
       if(!text) return;
+      const currentHint = hintTextEl.textContent;
       messageEl.textContent = text;
+      if(hintTextEl) hintTextEl.textContent = currentHint; // Restore hint
+    }
+
+    function setHint(text){
+      if(hintTextEl) hintTextEl.textContent = text;
     }
 
     function isGameOver(){

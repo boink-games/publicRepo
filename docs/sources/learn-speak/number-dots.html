@@ -2,46 +2,365 @@
 <html lang="en">
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Numbers 1–3</title>
+<title>Numbers 1–10</title>
 <link rel="stylesheet" href="./common.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka+One&display=swap');
+
+    :root {
+      --primary-bg-light: #e0f7fa; /* Light Cyan */
+      --primary-bg-dark: #b2ebf2;  /* Darker Cyan */
+      --card-bg-light: #ffffff;   /* White */
+      --card-bg-dark: #f0f8ff;    /* Alice Blue */
+      --card-border-color: #80deea; /* Cyan A400 */
+      --card-shadow-color: rgba(0, 0, 0, 0.1);
+      --number-text-color: #006064; /* Cyan 900 */
+      --number-shadow-light: rgba(255, 255, 255, 0.8);
+      --number-shadow-dark: rgba(0, 0, 0, 0.2);
+      --dot-color: #ff8a80;      /* Red A100 */
+      --dot-shadow-color: rgba(0, 0, 0, 0.2);
+      --speak-btn-start: #ffcc80; /* Orange 200 */
+      --speak-btn-end: #ffb74d;   /* Orange 300 */
+      --speak-btn-text: #e65100;  /* Orange 900 */
+      --feedback-ok: #4caf50;    /* Green 500 */
+      --feedback-bad: #f44336;   /* Red 500 */
+      --game-title-color: #00bcd4; /* Cyan 500 */
+      --game-title-shadow-light: rgba(255, 255, 200, 0.7); /* Light pastel yellow */
+      --game-title-shadow-dark: rgba(0, 0, 0, 0.15);
+      --text-color: #263238; /* Blue Grey 900 */
+    }
+
+    body {
+      background: linear-gradient(135deg, #f0f9ff 0%, #c9e9ff 100%); /* Very light blue gradient */
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.2'%3E%3Ctext x='10' y='30' font-family='Bangers' font-size='24' fill='%23aaddff'%3E1%3C/text%3E%3Ctext x='50' y='70' font-family='Bangers' font-size='24' fill='%23aaddff'%3E2%3C/text%3E%3Ctext x='80' y='20' font-family='Bangers' font-size='24' fill='%23aaddff'%3E3%3C/text%3E%3Ctext x='20' y='90' font-family='Bangers' font-size='24' fill='%23aaddff'%3E4%3C/text%3E%3Ctext x='60' y='10' font-family='Bangers' font-size='24' fill='%23aaddff'%3E5%3C/text%3E%3C/g%3E%3C/svg%3E");
+      background-size: 100px 100px;
+      font-family: 'Fredoka One', cursive;
+      color: var(--text-color);
+    }
+
+    .board {
+      margin-top: 20px; /* Add space below the title */
+      background: linear-gradient(160deg, var(--card-bg-light) 0%, var(--card-bg-dark) 100%);
+      box-shadow: 0 20px 45px var(--card-shadow-color);
+      border-radius: 28px;
+      padding: 32px 28px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, var(--card-bg-light), var(--card-bg-dark));
+      border: 3px solid var(--card-border-color);
+      border-radius: 20px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 160px;
+      box-shadow: 0 8px 15px var(--card-shadow-color);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(45deg);
+      transition: all 0.3s ease;
+      opacity: 0;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+      transform: rotate(45deg) translate(10%, 10%);
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.03);
+      border-color: var(--game-title-color);
+      box-shadow: 0 12px 25px var(--card-shadow-color);
+    }
+
+    .card-number {
+      font-family: 'Bangers', cursive;
+      font-size: 3.2em;
+      font-weight: normal;
+      color: var(--number-text-color);
+      text-shadow: 3px 3px 0px var(--number-shadow-light), 6px 6px 0px var(--number-shadow-dark);
+      margin-bottom: 8px;
+      line-height: 1;
+      z-index: 1;
+    }
+
+    .dots {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      max-width: 100%;
+      z-index: 1;
+    }
+
+    .dot {
+      width: 28px;
+      height: 28px;
+      background: radial-gradient(circle at 30% 30%, #ffffff, var(--dot-color));
+      border-radius: 50%;
+      box-shadow: 0 4px 8px var(--dot-shadow-color), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      transition: all 0.2s ease;
+    }
+
+    .speak {
+      box-sizing: border-box; /* Include padding in height */
+      height: 50px; /* Explicit height for consistency */
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center content horizontally */
+      background: linear-gradient(145deg, var(--speak-btn-start), var(--speak-btn-end));
+      color: var(--speak-btn-text);
+      border: none;
+      border-radius: 15px;
+      padding: 0 18px; /* Adjust padding to fit height */
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      gap: 8px;
+    }
+
+    .score-display {
+      box-sizing: border-box; /* Include padding in height */
+      height: 50px; /* Explicit height for consistency */
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center content horizontally */
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.2em;
+      color: var(--text-color);
+      background-color: var(--card-bg-light);
+      padding: 0 15px; /* Adjust padding to fit height */
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      gap: 5px;
+    }
+
+    .speak:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .feedback {
+      font-family: 'Bangers', cursive;
+      font-size: 2.2em;
+      letter-spacing: 1px;
+      text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.7);
+    }
+
+    .feedback.ok {
+      color: var(--feedback-ok);
+    }
+
+    .feedback.bad {
+      color: var(--feedback-bad);
+    }
+
+    .game-main-title {
+      font-family: 'Bangers', cursive;
+      font-size: 3.5em;
+      color: var(--number-text-color);
+      text-shadow: 4px 4px 0px var(--game-title-shadow-light), 8px 8px 0px var(--game-title-shadow-dark);
+      margin-top: 10px;
+      margin-bottom: 10px;
+      text-align: center;
+      line-height: 1;
+      letter-spacing: 2px;
+    }
+
+    .score-display {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.2em;
+      color: var(--text-color);
+      background-color: var(--card-bg-light);
+      padding: 8px 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .prompt-top {
+      display: flex;
+      align-items: stretch; /* Stretch items to fill the height */
+      justify-content: flex-start; /* Align both to the left */
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.2em;
+      color: var(--text-color);
+      background-color: var(--card-bg-light);
+      padding: 8px 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .confetti-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 9999;
+    }
+
+    .confetti-layer span {
+      position: absolute;
+      animation: confetti-fall linear forwards;
+    }
+
+    @keyframes confetti-fall {
+      0%   { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 360px) {
+      .choices {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .card {
+        min-height: 120px;
+        padding: 15px;
+      }
+
+      .card-number {
+        font-size: 2.5em;
+      }
+
+      .dot {
+        width: 22px;
+        height: 22px;
+      }
+
+      .speak {
+        font-size: 1em;
+        padding: 8px 15px;
+      }
+
+      .feedback {
+        font-size: 1.8em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .board {
+        padding: 25px 20px;
+        gap: 18px;
+      }
+
+      .game-title {
+        font-size: 38px;
+      }
+
+      .fruit-icons {
+        font-size: 26px;
+      }
+
+      .scoreboard {
+        font-size: 17px;
+        padding: 7px 15px;
+      }
+
+      .prompt-top {
+        gap: 12px;
+      }
+    }
+  </style>
 <body>
 <div class="game">
+  <h1 class="game-main-title">Numbers Fun!</h1>
   <div class="board">
     <div class="prompt">
-      <button class="speak" id="speak">🔊 Say number</button>
+      <div class="prompt-top">
+        <button class="speak" id="speak">🔊 Say number</button>
+        <div class="score-display">Score: <span id="scoreValue">0</span></div>
+      </div>
       <div class="feedback" id="fb"></div>
     </div>
     <div class="choices" id="choices"></div>
   </div>
 </div>
+<div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
 <script src="./_tts.js"></script>
 <script src="./_audio.js"></script>
 <script>
-const NUMS = [1,2,3,4,5];
+const NUMS = [1,2,3,4,5,6,7,8,9,10];
 let answer = null;
+let score = 0;
+
+function numberToWord(n) {
+  switch(n) {
+    case 1: return 'one';
+    case 2: return 'two';
+    case 3: return 'three';
+    case 4: return 'four';
+    case 5: return 'five';
+    case 6: return 'six';
+    case 7: return 'seven';
+    case 8: return 'eight';
+    case 9: return 'nine';
+    case 10: return 'ten';
+    default: return String(n);
+  }
+}
+
 function pickThree(){
-  const a=[...NUMS]; const out=[]; while(out.length<3){ out.push(a.splice(Math.random()*a.length|0,1)[0]); }
+  const a=[...NUMS]; const out=[]; while(out.length<6){ out.push(a.splice(Math.random()*a.length|0,1)[0]); }
   return out;
 }
-function dots(n){
-  const wrap=document.createElement('div'); wrap.className='dots';
-  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot'; wrap.appendChild(d);} 
-  return wrap;
-}
+
 function newRound(){
   const opts = pickThree();
   answer = opts[Math.random()*opts.length|0];
   const cont=document.getElementById('choices'); cont.innerHTML='';
+  const scoreValueEl = document.getElementById('scoreValue');
+  scoreValueEl.textContent = String(score);
+
   for(const n of opts){
     const btn=document.createElement('button'); btn.className='card';
-    btn.appendChild(dots(n));
+    const numSpan = document.createElement('span');
+    numSpan.className = 'card-number';
+    numSpan.textContent = String(n);
+    btn.appendChild(numSpan);
     btn.setAttribute('aria-label', String(n));
     btn.onclick=()=>{
       const ok = n===answer;
       if(ok){
         window.LE_AUDIO?.playDing?.();
-        const word = (n===1? 'one' : n===2? 'two' : n===3? 'three' : n===4? 'four' : 'five');
+        const word = numberToWord(n);
         window.LE_TTS.speak('Yes, ' + word + '!');
+        score++;
+        scoreValueEl.textContent = String(score);
+        makeConfetti();
       } else {
         window.LE_AUDIO?.playBuzz?.();
         window.LE_TTS.speak('Try again');
@@ -52,13 +371,53 @@ function newRound(){
     cont.appendChild(btn);
   }
   setTimeout(()=>{
-    const word = (answer===1? 'one' : answer===2? 'two' : answer===3? 'three' : answer===4? 'four' : 'five');
+    const word = numberToWord(answer);
     window.LE_TTS.speak(word);
   }, 200);
   fb('');
 }
 function fb(t, ok){ const el=document.getElementById('fb'); el.textContent=t; el.className='feedback ' + (ok===true? 'ok':'') + (ok===false? ' bad':''); }
-document.getElementById('speak').onclick=()=>{ if(answer) window.LE_TTS.speak(answer===1? 'one' : answer===2? 'two' : 'three'); };
+document.getElementById('speak').onclick=()=>{ if(answer) window.LE_TTS.speak(numberToWord(answer)); };
+
+const confettiLayer = document.getElementById('confettiLayer');
+
+function makeConfetti(count=30){
+  const colors = ['#ffcc80','#ffab40','#ffe0b2','#ff8a80','#81c784','#64ffda'];
+  for(let i=0;i<count;i++){
+    const conf = document.createElement('span');
+    conf.style.position='absolute';
+    conf.style.top='-10px';
+    conf.style.left = Math.random()*100 + '%';
+    const size = 8 + Math.random()*12;
+    conf.style.width = conf.style.height = size + 'px';
+    conf.style.background = colors[Math.floor(Math.random()*colors.length)];
+    conf.style.transform = `rotate(${Math.random()*360}deg)`;
+    conf.style.borderRadius = Math.random()>.6 ? '50%' : '4px';
+    conf.style.opacity = '0.95';
+    conf.style.willChange = 'transform, top, opacity';
+    confettiLayer.appendChild(conf);
+    confettiFall(conf, 1000 + Math.random()*800).then(()=> conf.remove());
+  }
+}
+
+function confettiFall(el, duration){
+  return new Promise(res=>{
+    const start = performance.now();
+    const wobble = 30 + Math.random()*50;
+    const rotStart = Math.random()*360;
+    function frame(now){
+      const t = Math.min(1, (now - start)/duration);
+      const ease = t<.5 ? 2*t*t : -1+(4-2*t)*t;
+      el.style.top = (ease*100) + '%';
+      el.style.transform = `translateX(${Math.sin(t*Math.PI*2)*wobble}px) rotate(${rotStart + t*720}deg)`;
+      el.style.opacity = String(1 - t*.8);
+      if(t<1) requestAnimationFrame(frame);
+      else res();
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
 newRound();
 </script>
 </body>

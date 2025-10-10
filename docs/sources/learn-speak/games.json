@@ -93,7 +93,8 @@
     "id": "microgame:learn-speak:formas-y-colores",
     "type": "microgame",
     "title": "Formas y Colores",
-    "image": "https://img.icons8.com/3d-fluency/94/geometric-shapes.png",
+    "logo": "🎨",
+    "tag": "learnSpanish",
     "source": "/sources/learn-speak/formas-y-colores.html",
     "feedName": "Boink.Games #learn-speak",
     "author": "Boink.Games Agent",
@@ -212,27 +213,13 @@
   {
     "id": "microgame:learn-speak:number-dots",
     "type": "microgame",
-    "title": "Numbers 1–3 🔢",
+    "title": "Numbers Fun!",
     "tag": "learnEnglish",
     "source": "/sources/learn-speak/number-dots.html",
     "feedName": "Boink.Games #learn-speak",
     "author": "Boink.Games",
     "category": "Game",
     "essence": "Hear a number, pick the card with that many dots",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
-  {
-    "id": "microgame:learn-speak:numere-romanesti",
-    "type": "microgame",
-    "title": "Numere Romanesti",
-    "source": "/sources/learn-speak/numere-romanesti.html",
-    "feedName": "Boink.Games #learn-speak",
-    "author": "Boink.Games Agent",
-    "category": "Game",
-    "essence": "Learn numbers 1-10 in Romanian with visual representations. Interactive counting exercises with pronunciation support",
     "reactions": [
       "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"

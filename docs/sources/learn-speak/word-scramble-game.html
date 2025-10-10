@@ -6,20 +6,22 @@
   <title>Word Scramble Game</title>
   <style>
     :root{
-      --bg1:#0f172a;
-      --bg2:#1e293b;
-      --accent:#22d3ee;
-      --accent-2:#a78bfa;
-      --good:#34d399;
-      --bad:#f87171;
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --tile:#111827;
-      --tile-2:#0b1220;
-      --btn:#0ea5e9;
-      --shadow:rgba(0,0,0,.35);
-      --radius:16px;
-      --spacing: clamp(12px, 2.5vw, 20px);
+      --bg1:#1a2a3a;
+      --bg2:#2a3a4a;
+      --accent:#a7ffeb; /* Brighter mint green */
+      --accent-2:#84ffff; /* Lighter cyan */
+      --good:#66bb6a;
+      --bad:#ef5350;
+      --text:#e0e0e0;
+      --muted:#bdbdbd;
+      --card-bg-start:#37474f;
+      --card-bg-end:#263238;
+      --tile:#455a64;
+      --tile-2:#37474f;
+      --btn:#03a9f4;
+      --shadow:rgba(0,0,0,.45);
+      --radius:20px;
+      --spacing: clamp(16px, 3vw, 32px);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -27,9 +29,7 @@
       margin:0;
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
       color:var(--text);
-      background: radial-gradient(1200px 800px at 10% -20%, #0b1220, transparent 60%),
-                  radial-gradient(1200px 800px at 110% 120%, #0b1220, transparent 60%),
-                  linear-gradient(120deg, var(--bg1), var(--bg2));
+      background: linear-gradient(145deg, var(--card-bg-start), var(--card-bg-end)); /* Same as card */
       background-size: 200% 200%;
       animation:bg-pan 18s ease-in-out infinite;
       display:flex;
@@ -44,17 +44,16 @@
     }
 
     .game{
-      width:min(100%, 820px);
-      padding: clamp(12px, 3vw, 28px);
+      width:min(100%, 960px); /* Even larger max-width */
+      padding: clamp(25px, 5vw, 50px); /* More padding */
     }
 
     .card{
       position:relative;
       border-radius: var(--radius);
-      background: rgba(255,255,255,0.06);
-      backdrop-filter: blur(10px);
+      background: linear-gradient(145deg, var(--card-bg-start), var(--card-bg-end)); /* More colorful gradient */
       box-shadow: 0 20px 45px var(--shadow);
-      padding: clamp(16px, 4vw, 28px);
+      padding: clamp(30px, 6vw, 50px); /* More padding */
       overflow:hidden;
     }
 
@@ -65,17 +64,19 @@
       margin-bottom: clamp(10px, 2.5vw, 16px);
     }
     .title{
-      display:flex; align-items:center; gap:10px;
-      font-weight:800;
-      letter-spacing:.5px;
-      font-size: clamp(20px, 4.5vw, 28px);
+      display:flex; align-items:center; gap:12px; /* Slightly more gap */
+      font-weight:900; /* Bolder */
+      letter-spacing:1px; /* More pronounced */
+      font-size: clamp(24px, 5vw, 36px); /* Larger font */
+      color: var(--accent); /* Use accent color for title */
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4); /* More prominent shadow */
     }
     .spark{
-      width: clamp(22px, 5vw, 28px);
-      height: clamp(22px, 5vw, 28px);
-      border-radius: 8px;
+      width: clamp(28px, 6vw, 36px); /* Larger spark */
+      height: clamp(28px, 6vw, 36px); /* Larger spark */
+      border-radius: 10px; /* Slightly rounder */
       background: conic-gradient(from 180deg at 50% 50%, var(--accent), var(--accent-2), var(--accent));
-      box-shadow: 0 4px 18px rgba(167,139,250,.55), inset 0 0 10px rgba(34,211,238,.35);
+      box-shadow: 0 6px 20px rgba(167,139,250,.7), inset 0 0 12px rgba(34,211,238,.5);
       animation: spin 5s linear infinite;
     }
     @keyframes spin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
@@ -108,6 +109,7 @@
     .scramble-area{
       display:flex; flex-direction:column; align-items:center; justify-content:center;
       margin: clamp(8px, 3vw, 16px) 0 clamp(14px, 4vw, 22px);
+      margin-top: 40px; /* Increased space */
       min-height: clamp(110px, 26vw, 160px);
       position:relative;
     }
@@ -161,8 +163,8 @@
       transition:border-color .2s ease, box-shadow .2s ease;
     }
     .guess:focus{
-      border-color: rgba(34,211,238,.65);
-      box-shadow: 0 0 0 4px rgba(34,211,238,.15);
+      border-color: rgba(0,0,0,.65); /* Darker border on focus */
+      box-shadow: 0 0 0 4px rgba(0,0,0,.15); /* Darker shadow */
     }
     .submit{
       background: linear-gradient(180deg, #22d3ee, #06b6d4);
@@ -198,6 +200,10 @@
     .ctrl.neutral{
       background: linear-gradient(180deg, #a7f3d0, #34d399);
       box-shadow: 0 10px 20px rgba(52,211,153,.35), inset 0 1px 0 rgba(255,255,255,.6);
+    }
+    .ctrl[data-action="skip"]{
+      background: linear-gradient(180deg, #a78bfa, #8b5cf6); /* Muted purple gradient */
+      box-shadow: 0 10px 20px rgba(139,92,246,.35), inset 0 1px 0 rgba(255,255,255,.6);
     }
     .msg{
       min-height: 22px;
@@ -264,6 +270,7 @@
       </div>
 
       <section class="scramble-area">
+        <div id="hintDisplay" class="hint-display"></div>
         <div id="tiles" class="tiles pulse" role="group" aria-label="Scrambled letters"></div>
       </section>
 
@@ -295,9 +302,26 @@
 
       // Word list
       const WORDS = [
-        'apple','banana','orange','grape','strawberry',
-        'cherry','mango','peach','papaya','kiwi','melon','pear','plum','apricot',
-        'lemon','lime','coconut','fig','guava','nectarine'
+        { word: 'apple', hint: 'A common red or green fruit.' },
+        { word: 'banana', hint: 'A long, yellow fruit.' },
+        { word: 'orange', hint: 'A citrus fruit and a color.' },
+        { word: 'grape', hint: 'Small, round fruit that grows in bunches.' },
+        { word: 'strawberry', hint: 'A red, heart-shaped fruit with seeds on the outside.' },
+        { word: 'cherry', hint: 'Small, red, and often comes in pairs.' },
+        { word: 'mango', hint: 'A tropical, juicy fruit.' },
+        { word: 'peach', hint: 'A fuzzy, sweet fruit with a large pit.' },
+        { word: 'papaya', hint: 'A tropical fruit with black seeds inside.' },
+        { word: 'kiwi', hint: 'A small, fuzzy, green fruit.' },
+        { word: 'melon', hint: 'A large, sweet fruit, often green outside and pink inside.' },
+        { word: 'pear', hint: 'A sweet, bell-shaped fruit.' },
+        { word: 'plum', hint: 'A sweet, dark purple fruit.' },
+        { word: 'apricot', hint: 'A small, orange, fuzzy fruit.' },
+        { word: 'lemon', hint: 'A sour yellow citrus fruit.' },
+        { word: 'lime', hint: 'A small, green, sour citrus fruit.' },
+        { word: 'coconut', hint: 'A large, hard-shelled tropical fruit with white flesh and water inside.' },
+        { word: 'fig', hint: 'A sweet, soft, pear-shaped fruit.' },
+        { word: 'guava', hint: 'A sweet, tropical fruit with many small seeds.' },
+        { word: 'nectarine', hint: 'A smooth-skinned variety of peach.' }
       ];
 
       // Elements
@@ -308,12 +332,14 @@
       const bestEl = document.getElementById('best');
       const roundEl = document.getElementById('round');
       const msgEl = document.getElementById('msg');
+      const hintDisplayEl = document.getElementById('hintDisplay');
       const soundToggleBtn = document.getElementById('soundToggle');
       const inputRow = document.getElementById('inputRow');
       const card = document.getElementById('card');
 
       // State
       let currentWord = '';
+      let currentHint = '';
       let score = 0;
       let round = 1;
       let usedTileStack = []; // track tiles used by taps
@@ -324,9 +350,13 @@
       // Sound system (Web Audio – lightweight, generated)
       const Sfx = (function(){
         let ctx;
+        let masterGain;
         function ensureCtx(){
           if(!ctx){
             ctx = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = ctx.createGain();
+            masterGain.connect(ctx.destination);
+            masterGain.gain.value = allowSound ? 0.8 : 0; // Initialize master volume
           }
           if (ctx.state === 'suspended') ctx.resume();
         }
@@ -342,7 +372,7 @@
           g.gain.setValueAtTime(0, now);
           g.gain.linearRampToValueAtTime(vol, now + attack);
           g.gain.exponentialRampToValueAtTime(0.0001, now + duration + release);
-          o.connect(g).connect(ctx.destination);
+          o.connect(g).connect(masterGain); // Connect to masterGain
           o.start(now);
           o.stop(now + duration + release + 0.02);
         }
@@ -361,20 +391,33 @@
             seq([{freq:220,type:'sawtooth',duration:0.12,vol:0.08},{freq:200,type:'sawtooth',duration:0.12,vol:0.07}],0.02);
           },
           newWord(){ seq([{freq:500,type:'triangle',duration:0.08,vol:0.05},{freq:660,type:'triangle',duration:0.08,vol:0.05}],0.02); },
-          hint(){ tone({freq:260,type:'triangle',duration:0.09,vol:0.06}); }
+          hint(){ tone({freq:260,type:'triangle',duration:0.09,vol:0.06}); },
+          masterGain: masterGain // Expose masterGain
         };
+      })();
+
+      // Expose masterGain for external control
+      Sfx.masterGain = Sfx.masterGain || (function(){
+        // This is a fallback if masterGain is not yet initialized
+        // It will be properly initialized in ensureCtx
+        let mg = { gain: { value: allowSound ? 0.8 : 0 } };
+        return mg;
       })();
 
       function setSound(on){
         allowSound = !!on;
         soundToggleBtn.setAttribute('aria-pressed', on ? 'true':'false');
         localStorage.setItem('ws_sound', on ? '1' : '0');
+        if (Sfx.masterGain) {
+          Sfx.masterGain.gain.value = on ? 0.8 : 0; // Set master volume
+        }
       }
       // Restore sound preference
       setSound(localStorage.getItem('ws_sound') !== '0');
       soundToggleBtn.addEventListener('click', ()=>{
-        setSound(!(soundToggleBtn.getAttribute('aria-pressed') === 'true'));
-        Sfx.click();
+        const newState = !(soundToggleBtn.getAttribute('aria-pressed') === 'true');
+        setSound(newState);
+        if (newState) Sfx.click(); // Play click sound only if turning sound ON
       }, {passive:true});
 
       // Utils
@@ -470,19 +513,21 @@
       function newWord(){
         // ensure we don't repeat same word too often
         if (seen.size === WORDS.length) seen.clear();
-        let w;
+        let wordObj;
         let attempts = 0;
         do {
-          w = choice(WORDS);
+          wordObj = choice(WORDS);
           attempts++;
-        } while (seen.has(w) && attempts < 10);
-        seen.add(w);
+        } while (seen.has(wordObj.word) && attempts < 10);
+        seen.add(wordObj.word);
 
-        currentWord = w.toLowerCase();
+        currentWord = wordObj.word.toLowerCase();
+        currentHint = wordObj.hint;
         renderTiles(currentWord);
         guessEl.value = '';
         tilesEl.classList.add('pulse');
         msg('');
+        hintDisplayEl.textContent = currentHint;
         roundEl.textContent = String(round);
         Sfx.newWord();
         setTimeout(()=>tilesEl.classList.remove('pulse'), 600);
@@ -524,7 +569,7 @@
           round++;
           setTimeout(newWord, 500);
         } else {
-          msg(`Not quite. Try again!`);
+          msg(`Not quite. Try again! The word was <strong class="highlight">${escapeHTML(currentWord)}</strong>.`);
           Sfx.wrong();
           inputRow.classList.add('shake');
           setTimeout(()=>inputRow.classList.remove('shake'), 360);
