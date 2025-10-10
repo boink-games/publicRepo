@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Name the Object</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
   <style>
     :root{
       --fg:#17324d;
@@ -50,11 +53,34 @@
     .header .icon {
       font-size: 1.3em;
     }
+    .header h1 {
+      font-family: 'Fredoka One', cursive; /* Apply playful font */
+      font-size: clamp(36px, 7vw, 60px); /* Make it larger */
+      margin: 0;
+      color: #3498db; /* A single, vibrant color */
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.2); /* Stronger shadow */
+      line-height: 1; /* Adjust line height */
+    }
+    .header .subtitle {
+      font-size: clamp(16px, 3vw, 22px);
+      margin: 0;
+      color: #333;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Added to center content */
+      gap: 8px;
+    }
+    .header {
+      flex-direction: column; /* Change to column to stack title and subtitle */
+      gap: 5px; /* Adjust gap between title and subtitle */
+    }
   </style>
 </head>
 <body>
   <div class="header">
-    <span class="icon">🔊</span> Tap a picture
+    <h1 class="game-title-colorful">Name the Object</h1>
+    <p class="subtitle"><span class="icon">🔊</span> Tap a picture</p>
   </div>
   <canvas id="c" aria-label="Name the Object game"></canvas>
   <script>

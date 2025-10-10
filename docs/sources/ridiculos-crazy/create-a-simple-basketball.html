@@ -248,6 +248,8 @@
     let dragEnd = { x: 0, y: 0 };
     let canShoot = true;
     let scoredThisShot = false;
+    let swishTextAlpha = 0; // For "SWISH!" animation
+    let swishTextY = 0; // For "SWISH!" animation
 
     // --- Background Elements ---
     let stars = [];
@@ -285,7 +287,7 @@
     }
 
     function createHoop() {
-        const hoopWidth = 120;
+        const hoopWidth = 140; // Increased for easier scoring
         const rimHeight = 280;
         return {
             x: canvas.width / 2,
@@ -427,6 +429,7 @@
             }
             scoreEl.textContent = score;
             playSound('swish');
+            triggerSwishAnimation(); // Trigger the "SWISH!" animation
             net.forEach(p => { if (!p.pinned) p.y += 15; });
             setTimeout(resetBall, 300);
         } else if (!scoredThisShot) {
@@ -450,6 +453,25 @@
         ball.y = canvas.height - 60;
         ball.vx = 0;
         ball.vy = 0;
+    }
+
+    function triggerSwishAnimation() {
+        swishTextAlpha = 1;
+        swishTextY = hoop.y - 50; // Start above the hoop
+        const animationDuration = 800; // ms
+        const startTime = performance.now();
+
+        function animateSwish(currentTime) {
+            const elapsedTime = currentTime - startTime;
+            if (elapsedTime < animationDuration) {
+                swishTextAlpha = 1 - (elapsedTime / animationDuration);
+                swishTextY -= 0.5; // Move upwards
+                requestAnimationFrame(animateSwish);
+            } else {
+                swishTextAlpha = 0; // Reset alpha
+            }
+        }
+        requestAnimationFrame(animateSwish);
     }
 
     // --- Drawing ---
@@ -506,6 +528,21 @@
             drawAimingIndicator();
         }
         drawBall();
+        drawSwishText(); // Draw "SWISH!" text
+    }
+
+    function drawSwishText() {
+        if (swishTextAlpha > 0) {
+            ctx.save();
+            ctx.globalAlpha = swishTextAlpha;
+            ctx.font = 'bold 48px Saira Stencil One';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+            ctx.shadowBlur = 10;
+            ctx.fillText('SWISH!', canvas.width / 2, swishTextY);
+            ctx.restore();
+        }
     }
 
     function drawHoop() {

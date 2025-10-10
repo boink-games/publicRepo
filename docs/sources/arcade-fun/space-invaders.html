@@ -1021,7 +1021,7 @@
     // Title
     const title = 'SPACE INVADERS';
     const subtitle = 'RETRO EDITION';
-    drawText(title, VW/2 - measureText(title, 28, 700)/2, 0, '#9efcff', 28, 700);
+    drawText(title, VW/2 - measureText(title, 28, 700)/2, -40, '#9efcff', 28, 700); // Moved title to y: -40
     drawText(subtitle, VW/2 - measureText(subtitle, 12)/2, 26, '#51f1d8', 12);
 
     // Score and Lives (only when not in menu)
@@ -1118,12 +1118,9 @@
     // Left Button
     const leftX = 10;
     ctx.globalAlpha = keys.left ? 0.4 : 0.2;
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(leftX, y, buttonWidth, buttonHeight);
-    drawText('LEFT', leftX + (buttonWidth - measureText('LEFT').width) / 2, y + (buttonHeight/2), '#000000');
-    drawArrow(leftX + buttonWidth / 2, y + (buttonHeight/2) + 6, -1);
-
-    // Fire Button
+    drawKeyWithArrow(leftX, y, -1, buttonWidth, buttonHeight); // Use drawKeyWithArrow
+    
+    // Fire Button (this one is fine as is)
     const fireX = (VW - buttonWidth) / 2;
     ctx.globalAlpha = keys.fire ? 0.4 : 0.2;
     ctx.fillStyle = '#ffffff';
@@ -1133,31 +1130,12 @@
     // Right Button
     const rightX = VW - buttonWidth - 10;
     ctx.globalAlpha = keys.right ? 0.4 : 0.2;
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(rightX, y, buttonWidth, buttonHeight);
-    drawText('RIGHT', rightX + (buttonWidth - measureText('RIGHT').width) / 2, y + (buttonHeight/2), '#000000');
-    drawArrow(rightX + buttonWidth / 2, y + (buttonHeight/2) + 6, 1);
+    drawKeyWithArrow(rightX, y, 1, buttonWidth, buttonHeight); // Use drawKeyWithArrow
 
     ctx.globalAlpha = 1;
   }
 
-  function drawArrow(x, y, dir) { // dir = -1 for left, 1 for right
-      ctx.save();
-      ctx.strokeStyle = '#c7f9ff';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      if (dir === -1) { // Left arrow
-          ctx.moveTo(x + 10, y - 10);
-          ctx.lineTo(x - 10, y);
-          ctx.lineTo(x + 10, y + 10);
-      } else { // Right arrow
-          ctx.moveTo(x - 10, y - 10);
-          ctx.lineTo(x + 10, y);
-          ctx.lineTo(x - 10, y + 10);
-      }
-      ctx.stroke();
-      ctx.restore();
-  }
+
 
   
 
@@ -1195,8 +1173,8 @@
     let currentY = y + 50;
     
     drawText('Move:', x + 20, currentY, '#ffffff');
-    drawKeyWithArrow(x + 80, currentY, -1);
-    drawKeyWithArrow(x + 108, currentY, 1);
+    drawKeyWithArrow(x + 80, currentY, -1, 22, 18); // Added width and height
+    drawKeyWithArrow(x + 108, currentY, 1, 22, 18);  // Added width and height
     
     currentY += lineHeight + 5;
     drawText('Fire:', x + 20, currentY, '#ffffff');
@@ -1207,9 +1185,7 @@
     drawKey(x + 80, currentY, 'P');
   }
 
-  function drawKeyWithArrow(x, y, dir) {
-      const width = 22;
-      const height = 18;
+  function drawKeyWithArrow(x, y, dir, width, height) { // Added width and height parameters
       // Draw key box
       ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
       ctx.fillRect(x, y, width, height);

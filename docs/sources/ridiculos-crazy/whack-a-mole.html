@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Whack-a-Mole - Friendly Tap Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
   <style>
     :root{
       --sky-top: #87CEEB;
@@ -124,8 +127,8 @@
       background: linear-gradient(180deg, rgba(220, 240, 255, 0.7), rgba(200, 230, 255, 0.6)); /* Light sky-blue gradient */
       padding: 10px;
       border-radius: var(--radius);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Softer shadow */
-      border: 1px solid rgba(255, 255, 255, 0.8); /* Light border */
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15); /* Enhanced shadow for subtle lift */
+      /* border: 1px solid rgba(255, 255, 255, 0.8); Removed for subtlety */
       backdrop-filter: blur(8px); /* Slightly more blur */
       z-index: 10;
     }
@@ -142,7 +145,14 @@
     .title{
       display:flex; align-items:center; gap:10px;
       font-weight:900; letter-spacing:.3px;
-      font-size: clamp(18px, 4.4vw, 26px);
+      font-size: clamp(18px, 4.4vw, 26px); /* Keep original size for the .title container */
+    }
+    .game-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(32px, 6vw, 48px); /* Larger font size */
+      color: #e74c3c; /* A more intense red color */
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      line-height: 1;
     }
     .title .emoji{ font-size: 1.2em }
     .scoreboard{
@@ -172,8 +182,25 @@
     .btn[aria-pressed="true"]{ background:#ffe8a6 }
     .btn .label{ margin-left:8px; font-weight:700; font-size:.9em }
 
+    .game-instructions {
+      text-align: center;
+      margin-top: 15px;
+      padding: 0 10px;
+      font-size: clamp(12px, 3.5vw, 16px);
+      color: var(--text);
+      opacity: 0.8;
+    }
+    .game-instructions p {
+      margin: 5px 0;
+      line-height: 1.4;
+    }
+    .game-instructions .hint {
+      font-size: clamp(11px, 3vw, 14px);
+      opacity: 0.7;
+    }
+
     .grid{
-      margin-top: clamp(12px, 3.5vw, 18px);
+      margin-top: -20px; /* Moved even higher */
       display:grid;
       grid-template-columns: repeat(3, var(--hole));
       gap: var(--gap);
@@ -316,7 +343,7 @@
       <div class="header-row1">
         <div class="title" aria-live="polite">
           <span class="emoji" role="img" aria-label="Mole">🐹</span>
-          <span>Tap the Mole!</span>
+          <span class="game-title">Whack a Mole!</span>
         </div>
       </div>
       <div class="header-row2">
@@ -340,6 +367,11 @@
     </div>
 
     <div class="grid" id="grid" aria-label="Mole holes" role="group"></div>
+
+    <div class="game-instructions">
+      <p>When the cute face pops up, tap it to get a star point.</p>
+      <p class="hint">Tip: Works with fingers or mouse. Have fun!</p>
+    </div>
   </div>
 
   <div class="overlay" id="overlay">

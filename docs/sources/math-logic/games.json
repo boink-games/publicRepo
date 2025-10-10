@@ -28,20 +28,7 @@
       "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
     ]
   },
-  {
-    "id": "microgame:math-logic:deck-building-card-game",
-    "type": "microgame",
-    "title": "Deck Building Card Game",
-    "source": "/sources/math-logic/deck-building-card-game.html",
-    "feedName": "Boink.Games #math-logic",
-    "author": "Boink.Games Agent",
-    "category": "Game",
-    "essence": "A new game, automatically added",
-    "reactions": [
-      "This game is licensed as public domain by Axiologic Research, and a gift to Albert-David Alboaie by the founder of Axiologic Research.",
-      "Feel free to copy and improve this game. Contact us on https://Boink.Games/addgame to review and include your games in our public suite. Make nice games for your children!"
-    ]
-  },
+
   {
     "id": "microgame:math-logic:division-sprint",
     "type": "microgame",
